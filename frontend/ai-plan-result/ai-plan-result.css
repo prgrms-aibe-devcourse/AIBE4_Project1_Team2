@@ -1,0 +1,158 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Malgun Gothic", sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
+.result-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.main-title {
+  font-size: 40px;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.highlight {
+  color: #f5c563;
+}
+
+.subtitle {
+  font-size: 20px;
+  color: #444;
+  font-weight: 600;
+}
+
+.timeline {
+  position: relative;
+  margin-left: 30px;
+  padding-left: 20px;
+  border-left: 3px solid #4a90e2;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 0;
+  bottom: 0;
+  border-left: 3px solid #4a90e2;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -38px;
+  top: 10px;
+  width: 18px;
+  height: 18px;
+  background-color: #fff;
+  border: 3px solid #4a90e2;
+  border-radius: 50%;
+}
+
+.timeline-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.timeline-content:hover {
+  transform: translateY(-3px);
+}
+
+.time {
+  color: #4a90e2;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.desc {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 하단 버튼 */
+.bottom-btn {
+  text-align: center;
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.btn-back,
+.btn-save {
+  font-size: 18px;
+  font-weight: 700;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-back {
+  background-color: #ff9b6b;
+  color: #000;
+}
+
+.btn-back:hover {
+  background-color: #ffd93d;
+  transform: translateY(-2px);
+}
+
+.btn-save {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.btn-save:hover {
+  background-color: #357bd8;
+  transform: translateY(-2px);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .main-title {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+  .timeline {
+    margin-left: 20px;
+  }
+
+  .timeline-content {
+    padding: 16px;
+  }
+}

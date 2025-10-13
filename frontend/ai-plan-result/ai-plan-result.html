@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 트립 | 여행 결과</title>
+    <link rel="stylesheet" href="./ai-plan-result.css" />
+  </head>
+  <body>
+    <div class="result-container">
+      <div class="header">
+        <h1 class="main-title">
+          <span id="trip-origin" class="highlight"></span>
+          여행 일정
+        </h1>
+        <p class="subtitle" id="trip-duration"></p>
+      </div>
+
+      <div class="timeline" id="timeline"></div>
+
+      <div class="bottom-btn">
+        <button class="btn-back" onclick="goBack()">◀ 다시 계획하기</button>
+        <button class="btn-save" onclick="savePlan()">💾 저장하기</button>
+      </div>
+    </div>
+
+    <script src="./ai-plan-result.js"></script>
+  </body>
+</html>

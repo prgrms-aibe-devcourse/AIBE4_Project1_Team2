@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 트립 | O-neul Trip</title>
+    <link rel="stylesheet" href="./ai-plan.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1 class="main-title">✈️ 어디로 떠나볼까요?</h1>
+        <p class="subtitle">
+          세부 정보를 입력하고 맞춤 여행 계획을 받아보세요.
+        </p>
+      </div>
+
+      <form id="travelForm" class="travel-form" novalidate>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label required">출발지 (Departure)</label>
+              <input
+                type="text"
+                class="form-control"
+                id="departure"
+                placeholder="예: 서울"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="form-label required">
+                출발 날짜 (Departure Date)
+              </label>
+              <input
+                type="date"
+                class="form-control"
+                id="departureDate"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label required">
+                누구와 함께하는지 (With Whom)
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="companionsType"
+                placeholder="예: 가족, 친구, 연인, 혼자"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label required">동행인 수 (Companions)</label>
+              <input
+                type="number"
+                class="form-control"
+                id="companions"
+                value="1"
+                min="1"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="form-group">
+              <label class="form-label required">
+                주요 교통수단 (Transportation)
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="transportation"
+                placeholder="예: 버스, 자가용, 비행기"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">여행 스타일 (Travel Style)</label>
+          <div class="style-buttons" id="styleButtons">
+            <button type="button" class="style-btn" data-style="휴양">
+              #휴양
+            </button>
+            <button type="button" class="style-btn" data-style="액티비티">
+              #액티비티
+            </button>
+            <button type="button" class="style-btn" data-style="관광">
+              #관광
+            </button>
+            <button type="button" class="style-btn" data-style="맛집탐방">
+              #맛집탐방
+            </button>
+            <button
+              type="button"
+              class="style-btn custom-style-btn"
+              id="customInputBtn"
+            >
+              #직접입력
+            </button>
+          </div>
+
+          <input
+            type="text"
+            id="customStyleInput"
+            class="form-control"
+            placeholder="예: 자연, 힐링, 문화탐방 등"
+            style="display: none; margin-top: 15px"
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">기타 세부 정보 (Additional Notes)</label>
+          <textarea
+            class="form-control"
+            id="additionalInfo"
+            rows="4"
+            placeholder="특별히 원하는 장소, 일정, 활동 등이 있다면 적어주세요."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            적정 예산 (Budget):
+            <span id="budgetValue">0</span>
+            원
+          </label>
+          <input
+            type="range"
+            class="form-range"
+            id="budget"
+            min="0"
+            max="10000000"
+            step="50000"
+            value="0"
+          />
+        </div>
+
+        <button type="submit" class="btn-submit">
+          나만의 여행 계획 만들기
+        </button>
+      </form>
+    </div>
+
+    <script src="./ai-plan.js"></script>
+  </body>
+</html>
