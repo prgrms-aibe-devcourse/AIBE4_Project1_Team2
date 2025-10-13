@@ -46,5 +46,5 @@ function savePlan() {
     return;
   }
   alert("저장되었습니다.");
-  window.location.href = "../index/index.html";
+  window.location.href = "/index.html";
 }
