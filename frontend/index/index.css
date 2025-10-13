@@ -1,0 +1,234 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Malgun Gothic", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* 상단/하단 바 */
+.top-bar,
+.bottom-bar {
+  background-color: #f5c563;
+  height: 15vh;
+  min-height: 80px;
+}
+
+.main-content {
+  background-color: #ffffff;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* 로고 영역 */
+.logo-container {
+  text-align: left;
+  margin-bottom: 40px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.logo-icon {
+  width: 100px;
+  height: 100px;
+  position: relative;
+}
+
+.balloon {
+  width: 80px;
+  height: 90px;
+  background-color: #f5c563;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  position: relative;
+}
+
+.balloon::before {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 2px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.balloon::after {
+  content: "";
+  position: absolute;
+  width: 2px;
+  height: 60px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.logo-text {
+  font-size: 96px;
+  font-weight: 900;
+  color: #000;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.logo-subtitle {
+  font-size: 20px;
+  color: #666;
+  margin-top: 10px;
+  text-align: right;
+  letter-spacing: 2px;
+}
+
+/* 버튼 영역 */
+.button-container {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-custom {
+  font-size: 22px;
+  font-weight: 700;
+  padding: 16px 80px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-ai {
+  background-color: #ff9b6b;
+  color: #000;
+}
+
+.btn-ai:hover {
+  background-color: #ff8a56;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 155, 107, 0.4);
+}
+
+.btn-review {
+  background-color: #ffd93d;
+  color: #000;
+}
+
+.btn-review:hover {
+  background-color: #ffd020;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+}
+
+/* ✅ 반응형 스타일 */
+@media (max-width: 1024px) {
+  .logo-text {
+    font-size: 72px;
+  }
+
+  .logo-subtitle {
+    font-size: 18px;
+  }
+
+  .logo-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .button-container {
+    gap: 16px;
+  }
+
+  .btn-custom {
+    font-size: 20px;
+    padding: 14px 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logo {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .logo-container {
+    margin-bottom: 30px;
+  }
+
+  .logo-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .logo-text {
+    font-size: 56px;
+  }
+
+  .logo-subtitle {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .btn-custom {
+    font-size: 18px;
+    padding: 12px 50px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .button-container {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .top-bar,
+  .bottom-bar {
+    height: 12vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-text {
+    font-size: 42px;
+  }
+
+  .logo-subtitle {
+    font-size: 14px;
+  }
+
+  .logo-icon {
+    width: 60px;
+    height: 60px;
+  }
+
+  .btn-custom {
+    font-size: 16px;
+    padding: 10px 40px;
+  }
+
+  .button-container {
+    gap: 12px;
+  }
+
+  .top-bar,
+  .bottom-bar {
+    height: 10vh;
+  }
+}
