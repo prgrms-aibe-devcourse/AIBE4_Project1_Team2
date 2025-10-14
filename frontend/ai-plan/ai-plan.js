@@ -4,7 +4,7 @@ const customInput = document.getElementById("customStyleInput");
 const styleContainer = document.getElementById("styleButtons");
 let selectedStyles = [];
 
-// 스타일 버튼 선택 처리
+// 스타일 버튼
 styleButtons.forEach((button) => {
   if (button.id === "customInputBtn") return;
   button.addEventListener("click", function () {
@@ -26,7 +26,7 @@ customInputBtn.addEventListener("click", () => {
   customInput.focus();
 });
 
-// Enter 입력 시 #태그 생성
+// Enter 시 태그 생성
 customInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -71,7 +71,6 @@ const requiredFields = {
   departureDate: "출발 날짜를 선택해주세요!",
   companionsType: "누구와 함께하는지 입력해주세요!",
   companions: "동행인 수를 입력해주세요!",
-  transportation: "교통수단을 입력해주세요!",
 };
 Object.keys(requiredFields).forEach((id) => {
   const input = document.getElementById(id);
@@ -89,7 +88,7 @@ Object.keys(requiredFields).forEach((id) => {
 const today = new Date().toISOString().split("T")[0];
 document.getElementById("departureDate").setAttribute("min", today);
 
-// 폼 제출 시 서버로 전송
+// 폼 제출
 travelForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!travelForm.checkValidity()) {
@@ -102,7 +101,6 @@ travelForm.addEventListener("submit", async (e) => {
     departureDate: document.getElementById("departureDate").value,
     companionsType: document.getElementById("companionsType").value,
     companions: document.getElementById("companions").value,
-    transportation: document.getElementById("transportation").value,
     travelStyles: selectedStyles,
     budget: document.getElementById("budget").value,
     additionalInfo: document.getElementById("additionalInfo").value,
@@ -119,16 +117,12 @@ travelForm.addEventListener("submit", async (e) => {
     if (!response.ok) throw new Error("서버 응답 오류");
     const result = await response.json();
     */
-    // 🧩 목업(mock) 데이터 (테스트용)
+    // 🧩 목업 데이터
     const result = {
       region: "목적지",
       total_duration: "약 12시간 30분",
       schedule: [
-        {
-          time: "오전 9시",
-          location: "경주역 → 부산역",
-          activity: "KTX 탑승",
-        },
+        { time: "오전 9시", location: "경주역 → 부산역", activity: "KTX 탑승" },
         {
           time: "오전 9시 30분",
           location: "부산역 → 금련산역",
@@ -144,11 +138,7 @@ travelForm.addEventListener("submit", async (e) => {
           location: "광안리",
           activity: "점심 식사 (돼지국밥 또는 회덮밥)",
         },
-        {
-          time: "13:00-15:00",
-          location: "광안리",
-          activity: "카페에서 휴식",
-        },
+        { time: "13:00-15:00", location: "광안리", activity: "카페에서 휴식" },
         {
           time: "15:00-17:00",
           location: "해운대",
@@ -159,24 +149,16 @@ travelForm.addEventListener("submit", async (e) => {
           location: "해운대 또는 광안리",
           activity: "저녁 식사 (부산댁)",
         },
-        {
-          time: "19:00-21:00",
-          location: "광안리 해변",
-          activity: "야경 감상",
-        },
+        { time: "19:00-21:00", location: "광안리 해변", activity: "야경 감상" },
         {
           time: "21:00-21:30",
           location: "광안리 → 부산역",
           activity: "지하철 이동",
         },
-        {
-          time: "21:30",
-          location: "부산역 → 경주역",
-          activity: "KTX 탑승",
-        },
+        { time: "21:30", location: "부산역 → 경주역", activity: "KTX 탑승" },
       ],
     };
-    // 응답을 localStorage에 저장 후 결과 페이지로 이동
+
     localStorage.setItem("aiTripResult", JSON.stringify(result));
     window.location.href = "../ai-plan-result/ai-plan-result.html";
   } catch (err) {
