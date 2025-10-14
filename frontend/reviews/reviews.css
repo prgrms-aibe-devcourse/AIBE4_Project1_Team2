@@ -1,0 +1,104 @@
+/* --- 기존에 작성했던 리뷰 카드 CSS --- */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+}
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+h1 { text-align: center; margin-bottom: 40px; }
+h2 { border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 30px; }
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+}
+.review-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+.review-card.clickable {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.review-card.clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+.card-image img { width: 100%; height: 200px; object-fit: cover; }
+.card-content { padding: 20px; }
+/* ... (기타 카드 스타일) ... */
+
+/* --- 👇 여기에 모달(팝업) 스타일 추가! 👇 --- */
+
+/* 모달 배경 (어두운 반투명 오버레이) */
+.modal-overlay {
+    position: fixed; /* 화면 전체를 덮도록 고정 */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 반투명 검은색 */
+    display: none; /* ✨ 평소에는 숨김 */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* JavaScript로 active 클래스가 추가되면 보이도록 설정 */
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* 모달 내용이 들어갈 흰색 창 */
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+
+/* 닫기 버튼 (X) */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #aaa;
+    cursor: pointer;
+}
+
+/* 모달 내부 스타일 */
+.review-header h1 { font-size: 1.8rem; margin-bottom: 15px; text-align: left; }
+.author-info { display: flex; align-items: center; margin-bottom: 15px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;}
+.star-rating-display { font-size: 1.2rem; color: #ffc107; }
+.review-body .review-photo { width: 100%; border-radius: 8px; margin: 20px 0; }
+.review-body .review-text { font-size: 1rem; line-height: 1.7; }
+
+/* 모달이 떴을 때 배경 스크롤 방지 */
+body.modal-open {
+    overflow: hidden;
+}
