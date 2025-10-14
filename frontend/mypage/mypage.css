@@ -89,7 +89,8 @@ header {
     margin-right: 20px;
 }
 .review-details {
-    flex-grow: 1; /* 남는 공간을 모두 차지 */
+    flex-grow: 1; 
+    padding-right: 40px;
 }
 .review-details h3 { margin: 0 0 5px 0; }
 .review-details p { margin: 0 0 10px 0; color: #6c757d; }
@@ -97,6 +98,7 @@ header {
 
 /* 공용 버튼 및 페이지네이션 */
 .itinerary-deleteBtn {
+    display: block;
     background-color: #dee2e6;
     color: #495057;
     border: none;
@@ -112,11 +114,16 @@ header {
     flex-direction: column; 
     gap: 8px;
     border: none;
-    margin-left: 15px; 
+    padding-left: 15px; 
+    transition: background-color 0.2s;
+}
+.review-btn:hover {
+    background-color: #ced4da; 
 }
 
 /* 수정하기 버튼 */
-#modify-button {
+.reviewModifyBtn {
+    width: 80px;
     background-color: #dee2e6;
     color: #495057;
     border: none;
@@ -124,10 +131,12 @@ header {
     padding: 5px 12px;
     font-size: 0.8rem;
     cursor: pointer;
+    text-align: center;
 }
 
 /* 삭제하기 버튼 */
-#delete-button {
+.deleteModifyBtn {
+    width: 80px;
     background-color: #dee2e6;
     color: #495057;
     border: none;
@@ -135,6 +144,7 @@ header {
     padding: 5px 12px;
     font-size: 0.8rem;
     cursor: pointer;
+    text-align: center;
 }
 .pagination {
     display: flex;

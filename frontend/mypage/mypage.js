@@ -67,8 +67,8 @@ function renderMyReviews() {
                 <p>${review.content.substring(0, 80)}...</p> 
             </div>
             <div class="reviewBtn-group">
-                <button id="modify-button" data-type="itinerary" data-index="${index}">수정하기</button>
-                <button id="delete-button" data-type="review" data-index="${index}">삭제하기</button>
+                <button class="reviewModifyBtn" data-index="${index}">수정하기</button>
+                <button class="deleteModifyBtn" data-type="review" data-index="${index}">삭제하기</button>
             </div>
         `;
         listContainer.appendChild(reviewItem);
@@ -82,15 +82,23 @@ function setupEventListeners() {
     contentArea.addEventListener('click', (event) => {
         const target = event.target;
 
+        // 일정 삭제 버튼 클릭 처리
+        if (target.matches('.itinerary-deleteBtn')) {
+            event.stopPropagation(); // 모달이 열리는 것을 방지
+            handleDelete(target);
+            return;
+        }
+
+        // 리뷰 내 버튼
         // 수정 버튼 클릭 처리
-        if (target.matches('.modify-button')) {
+        if (target.matches('.reviewModifyBtn')) {
             event.stopPropagation(); // 모달이 열리는 것을 방지
             handleModify(target);
             return;
         }
 
         // 삭제 버튼 클릭 처리
-        if (target.matches('.delete-button')) {
+        if (target.matches('.deleteModifyBtn')) {
             event.stopPropagation();
             handleDelete(target);
             return;
