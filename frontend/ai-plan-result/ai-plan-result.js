@@ -29,13 +29,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  console.log("📦 Loaded result data:", result);
+  console.log("Loaded result data:", result);
   renderSchedule(result);
 });
 
 // 일정 렌더링 함수
 function renderSchedule(result) {
-  console.log("📦 Loaded result data:", result);
+  console.log("Loaded result data:", result);
 
   // 타이틀 구성
   const departure = result.departure;
@@ -102,12 +102,48 @@ function goBack() {
  * 저장하기 버튼
  * - 데이터 확인 후 홈(index.html)로 이동
  */
-function savePlan() {
+async function savePlan() {
+  // localStorage에서 여행 데이터 가져오기
   const data = localStorage.getItem("aiTripResult");
   if (!data) {
     alert("저장할 데이터가 없습니다.");
     return;
   }
-  alert("저장되었습니다.");
-  window.location.href = "/AIBE4_Project1_Team2/index.html";
+
+  const parsedData = JSON.parse(data);
+
+  // 비밀번호 입력 요청
+  const password = prompt(
+    "저장용 비밀번호를 입력해주세요 (숫자 또는 문자 가능):"
+  );
+  if (!password || password.trim() === "") {
+    alert("비밀번호를 입력해야 저장할 수 있습니다.");
+    return;
+  }
+
+  /* 테스트 및 배포 시 요청 주소 변경 */
+  try {
+    const response = await fetch("http://localhost:3000/api/ai/schedules", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        password: password.trim(),
+        text: parsedData.text || parsedData, // 혹시 {text:{...}} 구조일 수도 있어서
+      }),
+    });
+
+    const result = await response.json();
+
+    // 응답 상태 확인
+    if (result.success && result.statusCode === 201) {
+      alert(`저장되었습니다! (비밀번호: ${password})`);
+      window.location.href = "/AIBE4_Project1_Team2/index.html";
+    } else {
+      console.error("서버 응답 오류:", result);
+      alert("저장 중 문제가 발생했습니다. 다시 시도해주세요.");
+    }
+  } catch (err) {
+    console.error("저장 실패:", err);
+    alert("서버 통신 중 오류가 발생했습니다. 다시 시도해주세요.");
+  }
 }

@@ -195,7 +195,7 @@ travelForm.addEventListener("submit", async (e) => {
     };
 
     /* 테스트 및 배포 시 2단계) 요청 주소 바꿔주세요. */
-    // const response = await fetch("http://localhost:3000/api/ai/generate", {
+    // const response = await fetch("http://localhost:3000/api/ai/plans", {
     //   method: "POST",
     //   headers: { "Content-Type": "application/json" },
     //   body: JSON.stringify({ prompt: formData }),
