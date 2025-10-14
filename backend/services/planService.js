@@ -1,0 +1,92 @@
+const { GoogleGenAI, Type } = require("@google/genai");
+
+const ai = new GoogleGenAI({});
+
+// 사용자의 입력에 따라 여행 일정 생성
+async function generateTravelPlan(userInput) {
+  const {
+    departure,
+    departureDate,
+    companionsType,
+    companions,
+    travelStyles,
+    budget,
+  } = userInput;
+
+  console.log(userInput.departure);
+
+  const userPrompt = `
+    다음 정보에 맞는 여행 일정을 생성해줘.
+    - 출발지: ${departure}
+    - 여행 날짜: ${departureDate}
+    - 동반 유형: ${companionsType}
+    - 여행객 수: ${companions}명
+    - 여행 스타일: ${travelStyles}
+    - 예산: ${budget}원
+
+    응답은 반드시 한국어로 해야돼.   
+  `;
+
+  console.log(userPrompt);
+
+  const response = await ai.models.generateContent({
+    model: "gemini-2.5-flash",
+    contents: userPrompt,
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT, // 최상위 응답 객체의 타입
+        properties: {
+          // 속성 값
+          departure: { type: Type.STRING },
+          departureDate: { type: Type.STRING },
+          companionsType: { type: Type.STRING },
+          companions: { type: Type.NUMBER },
+          travelStyles: {
+            type: Type.ARRAY,
+            items: { type: Type.STRING },
+          },
+          budget: { type: Type.NUMBER },
+          budgetUnit: { type: Type.STRING },
+          recommendation: {
+            type: Type.OBJECT,
+            properties: {
+              destinationName: { type: Type.STRING },
+              destinationDescription: { type: Type.STRING },
+              estimatedBudget: {
+                type: Type.OBJECT,
+                properties: {
+                  min: { type: Type.STRING },
+                  max: { type: Type.STRING },
+                  unit: { type: Type.STRING },
+                },
+              },
+              itinerary: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    time: { type: Type.STRING },
+                    activity: { type: Type.STRING },
+                    description: { type: Type.STRING },
+                    transportation: { type: Type.STRING },
+                  },
+                },
+              },
+              notes: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  //   console.log(response.text);
+  const travelPlan = response.text;
+  return travelPlan;
+}
+
+module.exports = { generateTravelPlan };

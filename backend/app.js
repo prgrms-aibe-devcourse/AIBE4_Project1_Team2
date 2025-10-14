@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -6,6 +7,13 @@ const port = 3000;
 const cors = require("cors");
 app.use(cors());
 
+// JSON 파싱을 위한 미들웨어
+app.use(express.json());
+
+// 라우터 가져오기
+const planRouter = require("./routes/planRoute");
+app.use("/", planRouter);
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -13,3 +21,6 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+const reviewRoutes = require('./routes/reviewRoutes');
+app.use('/reviews', reviewRoutes);
