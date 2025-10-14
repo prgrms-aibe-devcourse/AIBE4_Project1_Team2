@@ -10,7 +10,7 @@
 <body>
 
     <div class="review-form-container">
-        <form action="#" method="post">
+        <form action="#">
             <h1>✍️ 여행 리뷰 작성하기</h1>
             <p>소중한 여행 경험을 공유해주세요!</p>
 
@@ -45,7 +45,7 @@
 
                     <input 
                         type="radio" 
-                        d="3-stars" 
+                        id="3-stars" 
                         name="rating" 
                         value="3" 
                     />
@@ -75,8 +75,7 @@
                     id="content" 
                     name="content" 
                     rows="8" 
-                    placeholder="상세한 여행 후기를 남겨주세요">
-                </textarea>
+                    placeholder="상세한 여행 후기를 남겨주세요"></textarea>
             </div>
             
             <div class="form-group">
@@ -101,6 +100,7 @@
                         </svg>
                         <span>사진을 여기에 드래그하거나 클릭하여 업로드하세요.</span>
                     </label>
+                    <div id="image-preview" class="image-preview"></div>
                 </div>
             </div>
 
@@ -113,5 +113,6 @@
         </form>
     </div>
 
+    <script src="review-form.js"></script> 
 </body>
 </html>
