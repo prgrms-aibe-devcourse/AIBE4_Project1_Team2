@@ -1,7 +1,7 @@
 require("dotenv").config()
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 // cors
 const cors = require("cors");
@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 
 // 라우터 가져오기
-const planRouter = require("./backend/routes/planRoute");
+const planRouter = require("./backend/routes/planRoutes");
 app.use("/", planRouter);
 
 app.get('/', (req, res) => {
