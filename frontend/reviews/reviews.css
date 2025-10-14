@@ -33,6 +33,31 @@ h2 { border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-bottom: 30px
 }
 .card-image img { width: 100%; height: 200px; object-fit: cover; }
 .card-content { padding: 20px; }
+
+.fab {
+    position: fixed; /* 화면에 고정 */
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    background-color: #0d6efd; /* 깔끔한 스타일의 파란색 */
+    color: white;
+    border: none;
+    border-radius: 50%; /* 원 모양 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    font-size: 1.8rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    z-index: 999; /* 다른 요소들보다 위에 있도록 */
+}
+
+.fab:hover {
+    transform: scale(1.1); /* 마우스 올리면 살짝 커짐 */
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
 /* ... (기타 카드 스타일) ... */
 
 /* --- 👇 여기에 모달(팝업) 스타일 추가! 👇 --- */
