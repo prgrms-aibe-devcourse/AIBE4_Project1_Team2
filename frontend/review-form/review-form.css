@@ -1,0 +1,144 @@
+/* 기본 스타일 */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.review-form-container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+}
+
+h1 { text-align: center; margin-bottom: 10px; }
+p { text-align: center; margin-bottom: 30px; color: #666; }
+
+/* 폼 그룹 스타일 */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+input[type="password"],
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+}
+
+textarea {
+    resize: vertical; /* 세로로만 크기 조절 가능 */
+}
+
+/* --- ✨ 핵심 1: CSS로만 만드는 인터랙티브 별점 --- */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse; /* 아이템 순서를 거꾸로 배치 */
+    justify-content: flex-end; /* 오른쪽부터 채워지도록 */
+}
+
+/* 실제 라디오 버튼은 숨김 */
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+/* 별 모양 라벨 */
+.star-rating label {
+    font-size: 2rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+/* 마우스를 올렸을 때(hover), 해당 별과 그 이전 별들 색상 변경 */
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #ffc107;
+}
+
+/* 라디오 버튼이 체크됐을 때, 해당 별과 그 이전 별들 색상 고정 */
+.star-rating input[type="radio"]:checked ~ label {
+    color: #ffc107;
+}
+
+/* --- ✨ 핵심 2: 드래그 앤 드롭 영역 스타일링 --- */
+.drop-zone {
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    background-color: #fafafa;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.drop-zone-prompt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.drop-zone-prompt svg {
+    margin-bottom: 15px;
+    color: #ccc;
+    transition: color 0.2s;
+}
+
+.drop-zone-prompt span {
+    font-size: 1rem;
+}
+
+/* 드롭 영역에 마우스를 올렸을 때 */
+.drop-zone:hover {
+    border-color: #007bff;
+    background-color: #f4f8ff;
+}
+.drop-zone:hover .drop-zone-prompt {
+    color: #007bff;
+}
+.drop-zone:hover svg {
+    color: #007bff;
+}
+
+
+/* 제출 버튼 */
+button[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
