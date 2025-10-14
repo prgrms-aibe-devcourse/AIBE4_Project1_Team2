@@ -1,14 +1,10 @@
-import { supabase } from "../utils/supabase";
-
+let reviews = [];
 let nextId = 1;
 
 const reviewService = {
   getAllReviews: async (page, limit) => {
     const startIndex = (page - 1) * limit;
     const endIndex = startIndex + limit;
-    
-    const {data, error} = await supabase.from('review').select('*')
-    console.log(data)
 
     // 전체 리뷰에서 리스트용 필드만 추출
     const paginatedReviews = reviews
