@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 트립 | O-neul Trip</title>
+    <link rel="stylesheet" href="./saved-ai-plan.css" />
+  </head>
+  <body>
+    <div class="result-container">
+        <!-- 헤더 -->
+        <div class="header">
+            <h1 class="main-title" id="trip-title"></h1>
+            <p class="subtitle" id="trip-info"></p>
+        </div>
+
+        <!-- 리뷰 작성 버튼 -->
+        <div class="btn">
+            <button class="btn-review" id="btnReview">리뷰 작성하기</button>
+        </div>
+
+        <!-- 여행지 설명 -->
+        <div class="destination-description" id="destination-description"></div>
+
+        <!-- 일정 타임라인 -->
+        <div class="timeline" id="timeline"></div>
+
+        <!-- 여행 팁 -->
+        <div class="notes-section">
+            <h2>💡 여행 팁</h2>
+            <ul id="notes-list"></ul>
+        </div>
+    </div>
+
+    <script src="./saved-ai-plan.js"></script>
+  </body>
+</html>

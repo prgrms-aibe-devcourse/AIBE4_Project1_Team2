@@ -52,7 +52,7 @@ textarea {
     resize: vertical; /* 세로로만 크기 조절 가능 */
 }
 
-/* --- ✨ 핵심 1: CSS로만 만드는 인터랙티브 별점 --- */
+/* --- CSS로만 만드는 인터랙티브 별점 --- */
 .star-rating {
     display: flex;
     flex-direction: row-reverse; /* 아이템 순서를 거꾸로 배치 */
@@ -83,7 +83,7 @@ textarea {
     color: #ffc107;
 }
 
-/* --- ✨ 핵심 2: 드래그 앤 드롭 영역 스타일링 --- */
+/* --- 드래그 앤 드롭 영역 스타일링 --- */
 .drop-zone {
     border: 2px dashed #ddd;
     border-radius: 8px;
@@ -129,7 +129,7 @@ textarea {
 button[type="submit"] {
     width: 100%;
     padding: 15px;
-    background-color: #007bff;
+    background-color: #ffd93d;
     color: white;
     border: none;
     border-radius: 8px;
@@ -140,5 +140,5 @@ button[type="submit"] {
 }
 
 button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #ff9b6b;
 }
