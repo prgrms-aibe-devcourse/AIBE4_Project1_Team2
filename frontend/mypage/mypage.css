@@ -96,7 +96,7 @@ header {
 .tags { font-size: 0.9rem; color: #495057; }
 
 /* 공용 버튼 및 페이지네이션 */
-.delete-button {
+.itinerary-deleteBtn {
     background-color: #dee2e6;
     color: #495057;
     border: none;
@@ -104,7 +104,37 @@ header {
     padding: 5px 12px;
     font-size: 0.8rem;
     cursor: pointer;
-    align-self: flex-end; /* 버튼을 오른쪽 아래로 */
+    align-self: flex-end; 
+}
+
+.reviewBtn-group {
+    display: flex;
+    flex-direction: column; 
+    gap: 8px;
+    border: none;
+    margin-left: 15px; 
+}
+
+/* 수정하기 버튼 */
+#modify-button {
+    background-color: #dee2e6;
+    color: #495057;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+/* 삭제하기 버튼 */
+#delete-button {
+    background-color: #dee2e6;
+    color: #495057;
+    border: none;
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    cursor: pointer;
 }
 .pagination {
     display: flex;
@@ -124,3 +154,97 @@ header {
     background-color: #495057;
     border-radius: 4px;
 }
+
+/* 클릭 가능한 요소에 대한 스타일 */
+.itinerary-card.clickable,
+.review-item.clickable {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.itinerary-card.clickable:hover,
+.review-item.clickable:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+
+/* --- 모달 공통 스타일 --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+.modal-content {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+}
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: #aaa;
+    cursor: pointer;
+}
+body.modal-open {
+    overflow: hidden;
+}
+
+/* --- 각 모달 내부 콘텐츠 스타일 --- */
+/* 일정 모달 */
+.modal-header { text-align: center; border-bottom: 1px solid #e9ecef; padding-bottom: 20px; margin-bottom: 20px; }
+.modal-header h1 { font-size: 1.8rem; margin: 0; }
+.modal-header .date-range { display: block; font-size: 1rem; color: #6c757d; }
+.modal-body .day-plan { margin-bottom: 20px; }
+.modal-body h4 { font-size: 1.2rem; margin-bottom: 10px; }
+.modal-body ul { list-style: none; padding-left: 20px; border-left: 3px solid #f1f3f5; }
+.modal-body li { margin-bottom: 8px; }
+.modal-header button {
+    background-color: #f1f3f5; 
+    border: 1px solid #dee2e6;  
+    padding: 8px 16px; 
+    border-radius: 6px;  
+    color: #333;
+    font-size: 1rem;        
+    font-weight: 500;         
+    cursor: pointer;        
+    transition: background-color 0.2s; 
+}
+.modal-header button:hover {
+    background-color: #e9ecef; 
+}
+
+/* 리뷰 모달 */
+.review-header h1 { font-size: 1.8rem; margin-bottom: 15px; text-align: left; }
+.author-info { display: flex; align-items: center; margin-bottom: 15px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;}
+.star-rating-display { font-size: 1.2rem; color: #ffc107; }
+.review-body .review-photo { width: 100%; border-radius: 8px; margin: 20px 0; }
+.review-body .review-text { font-size: 1rem; line-height: 1.7; white-space: pre-wrap; }

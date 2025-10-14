@@ -24,53 +24,44 @@
             <div class="content-area">
                 <section id="itinerary" class="tab-content active">
                     <div class="itinerary-grid">
-                        <div class="itinerary-card">
-                            <h3>경주 - 부산</h3>
-                            <button class="delete-button">삭제하기</button>
                         </div>
-                        <div class="itinerary-card">
-                            <h3>부산 - 대전</h3>
-                            <button class="delete-button">삭제하기</button>
-                        </div>
-                        <div class="itinerary-card">
-                            <h3>서울 - 강릉</h3>
-                            <button class="delete-button">삭제하기</button>
-                        </div>
-                    </div>
                 </section>
 
                 <section id="reviews" class="tab-content">
                     <div class="review-list">
-                        <div class="review-item">
-                            <img src="https://images.unsplash.com/photo-1574936145849-f8aa04d2a37c?q=80&w=400" alt="부산 통영" class="review-photo">
-                            <div class="review-details">
-                                <h3>부산 통영 ★★★★★</h3>
-                                <p>야경 너무 예쁘고 케이블카랑 루지도 재밌었어요!</p>
-                                <div class="tags">#야경 #루지 #케이블카</div>
-                            </div>
-                            <button class="delete-button">삭제하기</button>
                         </div>
-                        <div class="review-item">
-                            <img src="https://images.unsplash.com/photo-1582238332992-a124fa9349c6?q=80&w=400" alt="시장 음식" class="review-photo">
-                            <div class="review-details">
-                                <h3>★★★☆☆</h3>
-                                <p>부산 시장 투어! 여러가지 음식을 맛볼 수 있어서 좋았지만 사람이 너무 많아요.</p>
-                                <div class="tags">#시장음식 #먹방투어</div>
-                            </div>
-                            <button class="delete-button">삭제하기</button>
-                        </div>
-                    </div>
                     <div class="pagination">
-                        <a href="#" class="active">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <span>...</span>
-                        <a href="#">67</a>
-                        <a href="#">68</a>
-                    </div>
+                        </div>
                 </section>
             </div>
         </main>
+    </div>
+
+    <div id="itineraryModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <header class="modal-header">
+                <h1 id="modalItineraryTitle"></h1>
+                <span id="modalItineraryDuration" class="date-range"></span><br>
+                <button id="reviewBtn">리뷰 작성하기</button>
+            </header>
+            <main id="modalItineraryBody" class="modal-body"></main>
+        </div>
+    </div>
+
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <header class="review-header">
+                <h1 id="modalReviewTitle"></h1>
+                <div id="modalReviewAuthor" class="author-info"></div>
+                <div id="modalReviewRating" class="star-rating-display"></div>
+            </header>
+            <main class="review-body">
+                <img id="modalReviewPhoto" src="" alt="리뷰 상세 사진" class="review-photo">
+                <p id="modalReviewContent" class="review-text"></p>
+            </main>
+        </div>
     </div>
     
     <script src="mypage.js"></script>
