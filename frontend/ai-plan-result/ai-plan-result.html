@@ -3,24 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오늘 트립 | 여행 결과</title>
+    <title>오늘 트립 | O-neul Trip</title>
     <link rel="stylesheet" href="./ai-plan-result.css" />
   </head>
   <body>
     <div class="result-container">
+      <!-- 헤더 -->
       <div class="header">
-        <h1 class="main-title">
-          <span id="trip-origin" class="highlight"></span>
-          여행 일정
-        </h1>
-        <p class="subtitle" id="trip-duration"></p>
+        <h1 class="main-title" id="trip-title"></h1>
+        <p class="subtitle" id="trip-info"></p>
       </div>
 
+      <!-- 여행지 설명 -->
+      <div class="destination-description" id="destination-description"></div>
+
+      <!-- 일정 타임라인 -->
       <div class="timeline" id="timeline"></div>
 
+      <!-- 여행 팁 -->
+      <div class="notes-section">
+        <h2>💡 여행 팁</h2>
+        <ul id="notes-list"></ul>
+      </div>
+
+      <!-- 버튼 -->
       <div class="bottom-btn">
-        <button class="btn-back" onclick="goBack()">◀ 다시 계획하기</button>
-        <button class="btn-save" onclick="savePlan()">💾 저장하기</button>
+        <button class="btn-back" id="btnBack">◀ 다시 계획하기</button>
+        <button class="btn-save" id="btnSave">💾 저장하기</button>
       </div>
     </div>
 

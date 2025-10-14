@@ -135,8 +135,8 @@
             class="form-range"
             id="budget"
             min="0"
-            max="10000000"
-            step="50000"
+            max="1000000"
+            step="10000"
             value="0"
           />
         </div>
@@ -145,6 +145,14 @@
           나만의 여행 계획 만들기
         </button>
       </form>
+    </div>
+
+    <!-- 로딩 오버레이 -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">
+        AI가 여행 일정을 생성 중이에요... 잠시만 기다려주세요 🧭
+      </p>
     </div>
 
     <script src="./ai-plan.js"></script>
