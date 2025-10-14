@@ -16,6 +16,7 @@
       </div>
 
       <form id="travelForm" class="travel-form" novalidate>
+        <!-- 출발지 / 출발 날짜 -->
         <div class="row">
           <div class="col-md-6">
             <div class="form-group">
@@ -45,8 +46,9 @@
           </div>
         </div>
 
+        <!-- 누구와 함께 / 동행인 수 -->
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <label class="form-label required">
                 누구와 함께하는지 (With Whom)
@@ -61,7 +63,7 @@
             </div>
           </div>
 
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group">
               <label class="form-label required">동행인 수 (Companions)</label>
               <input
@@ -74,23 +76,9 @@
               />
             </div>
           </div>
-
-          <div class="col-md-4">
-            <div class="form-group">
-              <label class="form-label required">
-                주요 교통수단 (Transportation)
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="transportation"
-                placeholder="예: 버스, 자가용, 비행기"
-                required
-              />
-            </div>
-          </div>
         </div>
 
+        <!-- 여행 스타일 -->
         <div class="form-group">
           <label class="form-label">여행 스타일 (Travel Style)</label>
           <div class="style-buttons" id="styleButtons">
@@ -124,6 +112,7 @@
           />
         </div>
 
+        <!-- 기타 세부 정보 -->
         <div class="form-group">
           <label class="form-label">기타 세부 정보 (Additional Notes)</label>
           <textarea
@@ -134,6 +123,7 @@
           ></textarea>
         </div>
 
+        <!-- 예산 -->
         <div class="form-group">
           <label class="form-label">
             적정 예산 (Budget):
