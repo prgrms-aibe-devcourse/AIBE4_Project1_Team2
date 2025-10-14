@@ -1,5 +1,3 @@
-import { supabase } from "../utils/supabase";
-
 let reviews = [];
 let nextId = 1;
 
