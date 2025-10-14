@@ -97,7 +97,6 @@ body {
   line-height: 1.5;
 }
 
-/* 하단 버튼 */
 .bottom-btn {
   text-align: center;
   margin-top: 60px;
@@ -138,7 +137,6 @@ body {
   transform: translateY(-2px);
 }
 
-/* 반응형 */
 @media (max-width: 768px) {
   .main-title {
     font-size: 28px;
