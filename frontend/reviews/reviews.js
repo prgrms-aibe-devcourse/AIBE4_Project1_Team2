@@ -1,426 +1,314 @@
-// 요소 참조
-const reviewCards = document.querySelectorAll(".review-card.clickable");
-const modalOverlay = document.getElementById("reviewModal");
-const closeButton = modalOverlay.querySelector(".close-button");
-const body = document.body;
+// =============================
+//  1. 상수 및 DOM 요소 관리
+// =============================
+const DOM = {
+  body: document.body,
+  reviewsContainer: document.getElementById("reviews-container"),
+  buttons: {
+    myReviews: document.getElementById("btnMyReviews"),
+    mySchedules: document.getElementById("btnMySchedules"),
+  },
+  modal: {
+    overlay: document.getElementById("reviewModal"),
+    closeButton: document.getElementById("reviewModal").querySelector(".close-button"),
+    title: document.getElementById("modal-title"),
+    rate: document.getElementById("modal-rate"),
+    image: document.getElementById("modal-image"),
+    content: document.getElementById("modal-content"),
+  },
+};
 
-// 버튼 (현재 마크업 기준: 헤더 내 1번째/2번째 버튼)
-const btnMyReviews = document.querySelector("header button:nth-of-type(1)");
-const btnMySchedules = document.querySelector("header button:nth-of-type(2)");
+// API 요청 시 사용할 데이터 타입을 상수로 관리 (오타 방지)
+const DATA_TYPE = {
+  REVIEWS: "reviews",
+  SCHEDULES: "schedules",
+};
 
-/* =============================
-   🔹 리뷰 카드 모달
-============================= */
-function openModal() {
-  modalOverlay.classList.add("active");
-  body.classList.add("modal-open");
+// =============================
+//  2. 함수 정의
+// =============================
+
+/**
+ * 리뷰 카드 하나를 생성하는 함수 (HTML 문자열 반환)
+ * @param {object} review - 리뷰 데이터 한 개
+ * @returns {HTMLDivElement} - 생성된 카드 div 요소
+ */
+function createReviewCard(review) {
+  const card = document.createElement("div");
+  card.className = "review-card clickable";
+  card.innerHTML = `
+    <div class="card-image">
+      <img src="${review.img_path}" alt="${review.title}" />
+    </div>
+    <div class="card-content">
+      <h3>${review.title}</h3>
+      <p>${review.content.substring(0, 50)}...</p>
+    </div>
+  `;
+  card.addEventListener("click", () => openModal(review));
+  return card;
 }
+
+/**
+ * 모든 리뷰 데이터를 받아와 화면에 렌더링하는 메인 함수
+ * @param {Array<object>} reviews - 전체 리뷰 데이터 배열
+ */
+function renderReviews(reviews) {
+  if (!DOM.reviewsContainer) {
+    console.error("#reviews-container 요소를 찾을 수 없습니다.");
+    return;
+  }
+  DOM.reviewsContainer.innerHTML = "";
+
+  const reviewsByCity = reviews.reduce((acc, review) => {
+    const city = review.arrival;
+    if (!acc[city]) acc[city] = [];
+    acc[city].push(review);
+    return acc;
+  }, {});
+
+  for (const city in reviewsByCity) {
+    const section = document.createElement("section");
+    section.className = "region-section";
+    
+    const title = document.createElement("h2");
+    title.textContent = city;
+    
+    const grid = document.createElement("div");
+    grid.className = "review-grid";
+    
+    reviewsByCity[city].forEach((review) => {
+      const cardElement = createReviewCard(review);
+      grid.appendChild(cardElement);
+    });
+    
+    section.appendChild(title);
+    section.appendChild(grid);
+    DOM.reviewsContainer.appendChild(section);
+  }
+}
+
+/**
+ * 특정 리뷰 데이터로 모달창의 내용을 채우고 표시하는 함수
+ * @param {object} review - 표시할 리뷰 데이터
+ */
+function openModal(review) {
+  DOM.modal.title.textContent = review.title;
+  DOM.modal.image.src = review.img_path;
+  DOM.modal.content.textContent = review.content;
+  DOM.modal.rate.textContent = "★".repeat(review.rate) + "☆".repeat(5 - review.rate);
+
+  DOM.modal.overlay.classList.add("active");
+  DOM.body.classList.add("modal-open");
+}
+
+/**
+ * 모달창을 닫는 함수
+ */
 function closeModal() {
-  modalOverlay.classList.remove("active");
-  body.classList.remove("modal-open");
+  DOM.modal.overlay.classList.remove("active");
+  DOM.body.classList.remove("modal-open");
 }
-reviewCards.forEach((card) => {
-  card.addEventListener("click", openModal);
+
+/**
+ * 버튼 클릭 시 데이터 요청 및 페이지 이동을 처리하는 공통 함수
+ * @param {string} dataType - 요청할 데이터 타입 ('reviews' 또는 'schedules')
+ * @param {string} redirectUrl - 성공 시 이동할 페이지 URL
+ */
+async function handleDataFetch(dataType, redirectUrl) {
+  const userKey = prompt("사용자 키(userKey)를 입력해주세요:");
+  if (!userKey) {
+    alert("사용자 키를 입력해야 합니다.");
+    return;
+  }
+
+  try {
+    const result = await fetchData(dataType, userKey);
+    alert(result.message);
+    if (result.success) {
+      localStorage.setItem(dataType, JSON.stringify(result.data));
+      window.location.href = redirectUrl;
+    }
+  } catch (err) {
+    console.error("통신 중 오류 발생:", err);
+    alert("⚠️ 서버 연결에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+  }
+}
+
+// =============================
+//  3. 이벤트 리스너 연결 및 초기화
+// =============================
+
+// 페이지 로딩 완료 시 리뷰 렌더링
+document.addEventListener("DOMContentLoaded", () => {
+  renderReviews(mockSuccessReviewData.data);
 });
-closeButton.addEventListener("click", closeModal);
-modalOverlay.addEventListener("click", (e) => {
-  if (e.target === modalOverlay) closeModal();
+
+// 각 버튼에 공통 핸들러 연결
+DOM.buttons.myReviews.addEventListener("click", () =>
+  handleDataFetch(DATA_TYPE.REVIEWS, "../my-reviews/my-reviews.html")
+);
+DOM.buttons.mySchedules.addEventListener("click", () =>
+  handleDataFetch(DATA_TYPE.SCHEDULES, "../my-ai-plans/my-ai-plans.html")
+);
+
+// 모달 닫기 이벤트들
+DOM.modal.closeButton.addEventListener("click", closeModal);
+DOM.modal.overlay.addEventListener("click", (e) => {
+  if (e.target === DOM.modal.overlay) closeModal();
 });
 window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && modalOverlay.classList.contains("active")) {
+  if (e.key === "Escape" && DOM.modal.overlay.classList.contains("active")) {
     closeModal();
   }
 });
 
-/* =============================
-   🔹 내가 작성한 후기 전체 보기
-============================= */
-btnMyReviews.addEventListener("click", async () => {
-  const password = prompt("비밀번호를 입력해주세요:");
-  if (!password || password.trim() === "") {
-    alert("비밀번호를 입력해야 합니다.");
-    return;
-  }
+// API 요청 시뮬레이션 함수
+const fetchData = async (dataType, userKey) => {
+console.log(`[API 요청 시뮬레이션] 타입: ${dataType}, 키: ${userKey}`);
+await new Promise((resolve) => setTimeout(resolve, 500)); // 0.5초 지연
 
-  try {
-    const result = {
-      success: true,
-      data: [
-        { title: "부산 해운대 후기", content: "여름엔 역시 해운대죠!" },
-        { title: "서울 경복궁 후기", content: "사진이 너무 잘 나왔어요!" },
-      ],
-    };
-
-    if (result.success) {
-      localStorage.setItem("reviews", JSON.stringify(result.data));
-      alert("✅ 인증 성공! 후기 데이터를 불러왔습니다.");
-      window.location.href = "../my-reviews/my-reviews.html";
+if (userKey === "mypassword") {
+    return dataType === "reviews"
+        ? mockSuccessReviewData
+        : mockSuccessScheduleData;
     } else {
-      alert("❌ 비밀번호가 올바르지 않습니다.");
+    return mockFailureData;
     }
-  } catch (err) {
-    console.error("서버 통신 오류:", err);
-    alert("⚠️ 서버 연결 중 오류가 발생했습니다.");
-  }
-});
+};
 
-/* =============================
-   🔹 내가 저장한 AI 일정 전체 보기
-============================= */
-btnMySchedules.addEventListener("click", async () => {
-  const password = prompt("비밀번호를 입력해주세요:");
-  if (!password || password.trim() === "") {
-    alert("비밀번호를 입력해야 합니다.");
-    return;
-  }
 
-  try {
-    // ✅ 서버 미구축 가정: 성공 + 긴 일정이 포함된 실제 구조형 더미
-    const result = {
-      success: true,
-      data: [
-        {
-          text: {
-            departure: "청주",
-            departureDate: "2025-10-19",
-            companionsType: "친구",
-            companions: "5",
-            travelStyles: ["힐링", "먹방여행"],
-            recommendation: {
-              destinationName: "강릉",
-              destinationDescription:
-                "청주에서 약 3시간 거리의 강릉은 바다, 카페거리, 먹거리로 완벽한 힐링 여행지입니다.",
-              itinerary: [
-                {
-                  time: "07:00",
-                  activity: "청주 출발",
-                  transportation: "자가용",
-                },
-                {
-                  time: "10:00",
-                  activity: "안목해변 카페거리 산책",
-                  transportation: "도보",
-                },
-                {
-                  time: "11:00",
-                  activity: "테라로사 커피 박물관 방문",
-                  transportation: "도보",
-                },
-                {
-                  time: "12:30",
-                  activity: "초당순두부 점심",
-                  transportation: "도보",
-                },
-                {
-                  time: "14:00",
-                  activity: "경포대 해변 산책",
-                  transportation: "자가용",
-                },
-                {
-                  time: "15:30",
-                  activity: "오죽헌 관람",
-                  transportation: "자가용",
-                },
-                {
-                  time: "17:00",
-                  activity: "중앙시장 저녁 및 커피거리 재방문",
-                  transportation: "자가용",
-                },
-                {
-                  time: "19:00",
-                  activity: "숙소 체크인 및 휴식",
-                  transportation: "도보",
-                },
-                {
-                  time: "09:00",
-                  activity: "둘째 날: 주문진 수산시장 방문",
-                  transportation: "자가용",
-                },
-                {
-                  time: "11:00",
-                  activity: "강릉 출발 → 청주 복귀",
-                  transportation: "자가용",
-                },
-              ],
-              notes: [
-                "강릉 카페거리는 오전보다 오후가 한산합니다.",
-                "오죽헌은 주차장이 협소하니 조심하세요.",
-              ],
-            },
-          },
-        },
-        {
-          text: {
-            departure: "서울",
-            departureDate: "2025-10-22",
-            companionsType: "연인",
-            companions: "2",
-            travelStyles: ["감성", "자연"],
-            recommendation: {
-              destinationName: "남해",
-              destinationDescription:
-                "남해는 드라이브와 감성 숙소가 어우러진 힐링 여행지입니다.",
-              itinerary: [
-                {
-                  time: "08:00",
-                  activity: "서울 출발",
-                  transportation: "자가용",
-                },
-                {
-                  time: "12:00",
-                  activity: "남해 독일마을 점심",
-                  transportation: "자가용",
-                },
-                {
-                  time: "13:30",
-                  activity: "보리암 방문 및 해안 절벽 감상",
-                  transportation: "자가용",
-                },
-                {
-                  time: "15:30",
-                  activity: "남해대교 전망대 방문",
-                  transportation: "도보",
-                },
-                {
-                  time: "17:00",
-                  activity: "숙소 체크인 및 일몰 감상",
-                  transportation: "도보",
-                },
-                {
-                  time: "19:00",
-                  activity: "남해 회센터에서 저녁 식사",
-                  transportation: "택시",
-                },
-                {
-                  time: "21:00",
-                  activity: "카페 거리 산책",
-                  transportation: "도보",
-                },
-                {
-                  time: "09:00",
-                  activity: "둘째 날: 상주은모래비치 조식 피크닉",
-                  transportation: "자가용",
-                },
-                {
-                  time: "11:00",
-                  activity: "서울로 복귀",
-                  transportation: "자가용",
-                },
-              ],
-              notes: [
-                "남해는 드라이브 코스가 많아 차량 이동이 필수입니다.",
-                "일몰 시간대에 숙소 근처 바다 산책을 추천합니다.",
-              ],
-            },
-          },
-        },
-        {
-          text: {
-            departure: "대구",
-            departureDate: "2025-09-28",
-            companionsType: "가족",
-            companions: "4",
-            travelStyles: ["자연", "체험"],
-            recommendation: {
-              destinationName: "안동",
-              destinationDescription:
-                "하회마을, 월영교, 찜닭골목이 있는 문화체험형 여행지입니다.",
-              itinerary: [
-                {
-                  time: "09:00",
-                  activity: "대구 출발",
-                  transportation: "자가용",
-                },
-                {
-                  time: "10:30",
-                  activity: "하회마을 도착 및 관람",
-                  transportation: "도보",
-                },
-                {
-                  time: "12:30",
-                  activity: "찜닭 골목 점심",
-                  transportation: "도보",
-                },
-                {
-                  time: "14:00",
-                  activity: "월영교 산책",
-                  transportation: "도보",
-                },
-                {
-                  time: "15:30",
-                  activity: "안동민속박물관 방문",
-                  transportation: "자가용",
-                },
-                {
-                  time: "17:00",
-                  activity: "전통시장 구경 및 기념품 구매",
-                  transportation: "도보",
-                },
-                {
-                  time: "18:00",
-                  activity: "안동 숙소 체크인",
-                  transportation: "자가용",
-                },
-                {
-                  time: "09:00",
-                  activity: "둘째 날: 병산서원 관람",
-                  transportation: "자가용",
-                },
-                {
-                  time: "11:00",
-                  activity: "대구 복귀",
-                  transportation: "자가용",
-                },
-              ],
-              notes: [
-                "하회마을은 입장료가 있습니다.",
-                "안동은 골목길 주차가 어려워 공영주차장 이용 추천.",
-              ],
-            },
-          },
-        },
-        {
-          text: {
-            departure: "광주",
-            departureDate: "2025-10-05",
-            companionsType: "친구",
-            companions: "3",
-            travelStyles: ["맛집", "힐링"],
-            recommendation: {
-              destinationName: "순천",
-              destinationDescription:
-                "순천만 습지와 드라마 세트장이 어우러진 감성 힐링 여행지입니다.",
-              itinerary: [
-                {
-                  time: "08:30",
-                  activity: "광주 출발",
-                  transportation: "자가용",
-                },
-                {
-                  time: "10:00",
-                  activity: "순천만 습지 산책",
-                  transportation: "도보",
-                },
-                {
-                  time: "11:30",
-                  activity: "전망대 오르기 및 갈대밭 사진 촬영",
-                  transportation: "도보",
-                },
-                {
-                  time: "13:00",
-                  activity: "순천만 근처 한식당 점심",
-                  transportation: "도보",
-                },
-                {
-                  time: "14:30",
-                  activity: "순천 드라마 세트장 방문",
-                  transportation: "자가용",
-                },
-                {
-                  time: "16:30",
-                  activity: "순천시내 카페거리 방문",
-                  transportation: "자가용",
-                },
-                {
-                  time: "18:00",
-                  activity: "저녁 식사 후 광주 복귀",
-                  transportation: "자가용",
-                },
-                {
-                  time: "19:30",
-                  activity: "광주 도착 및 해산",
-                  transportation: "자가용",
-                },
-              ],
-              notes: [
-                "순천만은 일몰 직전이 가장 아름답습니다.",
-                "갈대밭은 바람이 강하니 모자를 챙기세요.",
-              ],
-            },
-          },
-        },
-        {
-          text: {
-            departure: "부산",
-            departureDate: "2025-10-15",
-            companionsType: "혼자",
-            companions: "1",
-            travelStyles: ["액티비티"],
-            recommendation: {
-              destinationName: "통영",
-              destinationDescription:
-                "통영은 루지, 케이블카, 벽화마을 등 다양한 즐길 거리가 있는 해양 도시입니다.",
-              itinerary: [
-                {
-                  time: "09:00",
-                  activity: "부산 출발",
-                  transportation: "고속버스",
-                },
-                {
-                  time: "11:30",
-                  activity: "통영 도착 후 충무김밥 점심",
-                  transportation: "도보",
-                },
-                {
-                  time: "13:00",
-                  activity: "통영 스카이라인 루지 체험",
-                  transportation: "택시",
-                },
-                {
-                  time: "15:00",
-                  activity: "한려수도 케이블카 탑승",
-                  transportation: "택시",
-                },
-                {
-                  time: "17:00",
-                  activity: "동피랑 벽화마을 산책",
-                  transportation: "도보",
-                },
-                {
-                  time: "18:30",
-                  activity: "통영 중앙시장 해산물 저녁",
-                  transportation: "도보",
-                },
-                {
-                  time: "20:00",
-                  activity: "강구안 야경 감상",
-                  transportation: "도보",
-                },
-                {
-                  time: "09:00",
-                  activity: "둘째 날: 이순신공원 산책",
-                  transportation: "택시",
-                },
-                {
-                  time: "11:00",
-                  activity: "통영 특산품 기념품 구매",
-                  transportation: "도보",
-                },
-                {
-                  time: "12:30",
-                  activity: "부산으로 복귀",
-                  transportation: "고속버스",
-                },
-              ],
-              notes: [
-                "루지와 케이블카는 오전에 사람이 적습니다.",
-                "중앙시장은 현금이 편리합니다.",
-              ],
-            },
-          },
-        },
-      ],
-    };
+// =============================
+//  4. 목 데이터 (Mock Data)
+// =============================
 
-    if (result.success) {
-      localStorage.setItem("schedules", JSON.stringify(result.data));
-      alert("✅ 인증 성공! 일정 데이터를 불러왔습니다.");
-      window.location.href = "../my-ai-plans/my-ai-plans.html";
-    } else {
-      alert("❌ 비밀번호가 올바르지 않습니다.");
-    }
-  } catch (err) {
-    console.error("서버 통신 오류:", err);
-    alert("⚠️ 서버 연결 중 오류가 발생했습니다.");
-  }
-});
+// [데이터 확장] 동적 생성을 위해 부산, 강릉 리뷰 추가
+const mockSuccessReviewData = {
+  success: true,
+  statusCode: 200,
+  message: "✅ 후기 목록을 성공적으로 불러왔습니다.",
+  data: [
+    {
+      id: 5, rate: 4, title: "서울 당일치기",
+      content: "혼자 미술관 투어하고 한강에서 힐링했어요. 국립현대미술관은 언제 가도 마음이 편안해지는 곳입니다. 추천해요!",
+      departure: "수원", arrival: "서울",
+      img_path: "https://images.unsplash.com/photo-1579632353342-939b4a165b5d?q=80&w=800",
+    },
+    {
+      id: 6, rate: 5, title: "부산 해운대 먹방여행",
+      content: "역시 여름엔 해운대! 파도 소리 들으며 즐기는 휴가! 주변에 맛집도 많고 특히 돼지국밥은 최고였습니다.",
+      departure: "양산", arrival: "부산",
+      img_path: "https://images.unsplash.com/photo-1590840131153-2213793092ce?q=80&w=800",
+    },
+    {
+      id: 7, rate: 5, title: "강릉 카페거리 힐링",
+      content: "안목해변에서 커피 한 잔의 여유. 파도 소리가 ASMR 같아요. 조용히 생각 정리하고 오기 좋은 곳입니다.",
+      departure: "서울", arrival: "강릉",
+      img_path: "https://images.unsplash.com/photo-1624422295393-288a995cb24d?q=80&w=800",
+    },
+    {
+      id: 8, rate: 4, title: "서울 호캉스가 최고!",
+      content: "명동 한복판에 이런 곳이 있다니! 기대 이상이었습니다. 특히 루프탑 수영장이 정말 좋았어요.",
+      departure: "인천", arrival: "서울",
+      img_path: "https://images.unsplash.com/photo-1542314831-068cd1dbb563?q=80&w=800",
+    },
+  ],
+};
+
+// [성공] AI 일정 데이터
+const mockSuccessScheduleData = {
+    success: true,
+    statusCode: 200,
+    message: "✅ 저장된 AI 추천 일정을 성공적으로 불러왔습니다.",
+    data: [
+        {
+            "userKey": 12345,
+            "departure": "청주",
+            "departureDate": "2025-10-19",
+            "companionsType": "친구",
+            "companions": "5",
+            "travelStyles": ["힐링", "먹방여행"],
+            "budget": "2000000",
+            "budgetUnit": "KRW",
+            "recommendation": {
+            "destinationName": "강릉",
+            "destinationDescription": "청주에서 약 2시간 30분~3시간 거리에 위치한 강릉은 동해의 아름다운 바다와 풍부한 해산물, 그리고 고유한 문화와 카페거리까지 완벽한 힐링과 먹방 여행지입니다. 친구들과 함께 멋진 추억을 만들 수 있을 거예요.",
+            "estimatedBudget": {
+                "min": "600000",
+                "max": "800000",
+                "unit": "KRW"
+            },
+            "itinerary": [
+                {
+                "time": "07:00",
+                "activity": "청주 출발",
+                "description": "청주에서 강릉으로 출발합니다. 5명이 함께 이동하므로 자가용 또는 렌터카를 이용하는 것이 편리하며, 교대로 운전하여 피로를 줄일 수 있습니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "10:00",
+                "activity": "강릉 안목해변 카페거리 도착 및 해변 산책",
+                "description": "아름다운 동해 바다를 바라보며 여유롭게 커피 한 잔과 함께 힐링을 시작합니다. 다양한 개성의 카페들이 많아 선택의 폭이 넓습니다.",
+                "transportation": "도보"
+                },
+                {
+                "time": "11:30",
+                "activity": "초당 순두부마을 이동 및 점심 식사",
+                "description": "강릉의 명물인 초당 순두부 전골 또는 순두부 젤라또 등을 맛보며 든든한 한 끼를 해결합니다. 담백하고 고소한 맛으로 미식의 즐거움을 더합니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "13:30",
+                "activity": "경포호수 산책 또는 오죽헌 방문",
+                "description": "경포호수 주변을 산책하며 자연 속 힐링을 만끽하거나, 신사임당과 율곡 이이의 생가인 오죽헌에서 역사와 전통을 느껴보는 시간을 가집니다.",
+                "transportation": "도보 또는 자가용"
+                },
+                {
+                "time": "15:30",
+                "activity": "강릉 중앙시장 방문 및 간식/기념품 쇼핑",
+                "description": "닭강정, 수제 어묵 고로케, 회 등 강릉의 다양한 먹거리를 맛보고, 친구들과 함께 여행의 추억이 될 기념품을 구경합니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "17:00",
+                "activity": "주문진 해변 또는 영진 해변(도깨비 촬영지) 방문",
+                "description": "넓게 펼쳐진 주문진 해변을 거닐며 동해 바다의 매력을 느끼거나, 드라마 '도깨비' 촬영지로 유명한 영진 해변에서 친구들과 인생샷을 남겨봅니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "18:30",
+                "activity": "저녁 식사 (신선한 해산물 요리)",
+                "description": "동해안에서 갓 잡은 신선한 해산물 요리(회, 조개찜, 해산물 전골 등)를 맛보며 여행의 하이라이트를 장식합니다. 친구들과 맛있는 음식으로 하루를 마무리합니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "20:00",
+                "activity": "강릉 출발",
+                "description": "아쉬움을 뒤로하고 청주로 출발합니다. 늦은 시간까지 운전해야 하므로 안전 운전에 유의합니다.",
+                "transportation": "자가용 또는 렌터카"
+                },
+                {
+                "time": "23:00",
+                "activity": "청주 도착",
+                "description": "청주에 도착하여 당일치기 강릉 힐링&먹방 여행을 마무리합니다.",
+                "transportation": "자가용 또는 렌터카"
+                }
+            ],
+            "notes": [
+                "5인 이동 시 자가용 이용이 가장 편리하며, 교대로 운전하여 운전 피로를 분산시키는 것이 좋습니다.",
+                "강릉은 카페와 맛집이 워낙 많으니, 친구들과 미리 취향에 맞는 장소를 몇 군데 찾아보는 것도 좋은 방법입니다.",
+                "당일치기 일정은 유동적이므로, 친구들과 상의하여 관심사에 따라 방문 장소나 시간을 자유롭게 조절하여 만족도를 높일 수 있습니다.",
+                "늦은 시간까지 운전해야 하므로, 충분한 휴식을 취하고 안전 운전에 각별히 유의해 주세요."
+            ]
+        },
+            },
+    ],
+};
+
+// [실패] 공통 실패 데이터
+const mockFailureData = {
+  success: false,
+  statusCode: 500,
+  message: "❌ 인증에 실패했습니다. 사용자 키를 다시 확인해주세요.",
+  data: {},
+};

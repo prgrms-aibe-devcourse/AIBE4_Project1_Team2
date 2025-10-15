@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>오늘트립 | 지역별 여행 리뷰</title>
@@ -9,112 +9,48 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="reviews.css" />
-  </head>
+</head>
 
-  <body>
+<body>
     <div class="container">
-      <header class="header">
-        <div class="title-wrap">
-          <h1>✨ 전국 여행 리뷰 모음</h1>
-          <p class="subtitle">여행자들이 남긴 생생한 후기들을 만나보세요</p>
-        </div>
-        <div class="btn-group">
-          <button id="btnMyReviews" class="btn-main">
-            📝 내가 작성한 후기 전체 보기
-          </button>
-          <button id="btnMySchedules" class="btn-main">
-            📅 내가 저장한 AI 일정 보기
-          </button>
-        </div>
-      </header>
+        <header class="header">
+            <div class="title-wrap">
+            <h1>✨ 전국 여행 리뷰 모음</h1>
+            <p class="subtitle">여행자들이 남긴 생생한 후기들을 만나보세요</p>
+            </div>
+            <div class="btn-group">
+            <button id="btnMyReviews" class="btn-main">
+                📝 내가 작성한 후기 전체 보기
+            </button>
+            <button id="btnMySchedules" class="btn-main">
+                📅 내가 저장한 AI 일정 보기
+            </button>
+            </div>
+        </header>
 
-      <!-- 📍 서울 -->
-      <section class="region-section">
-        <h2>서울특별시 (Seoul)</h2>
-        <div class="review-grid">
-          <div class="review-card clickable">
-            <div class="card-image">
-              <img
-                src="https://images.unsplash.com/photo-1542314831-068cd1dbb563?q=80&w=800"
-                alt="서울 호텔"
-              />
-            </div>
-            <div class="card-content">
-              <h3>도심 속 최고의 호캉스!</h3>
-              <p>명동 한복판에 이런 곳이 있다니! 수영장도 너무 좋았고...</p>
-            </div>
-          </div>
+        <main id="reviews-container"></main>
 
-          <div class="review-card clickable">
-            <div class="card-image">
-              <img
-                src="https://images.unsplash.com/photo-1579632353342-939b4a165b5d?q=80&w=800"
-                alt="경복궁"
-              />
-            </div>
-            <div class="card-content">
-              <h3>경복궁, 언제가도 아름다워요</h3>
-              <p>
-                한복 입고 친구들이랑 방문했는데 사진도 잘 나오고 좋았어요...
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- 📍 부산 -->
-      <section class="region-section">
-        <h2>부산광역시 (Busan)</h2>
-        <div class="review-grid">
-          <div class="review-card clickable">
-            <div class="card-image">
-              <img
-                src="https://images.unsplash.com/photo-1590840131153-2213793092ce?q=80&w=800"
-                alt="해운대 해변"
-              />
-            </div>
-            <div class="card-content">
-              <h3>역시 여름엔 해운대!</h3>
-              <p>파도 소리 들으며 즐기는 휴가! 주변에 맛집도 많고...</p>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
 
-    <!-- 리뷰 상세 모달 -->
     <div id="reviewModal" class="modal-overlay">
-      <div class="modal-content">
-        <button class="close-button">&times;</button>
-        <header class="review-header">
-          <h1>도심 속 최고의 호캉스였습니다!</h1>
-          <div class="author-info">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <header class="review-header">
+            <h1 id="modal-title"></h1>
+            <div id="modal-rate" class="star-rating-display"></div>
+            </header>
+            <main class="review-body">
             <img
-              src="https://i.pravatar.cc/40?img=1"
-              alt="작성자 프로필"
-              class="avatar"
+                id="modal-image"
+                src=""
+                alt="리뷰 사진"
+                class="review-photo"
             />
-            <span class="username">여행가 제이</span>
-          </div>
-          <div class="star-rating-display">★★★★★</div>
-        </header>
-        <main class="review-body">
-          <img
-            src="https://images.unsplash.com/photo-1542314831-068cd1dbb563?q=80&w=1200"
-            alt="서울 호텔 리뷰 사진"
-            class="review-photo"
-          />
-          <p class="review-text">
-            명동 한복판에 이런 곳이 있다니! 기대 이상이었습니다. 특히 루프탑
-            수영장이 정말 좋았고, 해질녘에 보는 서울의 풍경이 정말 아름다웠어요.
-            룸 컨디션도 최상이었고, 직원분들도 모두 친절했습니다. 도심에서
-            완벽한 휴식을 원한다면 이곳을 강력하게 추천합니다. 재방문 의사
-            200%입니다!
-          </p>
-        </main>
-      </div>
+            <p id="modal-content" class="review-text"></p>
+            </main>
+        </div>
     </div>
 
     <script src="reviews.js"></script>
-  </body>
+</body>
 </html>
