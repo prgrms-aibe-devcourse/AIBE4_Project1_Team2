@@ -123,7 +123,7 @@ async function savePlan() {
 
   /* 테스트 및 배포 시 요청 주소 변경 */
   try {
-    const response = await fetch("http://localhost:3000/api/ai/schedules", {
+    const response = await fetch("https://aibe4-project1-team2-m9vr.onrender.com/schedules", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
