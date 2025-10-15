@@ -1,5 +1,4 @@
-// [초기화: 페이지 로딩이 완료되면 실행]
-
+// [초기화: 페이지 로딩이 완료되면 실행]햣
 document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('savedReviews')) {
         setupMockData();
