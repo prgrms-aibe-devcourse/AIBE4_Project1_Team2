@@ -140,7 +140,16 @@ async function handleDataFetch(dataType, redirectUrl) {
 // =============================
 
 // 페이지 로딩 완료 시 리뷰 렌더링
-document.addEventListener("DOMContentLoaded", () => {
+// document.addEventListener("DOMContentLoaded", () => {
+//   renderReviews(mockSuccessReviewData.data);
+// });
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const response = await fetch("");
+  const data = await response.json();
+
+
   renderReviews(mockSuccessReviewData.data);
 });
 
