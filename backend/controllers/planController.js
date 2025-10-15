@@ -31,3 +31,19 @@ exports.savePlan = async (req, res) => {
     handleError(res, "여행 일정 저장에 실패했습니다.", error);
   }
 };
+
+// 내가 저장한 일정 조회 /mypage/schedules
+exports.getMyPlans = async (req, res) => {
+  try {
+    const { userKey } = req.body;
+    console.log(userKey);
+    const result = await planService.getPlans(userKey);
+
+    console.log(result);
+
+    handleSuccess(res, 200, "내 일정이 조회되었습니다.", result);
+  } catch (error) {
+    console.error("내 일정 조회중 실패", error);
+    handleError(res, "내 일정 조회에 실패했습니다.", error);
+  }
+};
