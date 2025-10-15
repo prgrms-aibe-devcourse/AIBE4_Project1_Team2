@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
     if (confirmDelete) {
       const response = await fetch(
-        `https://aibe4-project1-team2-1y2x.onrender.com/mypage/my-review/${currentIndex}`,
+        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/my-review/${currentIndex}`,
       {
         method: "DELETE",
         headers: { "Content-Type": "application/json" }

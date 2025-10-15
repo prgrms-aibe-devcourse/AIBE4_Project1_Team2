@@ -135,7 +135,7 @@ function createReviewObject(title, rate, content, img_path, password) {
 async function saveReviewToDatabase(review) {
 
     const response = await fetch(
-        `https://aibe4-project1-team2-1y2x.onrender.com/mypage/${review.planId}/review`,
+        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/${review.planId}/review`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

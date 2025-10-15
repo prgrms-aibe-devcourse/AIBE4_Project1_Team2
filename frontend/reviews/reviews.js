@@ -145,7 +145,7 @@ async function handleDataFetch(dataType, redirectUrl) {
 // });
 
 document.addEventListener("DOMContentLoaded", async () => {
-  const response = await fetch("https://aibe4-project1-team2-1y2x.onrender.com/reviews/")
+  const response = await fetch("https://aibe4-project1-team2-m9vr.onrender.com/reviews/")
   const rawData = await response.json()
   console.log(rawData)
   renderReviews(rawData.data.reviews);
@@ -176,7 +176,7 @@ console.log(`[API 요청 시뮬레이션] 타입: ${dataType}, 키: ${userKey}`)
 
 if (dataType === DATA_TYPE.REVIEWS) {
 const response = await fetch(
-  "https://aibe4-project1-team2-1y2x.onrender.com/my-reviews",
+  "https://aibe4-project1-team2-m9vr.onrender.com/my-reviews",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -188,7 +188,7 @@ const response = await fetch(
   return data
 } else if (dataType === DATA_TYPE.SCHEDULES) {
   const response = await fetch(
-  "https://aibe4-project1-team2-1y2x.onrender.com/my-plans",
+  "https://aibe4-project1-team2-m9vr.onrender.com/my-plans",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

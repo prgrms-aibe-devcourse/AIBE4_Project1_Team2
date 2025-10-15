@@ -102,7 +102,7 @@ travelForm.addEventListener("submit", async (e) => {
   };
   try {
     const response = await fetch(
-      "https://aibe4-project1-team2-1y2x.onrender.com/plan",
+      "https://aibe4-project1-team2-m9vr.onrender.com/plan",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

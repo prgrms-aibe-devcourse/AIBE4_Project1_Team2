@@ -1,6 +1,6 @@
 require("dotenv").config();
 const { GoogleGenAI, Type } = require("@google/genai");
-const ai = new GoogleGenAI({apiKey: process.env.API_KEY});
+const ai = new GoogleGenAI({});
 
 const { supabase } = require("../utils/supabase");
 
