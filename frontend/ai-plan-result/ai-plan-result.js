@@ -129,7 +129,7 @@ async function savePlan() {
 
   try {
     const response = await fetch(
-      "https://aibe4-project1-team2-m9vr.onrender.com/schedules",
+      "https://aibe4-project1-team2-1y2x.onrender.com/plan-save",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
