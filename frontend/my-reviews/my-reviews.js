@@ -1,6 +1,6 @@
 // [초기화: 페이지 로딩이 완료되면 실행]햣
 document.addEventListener('DOMContentLoaded', () => {
-    if (!localStorage.getItem('savedReviews')) {
+    if (!localStorage.getItem('reviews')) {
         setupMockData();
     }
     renderMyReviews();
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // [데이터 렌더링 (화면 그리기)]
 
 function renderMyReviews() {
-    const reviews = JSON.parse(localStorage.getItem('savedReviews')) || [];
+    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
     const listContainer = document.querySelector('.review-list');
     listContainer.innerHTML = '';
 
@@ -235,5 +235,5 @@ function setupMockData() {
             }
         ]
     };
-    localStorage.setItem('savedReviews', JSON.stringify(mockReviews.data));
+    localStorage.setItem('reviews', JSON.stringify(mockReviews.data));
 }
