@@ -9,7 +9,7 @@ const reviewController = {
             const result = await reviewService.getAllReviews(page, limit);
 
             handleSuccess(res, 200, "성공적으로 조회되었습니다.", result);
-        } catch (error) {
+        } catch (error) { 
             handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
         }
     },
