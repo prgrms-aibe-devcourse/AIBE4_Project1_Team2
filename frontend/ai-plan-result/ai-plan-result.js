@@ -123,14 +123,17 @@ async function savePlan() {
 
   /* 테스트 및 배포 시 요청 주소 변경 */
   try {
-    const response = await fetch("https://aibe4-project1-team2-m9vr.onrender.com/schedules", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        password: password.trim(),
-        text: parsedData.text || parsedData, // 혹시 {text:{...}} 구조일 수도 있어서
-      }),
-    });
+    const response = await fetch(
+      "https://aibe4-project1-team2-m9vr.onrender.com/schedules",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          password: password.trim(),
+          text: parsedData.text || parsedData, // 혹시 {text:{...}} 구조일 수도 있어서
+        }),
+      }
+    );
 
     const result = await response.json();
 

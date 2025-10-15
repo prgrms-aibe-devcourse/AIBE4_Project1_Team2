@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 트립 | 내가 저장한 AI 일정</title>
+    <link rel="stylesheet" href="my-ai-plans.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>📅 내가 저장한 AI 일정</h1>
+        <p class="subtitle">AI로 생성된 여행 일정들을 한눈에 확인하세요</p>
+        <button class="btn-back" onclick="goBack()">◀ 돌아가기</button>
+      </header>
+
+      <div id="scheduleList" class="schedule-grid"></div>
+    </div>
+
+    <!-- 상세보기 모달 -->
+    <div id="scheduleModal" class="modal-overlay">
+      <div class="modal-content">
+        <button class="close-button">&times;</button>
+        <div id="modalDetails"></div>
+
+        <div class="modal-actions">
+          <button class="btn-delete" id="btnDelete">🗑 삭제하기</button>
+          <button class="btn-review" id="btnReview">✍️ 리뷰 작성하기</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="my-ai-plans.js"></script>
+  </body>
+</html>
