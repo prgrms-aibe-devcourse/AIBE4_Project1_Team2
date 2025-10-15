@@ -145,12 +145,9 @@ async function handleDataFetch(dataType, redirectUrl) {
 // });
 
 document.addEventListener("DOMContentLoaded", async () => {
-
   const response = await fetch("https://aibe4-project1-team2-1y2x.onrender.com/reviews/")
-  const data = await response.json()
-  console.log(data)
-
-  renderReviews(mockSuccessReviewData.data);
+  const rawData = await response.json()
+  renderReviews(rawData.data.reviews);
 });
 
 // 각 버튼에 공통 핸들러 연결
