@@ -32,7 +32,7 @@ exports.savePlan = async (req, res) => {
   }
 };
 
-// 내가 저장한 일정 조회 /mypage/schedules
+// 내가 저장한 일정 조회
 exports.getMyPlans = async (req, res) => {
   try {
     const { userKey } = req.body;
