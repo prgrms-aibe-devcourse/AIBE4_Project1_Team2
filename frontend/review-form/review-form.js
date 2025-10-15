@@ -104,34 +104,55 @@ function handleReviewSubmit(event) {
         reader.onload = (e) => {
             const img_path = e.target.result;
             const newReview = createReviewObject(title, rate, content, img_path, password);
-            saveReviewToLocalStorage(newReview);
+            saveReviewToDatabase(newReview);
         };
         reader.readAsDataURL(photoFile);
     } else {
         const newReview = createReviewObject(title, rate, content, null, password);
-        saveReviewToLocalStorage(newReview);
+        saveReviewToDatabase(newReview);
     }
 }
 
 function createReviewObject(title, rate, content, img_path, password) {
-    const aiTripData = JSON.parse(localStorage.getItem('aiTripResult'));
+    const data = JSON.parse(localStorage.getItem('selectedScheduleForReview'));
     return {
-        id: Date.now(),
-        title: title,
+        userKey: password,
         rate: rate,
+        title: title,
         content: content,
+        companionsType: data ? data.companionsType : "정보 없음",
+        companions: data ? data.companions : "정보 없음",
+        travelStyles: data ? data.travelStyles : "정보 없음",
+        budget: data ? data.budget : "정보 없음",
         img_path: img_path,
-        password: password,
-        departure: aiTripData ? aiTripData.departure : "정보 없음",
-        arrival: aiTripData ? aiTripData.recommendation.destinationName : "정보 없음",
-        createdAt: new Date().toISOString(),
+        planId: data ? data.planId : "정보 없음",
+        departure: data ? data.departure : "정보 없음",
+        arrival: data ? data.recommendation.destinationName : "정보 없음",
+        createdAt: new Date().toISOString()
     };
 }
 
+async function saveReviewToDatabase(review) {
+
+    const response = await fetch(
+        `https://aibe4-project1-team2-1y2x.onrender.com/mypage/${review.planId}/review`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(review),
+      }
+    )
+    const data = await response.json()
+    console.log(data)
+
+    alert('리뷰가 성공적으로 등록되었습니다!');
+    window.location.href = '../reviews/reviews.html';
+}
+
 function saveReviewToLocalStorage(review) {
-    const reviews = JSON.parse(localStorage.getItem('savedReviews')) || [];
+    const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
     reviews.unshift(review);
-    localStorage.setItem('savedReviews', JSON.stringify(reviews));
+    localStorage.setItem('reviews', JSON.stringify(reviews));
     alert('리뷰가 성공적으로 등록되었습니다!');
     // 리뷰 저장 후 마이페이지로 이동
     window.location.href = '../mypage/mypage.html';

@@ -98,16 +98,25 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ==================================================
      🔹 삭제 기능
   ================================================== */
-  btnDelete.addEventListener("click", () => {
+  btnDelete.addEventListener("click", async () => {
     if (currentIndex === null) return;
     const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
-    if (!confirmDelete) return;
+    if (confirmDelete) {
+      const response = await fetch(
+        `https://aibe4-project1-team2-1y2x.onrender.com/mypage/my-review/${currentIndex}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await response.json()
+      console.log(data)
+    } else return;
 
     schedules.splice(currentIndex, 1);
     localStorage.setItem("schedules", JSON.stringify(schedules));
     alert("삭제되었습니다.");
     closeModal();
-    renderScheduleCards();
+    // renderScheduleCards();
   });
 
   /* ==================================================
