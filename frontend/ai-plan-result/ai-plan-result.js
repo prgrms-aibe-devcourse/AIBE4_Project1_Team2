@@ -147,7 +147,7 @@ async function savePlan() {
     console.log("서버 응답:", result);
 
     if (result.success && result.statusCode === 201) {
-      alert(`저장되었습니다! (고유번호: ${userKey})`);
+      alert(`저장되었습니다. (고유번호: ${userKey})`);
       window.location.href = "/AIBE4_Project1_Team2/index.html";
     } else {
       console.error("서버 응답 오류:", result);

@@ -2,7 +2,8 @@
   --main-yellow: #f5c563;
   --main-orange: #ff9b6b;
   --main-yellow-light: #ffd93d;
-  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
   --transition: all 0.3s ease;
 }
 
@@ -197,6 +198,14 @@ body {
   outline: none;
 }
 
+/*  필수 입력 오류 강조 */
+.error-border {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 6px rgba(255, 107, 107, 0.5);
+  background-color: #fff5f5;
+  transition: all 0.3s ease;
+}
+
 /* 자동완성 배경 제거 */
 input:-webkit-autofill,
 input:-webkit-autofill:focus,
@@ -284,6 +293,15 @@ textarea.form-control {
 .form-range {
   width: 100%;
   accent-color: var(--main-yellow);
+  background: linear-gradient(
+    to right,
+    var(--main-yellow-light) 0%,
+    var(--main-yellow-light) 100%
+  );
+  height: 10px;
+  border-radius: 5px;
+  outline: none;
+  appearance: none;
 }
 
 #budgetValue {
