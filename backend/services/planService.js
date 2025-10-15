@@ -121,7 +121,7 @@ async function getPlans(userKey) {
 async function getMyReviews(userKey) {
   const { data, error } = await supabase
     .from("review")
-    .select("*")
+    .select("id, rate, title, content, img_path")
     .eq("userKey", userKey);
 
   if (error) {
