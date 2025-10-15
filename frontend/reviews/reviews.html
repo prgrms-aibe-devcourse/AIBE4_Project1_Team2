@@ -63,13 +63,24 @@
       color="#f5c563"
     />
     <link rel="manifest" href="../public/favicon/site.webmanifest" />
-
+    
     <!-- font / css -->
     <link rel="stylesheet" href="../public/font.css" />
     <link rel="stylesheet" href="./reviews.css" />
   </head>
 
   <body>
+    <section class="search-section">
+      <h2>🔍 후기 검색</h2>
+      <div class="search-form">
+          <input type="text" id="keyword" placeholder="검색 키워드 (예: 맛집)" />
+          <input type="text" id="region" placeholder="지역 (예: 부산)" />
+          <input type="text" id="partner" placeholder="동반자 (예: 친구, 연인)" />
+          <input type="text" id="type" placeholder="여행 타입 (예: 힐링, 맛집)" />
+          <input type="number" id="minRate" min="1" max="5" placeholder="별점 (1~5)" />
+          <button id="btnSearch" class="btn-main">검색</button>
+      </div>
+    </section>
     <div class="container">
       <header class="header">
         <div class="title-wrap">

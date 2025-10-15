@@ -1,38 +1,58 @@
 // [초기화: 페이지 로딩이 완료되면 실행]햣
 document.addEventListener('DOMContentLoaded', () => {
-    if (!localStorage.getItem('savedReviews')) {
-        setupMockData();
-    }
     renderMyReviews();
     setupEventListeners();
 });
 
 
 // [데이터 렌더링 (화면 그리기)]
-
-function renderMyReviews() {
-    const reviews = JSON.parse(localStorage.getItem('savedReviews')) || [];
+async function renderMyReviews() {
     const listContainer = document.querySelector('.review-list');
     listContainer.innerHTML = '';
 
-    reviews.forEach((review, index) => {
-        const reviewItem = document.createElement('div');
-        reviewItem.className = 'review-item clickable';
-        reviewItem.dataset.type = 'review';
-        reviewItem.dataset.index = index;
-        reviewItem.innerHTML = `
-            <img src="${review.img_path}" alt="${review.title}" class="review-photo">
-            <div class="review-details">
-                <h3>${review.title} ${generateStars(review.rate)}</h3>
-                <p>${review.content.substring(0, 80)}...</p> 
-            </div>
-            <div class="reviewBtn-group">
-                <button class="reviewModifyBtn" data-type="review" data-index="${index}">수정하기</button>
-                <button class="deleteModifyBtn" data-type="review" data-index="${index}">삭제하기</button>
-            </div>
-        `;
-        listContainer.appendChild(reviewItem);
-    });
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+    
+    try {
+        // API 경로를 '/my-reviews' -> '/reviews'로 변경
+        const res = await fetch(`${BASE_URL}/reviews`); 
+        
+        if (!res.ok) {
+            console.error(`Fetch failed with status: ${res.status}`);
+            throw new Error(`리뷰를 불러오는 데 실패했습니다. (상태 코드: ${res.status})`);
+        }
+
+        const result = await res.json();
+        const reviews = result.data;
+
+        if (reviews.length === 0) {
+            listContainer.innerHTML = '<p class="no-data-message">아직 작성된 리뷰가 없습니다. 리뷰를 작성해 보세요!😊</p>';
+            return;
+        }
+        
+        reviews.forEach((review, index) => {
+            const reviewItem = document.createElement('div');
+            reviewItem.className = 'review-item clickable';
+            reviewItem.dataset.type = 'review';
+            reviewItem.dataset.index = index;
+            reviewItem.dataset.reviewId = review.id;
+            reviewItem.innerHTML = `
+                <img src="${review.img_path}" alt="${review.title}" class="review-photo">
+                <div class="review-details">
+                    <h3>${review.title} ${generateStars(review.rate)}</h3>
+                    <p>${review.content.substring(0, 80)}...</p> 
+                </div>
+                <div class="reviewBtn-group">
+                    <button class="reviewModifyBtn" data-type="review" data-index="${index}" data-review-id="${review.id}">수정하기</button>
+                    <button class="deleteModifyBtn" data-type="review" data-index="${index}" data-review-id="${review.id}">삭제하기</button>
+                </div>
+            `;
+            listContainer.appendChild(reviewItem);
+        });
+
+    } catch (error) {
+        console.error('리뷰 로딩 중 오류 발생:', error);
+        listContainer.innerHTML = `<p class="error-message">리뷰를 불러오는 데 문제가 발생했습니다. 서버 상태를 확인해주세요. (에러: ${error.message})</p>`;
+    }
 }
 
 
@@ -92,16 +112,38 @@ function setupEventListeners() {
     });
 }
 
-function handleModify(button) {
-    const index = parseInt(button.dataset.index, 10);
-    const reviews = JSON.parse(localStorage.getItem('savedReviews'));
-    const dataToModify = reviews[index];
+async function handleModify(button) {
+    const reviewId = button.dataset.reviewId;
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+    
+    // 로딩 상태를 표시하여 사용자에게 대기 중임을 알림
+    console.log(`리뷰 ID ${reviewId}의 상세 정보를 불러오는 중...`);
 
-    if (dataToModify) {
-        // 수정할 데이터를 수정 폼 모달에 채워 넣기
-        populateModifyForm(dataToModify);
-        // 수정 폼 모달 열기
-        openModal(document.getElementById('modifyModal'));
+    try {
+        // 1. API에 GET 요청 보내기. 리뷰 ID를 URL에 포함합니다.
+        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`);
+        
+        // 2. 응답이 성공적인지 확인
+        if (!res.ok) {
+            throw new Error(`상세 리뷰를 불러오는 데 실패했습니다. (상태 코드: ${res.status})`);
+        }
+
+        // 3. JSON 응답 데이터를 파싱(Parsing)
+        const result = await res.json();
+        const dataToModify = result.data; // 서버 응답에서 'data' 필드에 상세 정보가 있음
+        
+        // 4. 받아온 데이터로 수정 폼 모달 채우기
+        if (dataToModify) {
+            populateModifyForm(dataToModify);
+            // 수정 폼 모달 열기
+            openModal(document.getElementById('modifyModal'));
+        } else {
+            throw new Error('데이터가 존재하지 않습니다.');
+        }
+
+    } catch (error) {
+        console.error('리뷰 수정 데이터 로딩 중 오류 발생:', error);
+        alert('리뷰 수정 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.');
     }
 }
 
@@ -134,51 +176,89 @@ function populateModifyForm(data) {
 }
 
 // 수정 폼 제출 처리 함수 
-function handleModifySubmit(event) {
-    event.preventDefault(); // 폼 기본 동작 방지
+async function handleModifySubmit(event) {
+    event.preventDefault();
 
-    const id = parseInt(document.getElementById('modifyReviewId').value, 10);
+    const reviewId = document.getElementById('modifyReviewId').value;
     const newTitle = document.getElementById('modifyTitle').value;
     const newContent = document.getElementById('modifyContent').value;
-    const newRating = document.querySelector('input[name="modifyRating"]:checked').value;
+    const checkedRating = document.querySelector('input[name="modifyRating"]:checked');
+    const newRating = checkedRating ? parseInt(checkedRating.value, 10) : 0;
 
-    // 1. Local Storage에서 전체 리뷰 데이터 가져오기
-    let reviews = JSON.parse(localStorage.getItem('savedReviews'));
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
 
-    // 2. 수정할 리뷰 찾아서 내용 업데이트
-    const reviewIndex = reviews.findIndex(review => review.id === id);
-    if (reviewIndex > -1) {
-        reviews[reviewIndex].title = newTitle;
-        reviews[reviewIndex].content = newContent;
-        reviews[reviewIndex].rate = parseInt(newRating, 10);
-    }
+    const updatedData = {
+        title: newTitle,
+        content: newContent,
+        rate: newRating,
+        reviewId: parseInt(reviewId) // API에 필요한 ID를 명시적으로 포함
+    };
 
-    // 3. 수정된 전체 데이터를 다시 Local Storage에 저장
-    localStorage.setItem('savedReviews', JSON.stringify(reviews));
+    try {
+        const res = await fetch(`${BASE_URL}/mypage/1/review`, { // planId는 임시로 1로 설정
+            method: 'POST', // HTTP 메서드를 'POST'로 지정
+            headers: {
+                'Content-Type': 'application/json', // 보내는 데이터가 JSON임을 명시
+            },
+            body: JSON.stringify(updatedData), // 자바스크립트 객체를 JSON 문자열로 변환
+        });
 
-    // 4. 화면 다시 그리기 및 모달 닫기
-    renderMyReviews();
-    closeModal(document.getElementById('modifyModal'));
-    alert('리뷰가 성공적으로 수정되었습니다.');
-}
+        if (!res.ok) {
+            throw new Error('리뷰 수정에 실패했습니다.');
+        }
 
-function handleDelete(button) {
-    const index = parseInt(button.dataset.index, 10);
-    const isConfirmed = confirm('정말로 이 리뷰를 삭제하시겠습니까?');
-
-    if (isConfirmed) {
-        const reviews = JSON.parse(localStorage.getItem('savedReviews')) || [];
-        reviews.splice(index, 1);
-        localStorage.setItem('savedReviews', JSON.stringify(reviews));
+        alert('리뷰가 성공적으로 수정되었습니다.');
+        closeModal(document.getElementById('modifyModal'));
         renderMyReviews();
+    } catch (error) {
+        console.error('리뷰 수정 중 오류 발생:', error);
+        alert('리뷰 수정 중 문제가 발생했습니다.');
     }
 }
 
-function handleDetailView(item) {
-    const index = parseInt(item.dataset.index, 10);
-    const reviews = JSON.parse(localStorage.getItem('savedReviews'));
-    populateReviewModal(reviews[index]);
-    openModal(document.getElementById('reviewModal'));
+async function handleDelete(button) {
+    const reviewId = button.dataset.reviewId;
+    const isConfirmed = confirm('정말로 이 리뷰를 삭제하시겠습니까?');
+    if (!isConfirmed) return;
+
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+
+    try {
+        const res = await fetch(`${BASE_URL}/mypage/my-review/${reviewId}`, {
+            method: 'DELETE', // HTTP 메서드를 'DELETE'로 지정
+        });
+
+        if (!res.ok) {
+            throw new Error('리뷰 삭제에 실패했습니다.');
+        }
+
+        alert('리뷰가 성공적으로 삭제되었습니다.');
+        renderMyReviews(); // 삭제 후 목록 다시 불러오기
+    } catch (error) {
+        console.error('리뷰 삭제 중 오류 발생:', error);
+        alert('리뷰 삭제 중 문제가 발생했습니다.');
+    }
+}
+
+async function handleDetailView(item) {
+    const reviewId = item.dataset.reviewId;
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+
+    try {
+        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`);
+        if (!res.ok) {
+            throw new Error('상세 리뷰를 불러오는 데 실패했습니다.');
+        }
+
+        const result = await res.json();
+        const review = result.data; // API 응답 구조에 따라 'data' 필드에 접근
+
+        populateReviewModal(review);
+        openModal(document.getElementById('reviewModal'));
+    } catch (error) {
+        console.error('상세 리뷰 로딩 중 오류 발생:', error);
+        alert('상세 정보를 불러올 수 없습니다.');
+    }
 }
 
 function populateReviewModal(data) {
@@ -208,32 +288,4 @@ function closeModal(modal) {
         modal.classList.remove('active');
         body.classList.remove('modal-open');
     }
-}
-
-
-// 목 데이터 설정 (리뷰 데이터만 포함)
-
-function setupMockData() {
-    const mockReviews = {
-        "success": true, "statusCode": 200, "message": "성공적으로 조회되었습니다.",
-        "data": [
-            {   "id": 1, 
-                "rate": 5, 
-                "title": "부산 존잼", 
-                "departure": "경주", 
-                "content": "광안리 너무 예쁘고 감동이었어요. 음식 존맛탱! 바다 존예! ㅎㅎㅎ", 
-                "arrival": "부산", 
-                "img_path": "https://images.unsplash.com/photo-1574936145849-f8aa04d2a37c?q=80&w=400" 
-            },
-            { "id": 2, 
-                "rate": 4, 
-                "title": "제주 존예", 
-                "departure": "제주", 
-                "arrival": "성산일출봉", 
-                "content": "가족들과 함께 성산일출봉에 다녀왔어요. 날씨가 조금 흐렸지만 경치가 정말 좋아서 만족스러운 여행이었습니다.", 
-                "img_path": "https://images.unsplash.com/photo-1582238332992-a124fa9349c6?q=80&w=400" 
-            }
-        ]
-    };
-    localStorage.setItem('savedReviews', JSON.stringify(mockReviews.data));
 }

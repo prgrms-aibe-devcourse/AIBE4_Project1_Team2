@@ -1,6 +1,6 @@
-// =============================
+// ======================================================
 //  1. 상수 및 DOM 요소 관리
-// =============================
+// ======================================================
 const DOM = {
   body: document.body,
   reviewsContainer: document.getElementById("reviews-container"),
@@ -118,8 +118,13 @@ async function handleMyReviewsClick() {
     console.error("통신 중 오류 발생:", err);
     alert("⚠️ 서버 연결에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
   }
-}
+};
 
+// ======================================================
+//  3. UI 렌더링 관련 함수
+// ======================================================
+
+// 리뷰 카드 생성
 function createReviewCard(review) {
   const card = document.createElement("div");
   card.className = "review-card clickable";
@@ -139,6 +144,7 @@ function createReviewCard(review) {
       }...</p>
     </div>
   `;
+
   card.addEventListener("click", () => openModal(review));
   return card;
 }
@@ -167,57 +173,92 @@ const fetchReviews = async () => {
   }
 };
 
-// =============================
-//  4. 이벤트 리스너 연결 및 초기화
-// =============================
+    section.append(title, grid);
+    DOM.reviewsContainer.appendChild(section);
+  });
+}
 
-// 페이지 로딩 완료 시 리뷰 렌더링
+// ======================================================
+//  4. 모달 관련 함수
+// ======================================================
+function openModal(review) {
+  DOM.modal.title.textContent = review?.title || "제목 없음";
+  DOM.modal.image.src = review?.img_path || "https://placehold.co/600x400?text=No+Image";
+  DOM.modal.content.textContent = review?.content || "내용이 없습니다.";
+  DOM.modal.rate.textContent = "★".repeat(review?.rate || 0) + "☆".repeat(5 - (review?.rate || 0));
+
+  DOM.modal.overlay.classList.add("active");
+  DOM.body.classList.add("modal-open");
+}
+
+function closeModal() {
+  DOM.modal.overlay.classList.remove("active");
+  DOM.body.classList.remove("modal-open");
+}
+
+// ======================================================
+//  5. 이벤트 핸들러
+// ======================================================
+
+// "내 리뷰 보기" 버튼 클릭 → 서버에서 내 리뷰 가져와 저장 후 페이지 이동
+async function handleMyReviewsClick() {
+  try {
+    const result = await fetchReviews();
+
+    if (result.success) {
+      alert(result.message);
+
+      // ✅ 구조 통일: reviews 배열만 저장
+      const reviewsData = result.data?.reviews || result.data || [];
+      localStorage.setItem("reviews", JSON.stringify(reviewsData));
+
+      window.location.href = "../my-reviews/my-reviews.html";
+    } else {
+      alert(result.message || "리뷰를 불러오지 못했습니다.");
+    }
+  } catch (error) {
+    console.error("❌ 내 리뷰 조회 중 오류:", error);
+    alert("⚠️ 서버 연결에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+  }
+}
+
+// ======================================================
+//  6. 초기화 (DOMContentLoaded)
+// ======================================================
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    const savedReviews = localStorage.getItem("reviews");
+    const saved = localStorage.getItem("reviews");
     let reviewsArray = [];
 
-    if (savedReviews) {
-      console.log("✅ LocalStorage에서 리뷰 데이터 불러옴");
-      const parsedReviews = JSON.parse(savedReviews);
+    if (saved) {
+      console.log("✅ LocalStorage에서 리뷰 불러옴");
+      const parsed = JSON.parse(saved);
 
-      // 배열 형태면 그대로 사용
-      if (Array.isArray(parsedReviews)) {
-        reviewsArray = parsedReviews;
-      }
-      // { data: [...] } 구조면 data만 사용
-      else if (parsedReviews && Array.isArray(parsedReviews.data)) {
-        reviewsArray = parsedReviews.data;
-      }
+      // 구조 유연하게 처리
+      if (Array.isArray(parsed)) reviewsArray = parsed;
+      else if (Array.isArray(parsed.data)) reviewsArray = parsed.data;
 
-      console.log("🧾 불러온 리뷰 데이터:", reviewsArray);
       renderReviews(reviewsArray);
       return;
     }
 
-    // ⚠️ localStorage 비어 있을 때 → 서버 요청
-    console.log("⚠️ LocalStorage 비어 있음 → 서버에서 리뷰 요청");
+    console.log("🌐 서버에서 리뷰 요청 중...");
     const result = await fetchReviews();
 
-    // 서버 응답 구조에 따라 유연하게 처리
-    if (result) {
-      if (Array.isArray(result)) {
-        reviewsArray = result;
-      } else if (result.success && Array.isArray(result.data)) {
-        reviewsArray = result.data;
-      }
-    }
+    if (Array.isArray(result)) reviewsArray = result;
+    else if (result.success && Array.isArray(result.data)) reviewsArray = result.data;
 
     if (reviewsArray.length > 0) {
       renderReviews(reviewsArray);
       localStorage.setItem("reviews", JSON.stringify(reviewsArray));
-      console.log("✅ 서버에서 리뷰 데이터 성공적으로 렌더링");
+      console.log("✅ 서버에서 리뷰 데이터 렌더링 완료");
     } else {
-      console.warn("서버에서 유효한 리뷰 데이터를 찾지 못했습니다:", result);
+      console.warn("⚠️ 유효한 리뷰 데이터를 찾지 못했습니다:", result);
       renderReviews([]);
     }
   } catch (error) {
-    console.error("페이지 로딩 중 데이터 통신 에러:", error);
+    console.error("🚨 페이지 초기화 중 오류:", error);
+    DOM.reviewsContainer.innerHTML = `<p>리뷰를 불러오는 중 오류가 발생했습니다.</p>`;
   }
 });
 
