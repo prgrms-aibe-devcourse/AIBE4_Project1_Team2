@@ -25,7 +25,7 @@ const mypageService = {
   createReview: async (scheduleId, reviewData) => {
     // 일정이 존재하는지 확인
     const { data: aiData, error: aiError } = await supabase
-    .from('ai').select('*').eq('userKey', reviewData.userKey)
+    .from('ai').select('*').eq('planId', scheduleId)
 
     if (aiError || !aiData || aiData.length === 0) {
       console.log("aiError")
@@ -54,11 +54,11 @@ const mypageService = {
       // createdAt: new Date(),
     };
 
-    // const { data, error } = await supabase.from('review').insert([newReview]).select('id')
-    // if (error) {
-    //   console.log("reviewError")
-    //   return { success: false };
-    // }
+    const { data, error } = await supabase.from('review').insert([newReview]).select('id')
+    if (error) {
+      console.log("reviewError")
+      return { success: false };
+    }
 
     return {
       success: true,
