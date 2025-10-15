@@ -1,3 +1,6 @@
+// 실제 프로젝트에서는 데이터베이스를 사용하겠지만,
+// 예시를 위해 메모리에 저장하는 방식으로 구현했습니다.
+
 let schedules = [];
 let reviews = [];
 let nextReviewId = 1;
@@ -13,7 +16,14 @@ const mypageService = {
 
     // userKey는 응답에서 제외 (보안)
     const { userKey, ...scheduleData } = schedule;
-    return scheduleData;
+
+    // hasReview 필드 추가 (이 일정에 후기가 있는지 확인)
+    const hasReview = reviews.some((r) => r.scheduleId === scheduleId);
+
+    return {
+      ...scheduleData,
+      hasReview,
+    };
   },
 
   // 일정에 후기 작성
