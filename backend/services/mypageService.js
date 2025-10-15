@@ -42,7 +42,7 @@ const mypageService = {
     const newReview = {
       // scheduleId: scheduleId,
       userKey: reviewData.userKey,
-      rate: reviewData.rate,
+      rate: Number(reviewData.rate),
       title: reviewData.title,
       content: reviewData.content,
       // companioonsType: reviewData.companioonsType,
@@ -54,7 +54,7 @@ const mypageService = {
       // createdAt: new Date(),
     };
 
-    const { data, error } = await supabase.from('review').insert([newReview]).select('id')
+    const { data, error } = await supabase.from('review').insert([newReview]).select('reviewId')
     if (error) {
       console.log("reviewError")
       return { success: false };
@@ -62,7 +62,7 @@ const mypageService = {
 
     return {
       success: true,
-      reviewId: data[0].id,
+      reviewId: data[0].reviewId,
     };
   },
 
