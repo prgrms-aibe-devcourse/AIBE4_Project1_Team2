@@ -13,7 +13,14 @@ const mypageService = {
 
     // userKey는 응답에서 제외 (보안)
     const { userKey, ...scheduleData } = schedule;
-    return scheduleData;
+
+    // hasReview 필드 추가 (이 일정에 후기가 있는지 확인)
+    const hasReview = reviews.some((r) => r.scheduleId === scheduleId);
+
+    return {
+      ...scheduleData,
+      hasReview,
+    };
   },
 
   // 일정에 후기 작성

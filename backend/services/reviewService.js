@@ -1,61 +1,89 @@
-let reviews = [];
-let nextId = 1;
+const { supabase } = require('../utils/supabase');
 
 const reviewService = {
+  // 모든 리뷰 조회 (페이지네이션)
   getAllReviews: async (page, limit) => {
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
+    try {
+      const startIndex = (page - 1) * limit;
 
-    // 전체 리뷰에서 리스트용 필드만 추출
-    const paginatedReviews = reviews
-      .slice(startIndex, endIndex)
-      .map(review => ({
-        id: review.id,
-        title: review.title,
-        rate: review.rate,
-        departure: review.departure,
-        arrival: review.arrival,
-        img_path: review.img_path
-        // 리스트에 보여줄 필드만 여기 추가
-      }));
-    
-    return {
-      reviews: paginatedReviews,
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(reviews.length / limit),
-        totalItems: reviews.length,
-      },
-    };
-  }
-  ,
+      // 전체 개수 조회
+      const { count, error: countError } = await supabase
+        .from('review')
+        .select('*', { count: 'exact', head: true });
 
-  getReviewById: async (id) => {
-    return reviews.find(r => r.id === id);
+      if (countError) {
+        console.error('리뷰 개수 조회 오류:', countError);
+        throw new Error(countError.message);
+      }
+
+      // 페이지네이션된 리뷰 조회
+      const { data, error } = await supabase
+        .from('review')
+        .select('id, title, rate, content, img_path')
+        .range(startIndex, startIndex + limit - 1)
+        .order('id', { ascending: false });
+
+      if (error) {
+        console.error('리뷰 조회 오류:', error);
+        throw new Error(error.message);
+      }
+
+      return {
+        reviews: data || [],
+        pagination: {
+          currentPage: page,
+          totalPages: Math.ceil(count / limit),
+          totalItems: count,
+        },
+      };
+    } catch (error) {
+      console.error('getAllReviews 오류:', error);
+      throw error;
+    }
   },
 
-  searchReviews: async ({ departure, arrival, keyword }) => {
-    let filteredReviews = reviews;
-    
-    if (departure) {
-      filteredReviews = filteredReviews.filter(r => 
-        r.departure.includes(departure)
-      );
+  // 특정 리뷰 상세 조회
+  getReviewById: async (id) => {
+    try {
+      const { data, error } = await supabase
+        .from('review')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('리뷰 상세 조회 오류:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('getReviewById 오류:', error);
+      return null;
     }
-    
-    if (arrival) {
-      filteredReviews = filteredReviews.filter(r => 
-        r.arrival.includes(arrival)
-      );
+  },
+
+  // 리뷰 검색 (키워드만 지원)
+  searchReviews: async ({ keyword }) => {
+    try {
+      let query = supabase.from('review').select('*');
+
+      if (keyword) {
+        query = query.or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('리뷰 검색 오류:', error);
+        throw new Error(error.message);
+      }
+
+      return data || [];
+    } catch (error) {
+      console.error('searchReviews 오류:', error);
+      throw error;
     }
-    
-    if (keyword) {
-      filteredReviews = filteredReviews.filter(r => 
-        r.title.includes(keyword) || r.content.includes(keyword)
-      );
-    }
-    
-    return filteredReviews;
   }
 };
 

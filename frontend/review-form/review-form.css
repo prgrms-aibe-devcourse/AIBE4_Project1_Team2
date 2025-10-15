@@ -3,92 +3,108 @@ body {
     font-family: 'Noto Sans KR', sans-serif;
     background-color: #f4f6f9;
     color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin: 0;
     padding: 40px;
 }
 
+/* 전체 레이아웃 컨테이너 */
+.page-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    align-items: flex-start;
+    max-width: 1300px; /* ✨ 최대 너비를 살짝 줄여 균형 맞춤 */
+    margin: 0 auto;
+}
+
+/* ============================================= */
+/* ✨ 1. 왼쪽: AI 일정 결과 (result-container) */
+/* ============================================= */
+.result-container {
+    flex: 1; /* ✨ 너비 비율을 1로 동일하게 설정 */
+    /* max-width는 제거하여 flex 비율에 따르도록 함 */
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.header { text-align: center; margin-bottom: 40px; }
+.main-title { font-size: 2rem; color: #ff9b6b; font-weight: 700; margin-bottom: 8px; }
+.title-black { color: #333; font-weight: 700; }
+.highlight { color: #ff9b6b; font-weight: 700; }
+.subtitle { font-size: 1rem; color: #555; line-height: 1.6; }
+
+.destination-description {
+    margin-bottom: 40px;
+    line-height: 1.7;
+    color: #444;
+    text-align: center; /* ✨ 중앙 정렬 추가 */
+}
+
+.timeline { position: relative; margin: 40px 0; padding-left: 20px; border-left: 2px solid #ffd93d; }
+.timeline-item { position: relative; margin-bottom: 25px; padding-left: 25px; }
+.timeline-item::before {
+    content: "";
+    position: absolute; top: 5px; left: -32px; /* 위치 조정 */
+    width: 12px; height: 12px; background-color: #ff9b6b;
+    border-radius: 50%; border: 3px solid white;
+}
+.time { font-size: 0.9rem; color: #888; margin-bottom: 6px; }
+.details { background: #fff9ec; border: 1px solid #ffe6b0; border-radius: 12px; padding: 15px 20px; }
+.activity { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+.description { font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 6px; }
+.transport { font-size: 0.9rem; color: #999; }
+
+.notes-section { margin-top: 40px; padding: 25px; background: #fff8e6; border-radius: 15px; border: 1px solid #ffebb0; }
+.notes-section h2 { font-size: 1.2rem; color: #ff9b6b; margin-top: 0; margin-bottom: 15px; }
+#trip-notes { list-style: none; padding: 0; margin: 0; }
+#trip-notes li { position: relative; padding-left: 24px; margin-bottom: 12px; line-height: 1.5; color: #444; }
+#trip-notes li::before { content: "💡"; position: absolute; left: 0; top: 0; }
+
+
+/* ============================================= */
+/* ✨ 2. 오른쪽: 리뷰 작성 폼 (review-form-container) */
+/* ============================================= */
 .review-form-container {
+    flex: 1; /* ✨ 너비 비율을 1로 동일하게 설정 */
+    /* max-width는 제거하여 flex 비율에 따르도록 함 */
     background-color: #fff;
     padding: 40px;
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    position: sticky;
+    top: 40px;
 }
 
-h1 { text-align: center; margin-bottom: 10px; }
-p { text-align: center; margin-bottom: 30px; color: #666; }
+.review-form-container h1 { font-size: 1.5rem; text-align: center; margin: 0 0 10px 0; }
+.review-form-container p { text-align: center; margin: 0 0 30px 0; color: #666; }
 
-/* 폼 그룹 스타일 */
-.form-group {
-    margin-bottom: 25px;
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+input[type="password"], input[type="text"], textarea {
+    width: 100%; padding: 12px; border: 1px solid #ddd;
+    border-radius: 8px; font-size: 1rem; box-sizing: border-box;
 }
+input:focus, textarea:focus { outline: none; border-color: #007bff; box-shadow: 0 0 0 2px rgba(0,123,255,0.25); }
+textarea { resize: vertical; }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
+.star-rating { 
+    display: flex; 
+    flex-direction: row-reverse; 
+    justify-content: flex-end; 
 }
+.star-rating input[type="radio"] { display: none; }
+.star-rating label { font-size: 2rem; color: #ddd; cursor: pointer; transition: color 0.2s; }
+.star-rating label:hover, .star-rating label:hover ~ label, .star-rating input[type="radio"]:checked ~ label { color: #ffc107; }
 
-input[type="password"],
-input[type="text"],
-textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: #007bff;
-    box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
-}
-
-textarea {
-    resize: vertical; /* 세로로만 크기 조절 가능 */
-}
-
-/* --- CSS로만 만드는 인터랙티브 별점 --- */
-.star-rating {
-    display: flex;
-    flex-direction: row-reverse; /* 아이템 순서를 거꾸로 배치 */
-    justify-content: flex-end; /* 오른쪽부터 채워지도록 */
-}
-
-/* 실제 라디오 버튼은 숨김 */
-.star-rating input[type="radio"] {
-    display: none;
-}
-
-/* 별 모양 라벨 */
-.star-rating label {
-    font-size: 2rem;
-    color: #ddd;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-/* 마우스를 올렸을 때(hover), 해당 별과 그 이전 별들 색상 변경 */
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-    color: #ffc107;
-}
-
-/* 라디오 버튼이 체크됐을 때, 해당 별과 그 이전 별들 색상 고정 */
-.star-rating input[type="radio"]:checked ~ label {
-    color: #ffc107;
-}
-
-/* --- 드래그 앤 드롭 영역 스타일링 --- */
 .drop-zone {
-    position: relative; /* 자식 요소의 위치 기준이 됨 */
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* 내부 콘텐츠(prompt)를 정중앙에 배치 */
     width: 100%;
     height: 150px;
     border: 2px dashed #ccc;
@@ -96,25 +112,20 @@ textarea {
     cursor: pointer;
     transition: background-color 0.2s, border-color 0.2s;
 }
-.drop-zone:hover {
-    background-color: #f9f9f9;
-}
-.drop-zone.drag-over {
-    background-color: #f0f8ff;
-    border-color: #007bff;
-}
+
 .drop-zone-prompt {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column; /* 아이콘과 텍스트를 세로(위아래)로 쌓음 */
+    align-items: center;    /* 수평 중앙 정렬 */
+    justify-content: center;/* 수직 중앙 정렬 */
+    text-align: center;     /* 글자가 길어져도 가운데 정렬되도록 */
     color: #888;
 }
 
 .drop-zone-prompt svg {
     width: 40px;
     height: 40px;
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* 아이콘과 텍스트 사이 간격 */
     color: #aaa;
 }
 
@@ -122,53 +133,46 @@ textarea {
     font-size: 1rem;
 }
 
-/* 드롭 영역에 마우스를 올렸을 때 */
 .drop-zone:hover {
-    border-color: #007bff;
-    background-color: #f4f8ff;
+    background-color: #f4f8ff; /* 옅은 파란색 배경 */
+    border-color: #007bff;     /* 파란색 테두리 */
 }
+
 .drop-zone:hover .drop-zone-prompt {
-    color: #007bff;
+    color: #007bff; /* 파란색 글자 */
 }
+
 .drop-zone:hover svg {
-    color: #007bff;
+    color: #007bff; /* 파란색 아이콘 */
 }
-/* 이미지 미리보기 영역 */
 .image-preview {
-    position: absolute; /* drop-zone 내부에 꽉 차도록 설정 */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    right: 5px;
+    bottom: 5px;
+    display: flex; /* 이미지가 중앙에 오도록 flexbox 사용 */
     align-items: center;
     justify-content: center;
-    padding: 5px; /* 테두리와 이미지 사이에 약간의 여백 */
-    box-sizing: border-box;
-}
-/* 미리보기 이미지 스타일 */
-.image-preview img {
-    max-width: 100%;
-    max-height: 100%;
+    overflow: hidden; /* 이미지가 이 영역을 벗어나면 숨김 */
     border-radius: 5px;
-    object-fit: cover; /* 이미지가 영역에 꽉 차도록 비율 유지하며 자르기 */
 }
 
+.image-preview img {
+    /* ✨ 이 부분이 핵심입니다: 이미지가 부모 영역을 벗어나지 않도록! */
+    max-width: 100%;  /* 부모 요소의 너비를 넘지 않도록 설정 */
+    max-height: 100%; /* 부모 요소의 높이를 넘지 않도록 설정 */
+    object-fit: contain; /* ✨ 비율을 유지하며 영역 안에 맞춤 (crop하지 않음) */
+    /* object-fit: cover;  <-- 이미지를 영역에 꽉 채우고 잘라낼 경우 사용 */
+    border-radius: 5px;
+}
 
-/* 제출 버튼 */
+/* 드롭존 프롬프트가 이미지 위에 겹치지 않도록 조정 */
+.drop-zone.has-image .drop-zone-prompt {
+    display: none;
+}
+
 button[type="submit"] {
-    width: 100%;
-    padding: 15px;
-    background-color: #ffd93d;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-button[type="submit"]:hover {
-    background-color: #ff9b6b;
+    width: 100%; padding: 15px; background-color: #ff9b6b; color: white;
+    border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 700; cursor: pointer;
 }

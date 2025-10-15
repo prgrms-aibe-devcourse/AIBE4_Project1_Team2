@@ -1,6 +1,7 @@
 const { GoogleGenAI, Type } = require("@google/genai");
-
 const ai = new GoogleGenAI({});
+
+const { supabase } = require("../utils/supabase");
 
 // 사용자의 입력에 따라 여행 일정 생성
 async function generateTravelPlan(userInput) {
@@ -87,4 +88,45 @@ async function generateTravelPlan(userInput) {
   return travelPlan;
 }
 
-module.exports = { generateTravelPlan };
+// 생성된 여행 일정 저장
+async function savePlan(plan) {
+  const { error } = await supabase.from("ai").insert(plan);
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+}
+
+// 내가 저장한 일정 조회
+async function getPlans(userKey) {
+  const { data, error } = await supabase
+    .from("ai")
+    .select(
+      "planId, departure, companions, companionsType, travelStyles, budget, recommendation, departureDate, budgetUnit"
+    )
+    .eq("userKey", userKey);
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data;
+}
+
+// 내가 작성한 리뷰조회
+async function getMyReviews(userKey) {
+  const { data, error } = await supabase
+    .from("review")
+    .select("id, rate, title, content, img_path")
+    .eq("userKey", userKey);
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data;
+}
+
+module.exports = { generateTravelPlan, savePlan, getPlans, getMyReviews };

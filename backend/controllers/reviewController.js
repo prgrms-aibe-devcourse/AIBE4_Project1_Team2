@@ -1,4 +1,5 @@
 const reviewService = require('../services/reviewService');
+const { handleSuccess, handleError } = require('../utils/responseHandler');
 
 const reviewController = {
     getAllReviews: async (req, res) => {
@@ -7,18 +8,9 @@ const reviewController = {
             const limit = parseInt(req.query.limit) || 10;
             const result = await reviewService.getAllReviews(page, limit);
 
-            res.status(200).json({
-                success: true,
-                statusCode: 200,
-                message: "성공적으로 조회되었습니다.",
-                data: result
-            });
-        } catch (error) {
-            res.status(500).json({
-                success: false,
-                statusCode: 500,
-                message: error.message || "리뷰 목록 조회에 실패하였습니다.",
-            });
+            handleSuccess(res, 200, "성공적으로 조회되었습니다.", result);
+        } catch (error) { 
+            handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
         }
     },
 
@@ -36,18 +28,9 @@ getReviewById: async (req, res) => {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            statusCode: 200,
-            message: "성공적으로 조회되었습니다.",
-            data: review
-        });
+        handleSuccess(res, 200, "성공적으로 조회되었습니다.", review);
     } catch (error) {
-        res.status(500).json({
-            success: false,
-            statusCode: 500,
-            message: error.message || "리뷰 상세 조회에 실패하였습니다."
-            });
+        handleError(res, "리뷰 상세 조회에 실패하였습니다.", error);
     }
 
 },
@@ -58,18 +41,9 @@ getReviewById: async (req, res) => {
       const { departure, arrival, keyword } = req.query;
       const reviews = await reviewService.searchReviews({ departure, arrival, keyword });
       
-      res.status(200).json({
-        success: true,
-        statusCode: 200,
-        message: "성공적으로 조회되었습니다.",
-        data: reviews
-      });
+      handleSuccess(res, 200, "성공적으로 조회되었습니다.", reviews);
     } catch (error) {
-      res.status(500).json({
-        success: false,
-        statusCode: 500,
-        message: error.message || "리뷰 검색에 실패하였습니다."
-      });
+      handleError(res, "리뷰 검색에 실패하였습니다.", error);
     }
   }
 };
