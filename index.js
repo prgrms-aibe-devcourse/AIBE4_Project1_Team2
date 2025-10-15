@@ -30,7 +30,7 @@ app.use("/mypage", mypageRoutes);
 
 const { supabase } = require("./backend/utils/supabase");
 
-app.post('/api', async (req, res) => {
+app.post('/schedules', async (req, res) => {
   try {
     const { password, text } = req.body;
 
