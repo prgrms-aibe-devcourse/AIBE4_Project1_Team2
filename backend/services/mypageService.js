@@ -56,7 +56,7 @@ const mypageService = {
 
     const { data, error } = await supabase.from('review').insert([newReview]).select('reviewId')
     if (error) {
-      console.log(reviewData.rate, typeof reviewData.rate)
+      console.error(error)
       return { success: false };
     }
 
