@@ -1,6 +1,3 @@
-// 실제 프로젝트에서는 데이터베이스를 사용하겠지만,
-// 예시를 위해 메모리에 저장하는 방식으로 구현했습니다.
-
 let schedules = [];
 let reviews = [];
 let nextReviewId = 1;
