@@ -2,6 +2,7 @@ const { GoogleGenAI, Type } = require("@google/genai");
 const ai = new GoogleGenAI({});
 
 const { createClient } = require("@supabase/supabase-js");
+const { get } = require("../routes/planRoutes");
 const { SUPABASE_KEY: supabaseKey, SUPABASE_URL: supabaseUrl } = process.env;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -116,4 +117,19 @@ async function getPlans(userKey) {
   return data;
 }
 
-module.exports = { generateTravelPlan, savePlan, getPlans};
+// 내가 작성한 리뷰조회
+async function getMyReviews(userKey) {
+  const { data, error } = await supabase
+    .from("review")
+    .select("*")
+    .eq("userKey", userKey);
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data;
+}
+
+module.exports = { generateTravelPlan, savePlan, getPlans, getMyReviews };
