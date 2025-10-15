@@ -1,3 +1,5 @@
+let planData = {}; // AI 파싱 데이터를 저장할 전역 변수
+
 document.addEventListener("DOMContentLoaded", () => {
   const data = JSON.parse(localStorage.getItem("aiTripResult"));
   if (!data) {
@@ -19,9 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 3. 문자열을 실제 JSON으로 변환
-  let result;
   try {
-    result = typeof raw === "string" ? JSON.parse(raw) : raw;
+    // 파싱된 최종 데이터를 전역 변수에 저장
+    planData = typeof raw === "string" ? JSON.parse(raw) : raw;
   } catch (err) {
     console.error("JSON 파싱 오류:", err, raw);
     alert("AI 응답 데이터가 올바르지 않습니다. 다시 시도해주세요.");
@@ -29,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  console.log("Loaded result data:", result);
-  renderSchedule(result);
+  console.log("Loaded result data:", planData);
+  renderSchedule(planData);
 });
 
 // 일정 렌더링 함수
@@ -103,17 +105,10 @@ function goBack() {
  * - 데이터 확인 후 홈(index.html)로 이동
  */
 async function savePlan() {
-  // localStorage에서 여행 데이터 가져오기
-  const data = localStorage.getItem("aiTripResult");
-  if (!data) {
+  if (!planData || Object.keys(planData).length === 0) {
     alert("저장할 데이터가 없습니다.");
     return;
   }
-
-  let parsedData = JSON.parse(data);
-
-  // AI 응답이 { text: {...} } 형태인 경우 내부 데이터만 꺼냄
-  if (parsedData.text) parsedData = parsedData.text;
 
   // 비밀번호 입력 요청
   const userKey = prompt(
@@ -124,10 +119,10 @@ async function savePlan() {
     return;
   }
 
-  // 서버로 전송할 데이터 구성
+  // 서버로 전송할 데이터 구성 (전역 변수 사용)
   const requestBody = {
     userKey: userKey.trim(),
-    ...parsedData, // text 없이 펼쳐서 보냄 ✅
+    ...planData, // ✅ 이제 planData는 문자열이 아닌 올바른 객체입니다.
   };
 
   console.log("📦 서버로 전송되는 데이터:", requestBody);
