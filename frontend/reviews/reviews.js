@@ -34,12 +34,11 @@ const DATA_TYPE = {
  * @returns {HTMLDivElement} - 생성된 카드 div 요소
  */
 function createReviewCard(review) {
-  const img_src = review.img_path
   const card = document.createElement("div");
   card.className = "review-card clickable";
   card.innerHTML = `
     <div class="card-image">
-      <img src=${img_src} alt="${review.title}" />
+      <img src=${review.img_path} alt="${review.title}" />
     </div>
     <div class="card-content">
       <h3>${review.title}</h3>
@@ -148,6 +147,7 @@ async function handleDataFetch(dataType, redirectUrl) {
 document.addEventListener("DOMContentLoaded", async () => {
   const response = await fetch("https://aibe4-project1-team2-1y2x.onrender.com/reviews/")
   const rawData = await response.json()
+  console.log(rawData)
   renderReviews(rawData.data.reviews);
 });
 
@@ -173,15 +173,42 @@ window.addEventListener("keydown", (e) => {
 // API 요청 시뮬레이션 함수
 const fetchData = async (dataType, userKey) => {
 console.log(`[API 요청 시뮬레이션] 타입: ${dataType}, 키: ${userKey}`);
-await new Promise((resolve) => setTimeout(resolve, 500)); // 0.5초 지연
 
-if (userKey === "mypassword") {
-    return dataType === "reviews"
-        ? mockSuccessReviewData
-        : mockSuccessScheduleData;
-    } else {
-    return mockFailureData;
-    }
+if (dataType === DATA_TYPE.REVIEWS) {
+const response = await fetch(
+  "https://aibe4-project1-team2-1y2x.onrender.com/my-reviews/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userKey: userKey }),
+      }
+    )
+  const data = await response.json()
+  console.log(data)
+  return data
+} else if (dataType === DATA_TYPE.SCHEDULES) {
+  const response = await fetch(
+  "https://aibe4-project1-team2-1y2x.onrender.com/my-plans/",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userKey: userKey }),
+      }
+    )
+  const data = await response.json()
+  console.log(data)
+  return data
+}
+
+// await new Promise((resolve) => setTimeout(resolve, 500)); // 0.5초 지연
+
+// if (userKey === "mypassword") {
+//     return dataType === "reviews"
+//         ? mockSuccessReviewData
+//         : mockSuccessScheduleData;
+//     } else {
+//     return mockFailureData;
+//     }
 };
 
 
