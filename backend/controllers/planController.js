@@ -23,7 +23,6 @@ exports.createPlan = async (req, res) => {
 exports.savePlan = async (req, res) => {
   try {
     const plan = req.body;
-    console.log(plan);
     await planService.savePlan(plan);
 
     handleSuccess(res, 201, "여행 일정이 성공적으로 저장되었습니다.");
