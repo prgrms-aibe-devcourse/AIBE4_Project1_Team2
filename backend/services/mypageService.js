@@ -54,11 +54,11 @@ const mypageService = {
       // createdAt: new Date(),
     };
 
-    const { data, error } = await supabase.from('review').insert([newReview]).select('id')
-    if (error) {
-      console.log("reviewError")
-      return { success: false };
-    }
+    // const { data, error } = await supabase.from('review').insert([newReview]).select('id')
+    // if (error) {
+    //   console.log("reviewError")
+    //   return { success: false };
+    // }
 
     return {
       success: true,
