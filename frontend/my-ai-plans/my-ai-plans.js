@@ -1,34 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   // 🔹 실제 사용 시 localStorage에서 불러오기
-  // let schedules = JSON.parse(localStorage.getItem("schedules")) || [];
+  let schedules = JSON.parse(localStorage.getItem("schedules")) || [];
 
-  // 🔹 테스트용 목업 데이터
-  let schedules = [
-    {
-      text: {
-        departure: "청주",
-        departureDate: "2025-10-19",
-        companionsType: "친구",
-        companions: "5",
-        travelStyles: ["힐링", "먹방여행"],
-        recommendation: {
-          destinationName: "강릉",
-          destinationDescription:
-            "청주에서 약 2시간 30분~3시간 거리에 위치한 강릉은 동해의 아름다운 바다와 풍부한 해산물, 그리고 고유한 문화와 카페거리까지 완벽한 힐링과 먹방 여행지입니다.",
-          itinerary: [
-            { time: "07:00", activity: "청주 출발", transportation: "자가용" },
-            {
-              time: "10:00",
-              activity: "강릉 안목해변 카페거리 도착",
-              transportation: "도보",
-            },
-          ],
-          notes: ["자가용 이동이 편리합니다.", "카페거리가 특히 유명합니다."],
-        },
-      },
-    },
-  ];
+  // 🔹 테스트용 목업 데이터 (비밀번호 1234)
+  // ⚠️ 이제는 자동으로 넣지 않음 — localStorage가 비어 있으면 아무것도 안 보여줌
+  // if (!schedules.length) { ... } 제거됨
 
+  /* ==================================================
+     🔹 요소 참조
+  ================================================== */
   const listContainer = document.getElementById("scheduleList");
   const modalOverlay = document.getElementById("scheduleModal");
   const modalDetails = document.getElementById("modalDetails");
@@ -40,17 +20,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderScheduleCards();
 
-  // 카드 렌더링
+  /* ==================================================
+     🔹 카드 목록 렌더링
+  ================================================== */
   function renderScheduleCards() {
     listContainer.innerHTML = "";
 
-    if (!schedules.length) {
-      listContainer.innerHTML = "<p>저장된 일정이 없습니다.</p>";
-      return;
-    }
+    // ⚙️ localStorage가 비어 있으면 아무것도 표시하지 않음
+    if (!schedules.length) return;
 
     schedules.forEach((item, index) => {
-      const trip = item.text;
+      const trip = item.text || item;
       const card = document.createElement("div");
       card.classList.add("schedule-card");
       card.innerHTML = `
@@ -66,7 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 상세보기 모달 열기
+  /* ==================================================
+     🔹 상세 모달 열기
+  ================================================== */
   function openModal(trip, index) {
     currentIndex = index;
 
@@ -100,15 +82,22 @@ document.addEventListener("DOMContentLoaded", () => {
     modalOverlay.classList.add("active");
   }
 
-  // 닫기
-  closeButton.addEventListener("click", () => {
-    modalOverlay.classList.remove("active");
-  });
+  /* ==================================================
+     🔹 모달 닫기 이벤트
+  ================================================== */
+  closeButton.addEventListener("click", () => closeModal());
   modalOverlay.addEventListener("click", (e) => {
-    if (e.target === modalOverlay) modalOverlay.classList.remove("active");
+    if (e.target === modalOverlay) closeModal();
   });
 
-  // 🗑 삭제하기
+  function closeModal() {
+    modalOverlay.classList.remove("active");
+    currentIndex = null;
+  }
+
+  /* ==================================================
+     🔹 삭제 기능
+  ================================================== */
   btnDelete.addEventListener("click", () => {
     if (currentIndex === null) return;
     const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
@@ -117,20 +106,25 @@ document.addEventListener("DOMContentLoaded", () => {
     schedules.splice(currentIndex, 1);
     localStorage.setItem("schedules", JSON.stringify(schedules));
     alert("삭제되었습니다.");
-    modalOverlay.classList.remove("active");
+    closeModal();
     renderScheduleCards();
   });
 
-  // ✍️ 리뷰 작성하기
+  /* ==================================================
+     🔹 리뷰 작성 기능
+  ================================================== */
   btnReview.addEventListener("click", () => {
     if (currentIndex === null) return;
-    const trip = schedules[currentIndex].text;
+    const trip = schedules[currentIndex].text || schedules[currentIndex];
     localStorage.setItem("selectedScheduleForReview", JSON.stringify(trip));
     alert("리뷰 작성 페이지로 이동합니다.");
     window.location.href = "../review-form/review-form.html";
   });
 });
 
+/* ==================================================
+   🔹 돌아가기 버튼
+================================================== */
 function goBack() {
   window.location.href = "../reviews/reviews.html";
 }
