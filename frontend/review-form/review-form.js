@@ -179,7 +179,7 @@ async function handleReviewSubmit(event) {
         }
 
         alert("🎉 리뷰가 성공적으로 등록되었습니다!");
-        window.location.href = '../mypage/mypage.html';
+        window.location.href = '../my-reviews/my-reviews.html';
     } catch (error) {
         console.error("리뷰 등록 중 오류:", error);
         alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
