@@ -63,7 +63,7 @@ btnMyReviews.addEventListener("click", async () => {
     if (result.success) {
       localStorage.setItem("reviews", JSON.stringify(result.data));
       alert("✅ 인증 성공! 후기 데이터를 불러왔습니다.");
-      window.location.href = "../myReviews/myReviews.html";
+      window.location.href = "../my-reviews/my-reviews.html";
     } else {
       alert("❌ 비밀번호가 올바르지 않습니다.");
     }
@@ -104,7 +104,7 @@ btnMySchedules.addEventListener("click", async () => {
     if (result.success) {
       localStorage.setItem("schedules", JSON.stringify(result.data));
       alert("✅ 인증 성공! 일정 데이터를 불러왔습니다.");
-      window.location.href = "../mySchedules/mySchedules.html";
+      window.location.href = "../my-schedules/my-schedules.html";
     } else {
       alert("❌ 비밀번호가 올바르지 않습니다.");
     }
