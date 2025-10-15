@@ -1,7 +1,7 @@
-require("dotenv").config()
-const express = require('express')
-const app = express()
-const port = process.env.PORT || 3000
+require("dotenv").config();
+const express = require("express");
+const app = express();
+const port = process.env.PORT || 3000;
 
 // cors
 const cors = require("cors");
@@ -14,13 +14,16 @@ app.use(express.json());
 const planRouter = require("./backend/routes/planRoutes");
 app.use("/", planRouter);
 
-app.get('/', (req, res) => {
-  res.send('Hello, World!')
-})
+app.get("/", (req, res) => {
+  res.send("Hello, World!");
+});
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+  console.log(`Example app listening on port ${port}`);
+});
 
-const reviewRoutes = require('./backend/routes/reviewRoutes');
-app.use('/reviews', reviewRoutes);
+const reviewRoutes = require("./backend/routes/reviewRoutes");
+app.use("/reviews", reviewRoutes);
+
+const mypageRoutes = require("./backend/routes/mypageRoutes");
+app.use("/mypage", mypageRoutes);
