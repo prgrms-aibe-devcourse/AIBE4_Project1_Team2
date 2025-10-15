@@ -1,24 +1,24 @@
 let planData = {}; // AI 파싱 데이터를 저장할 전역 변수
 
 document.addEventListener("DOMContentLoaded", () => {
-  const data = JSON.parse(localStorage.getItem("aiTripResult"));
-  if (!data) {
-    alert("일정 데이터가 없습니다. 처음부터 다시 진행해주세요.");
-    window.location.href = "../ai-plan/ai-plan.html";
-    return;
-  }
+    const data = JSON.parse(localStorage.getItem("aiTripResult"));
+    if (!data) {
+        alert("일정 데이터가 없습니다. 처음부터 다시 진행해주세요.");
+        window.location.href = "../ai-plan/ai-plan.html";
+        return;
+    }
 
-  // 1. AI 응답이 { text: "```json ... ```" } 형태인 경우 처리
-  let raw = data;
-  if (data.text) raw = data.text; // text 필드 안에 JSON 문자열이 있으면 꺼내기
+    // 1. AI 응답이 { text: "```json ... ```" } 형태인 경우 처리
+    let raw = data;
+    if (data.text) raw = data.text; // text 필드 안에 JSON 문자열이 있으면 꺼내기
 
-  // 2. ```json ... ``` 제거
-  if (typeof raw === "string") {
-    raw = raw
-      .replace(/```json\s*/g, "") // ```json 제거
-      .replace(/```/g, "") // 닫는 ``` 제거
-      .trim();
-  }
+    // 2. ```json ... ``` 제거
+    if (typeof raw === "string") {
+        raw = raw
+        .replace(/```json\s*/g, "") // ```json 제거
+        .replace(/```/g, "") // 닫는 ``` 제거
+        .trim();
+    }
 
   // 3. 문자열을 실제 JSON으로 변환
   try {
