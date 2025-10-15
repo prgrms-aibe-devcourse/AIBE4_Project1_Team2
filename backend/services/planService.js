@@ -13,8 +13,6 @@ async function generateTravelPlan(userInput) {
     budget,
   } = userInput;
 
-  console.log(userInput.departure);
-
   const userPrompt = `
     다음 정보에 맞는 여행 일정을 생성해줘.
     - 출발지: ${departure}

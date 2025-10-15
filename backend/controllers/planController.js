@@ -4,9 +4,6 @@ const planService = require("../services/planService");
 exports.createPlan = async (req, res) => {
   try {
     const userInput = req.body.prompt;
-    console.log("--------------------------------------------------------");
-    console.log(userInput);
-    console.log("--------------------------------------------------------");
     const travelPlan = await planService.generateTravelPlan(userInput);
 
     res.status(200).json({
