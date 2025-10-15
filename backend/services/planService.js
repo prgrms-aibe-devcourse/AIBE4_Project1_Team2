@@ -82,8 +82,8 @@ async function generateTravelPlan(userInput) {
     },
   });
 
-  //   console.log(response.text);
   const travelPlan = response.text;
+  console.log(travelPlan);
   return travelPlan;
 }
 
