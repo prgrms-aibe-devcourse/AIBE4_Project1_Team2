@@ -5,4 +5,7 @@ const planController = require("../controllers/planController");
 // POST 요청이 /plans 경로로 들어오면 planController.createPlan 함수를 실행
 router.post("/plans", planController.createPlan);
 
+// AI 출력 결과 저장
+router.post("/schedules", planController.savePlan);
+
 module.exports = router;

@@ -1,6 +1,9 @@
 const { GoogleGenAI, Type } = require("@google/genai");
-
 const ai = new GoogleGenAI({});
+
+const { createClient } = require("@supabase/supabase-js");
+const { SUPABASE_KEY: supabaseKey, SUPABASE_URL: supabaseUrl } = process.env;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // 사용자의 입력에 따라 여행 일정 생성
 async function generateTravelPlan(userInput) {
@@ -87,4 +90,14 @@ async function generateTravelPlan(userInput) {
   return travelPlan;
 }
 
-module.exports = { generateTravelPlan };
+// 생성된 여행 일정 저장
+async function savePlan(plan) {
+  const { data, error } = await supabase.from("ai").insert(plan);
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+  return data;
+}
+
+module.exports = { generateTravelPlan, savePlan };

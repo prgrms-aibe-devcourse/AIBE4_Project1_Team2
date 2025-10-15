@@ -1,4 +1,5 @@
 const planService = require("../services/planService");
+const { handleSuccess, handleError } = require("../utils/responseHandler");
 
 // 여행 일정 생성 요청을 처리하고 응답을 보냅니다.
 exports.createPlan = async (req, res) => {
@@ -6,19 +7,27 @@ exports.createPlan = async (req, res) => {
     const userInput = req.body.prompt;
     const travelPlan = await planService.generateTravelPlan(userInput);
 
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: "여행 일정이 성공적으로 생성되었습니다.",
-      data: travelPlan,
-    });
+    handleSuccess(
+      res,
+      200,
+      "여행 일정이 성공적으로 생성되었습니다.",
+      travelPlan
+    );
   } catch (error) {
     console.error("여행 일정 생성 중 오류 발생:", error);
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: "여행 일정 생성에 실패했습니다.",
-      error: error.message,
-    });
+    handleError(res, "여행 일정 생성에 실패했습니다.");
+  }
+};
+
+// 여행 일정 저장
+exports.savePlan = async (req, res) => {
+  try {
+    const plan = req.body;
+    await planService.savePlan(plan);
+
+    handleSuccess(res, 201, "여행 일정이 성공적으로 저장되었습니다.");
+  } catch (error) {
+    console.error("여행 일정 저장 중 오류 발생:", error);
+    handleError(res, "여행 일정 저장에 실패했습니다.", error);
   }
 };
