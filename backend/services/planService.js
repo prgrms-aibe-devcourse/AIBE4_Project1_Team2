@@ -99,4 +99,21 @@ async function savePlan(plan) {
   }
 }
 
-module.exports = { generateTravelPlan, savePlan };
+// 내가 저장한 일정 조회
+async function getPlans(userKey) {
+  const { data, error } = await supabase
+    .from("ai")
+    .select(
+      "planId, departure, companions, companionsType, travelStyles, budget, recommendation, departureDate, budgetUnit"
+    )
+    .eq("userKey", userKey);
+
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+
+  return data;
+}
+
+module.exports = { generateTravelPlan, savePlan, getPlans};
