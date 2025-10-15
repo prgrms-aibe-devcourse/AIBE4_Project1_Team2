@@ -28,6 +28,7 @@ const mypageService = {
     .from('ai').select('*').eq('userKey', reviewData.userKey)
 
     if (aiError || !aiData || aiData.length === 0) {
+      console.log("aiError")
       return { success: false };
     }
 
@@ -55,6 +56,7 @@ const mypageService = {
 
     const { data, error } = await supabase.from('review').insert([newReview]).select('id')
     if (error) {
+      console.log("reviewError")
       return { success: false };
     }
 
