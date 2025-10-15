@@ -2,7 +2,6 @@ const { GoogleGenAI, Type } = require("@google/genai");
 const ai = new GoogleGenAI({});
 
 const { createClient } = require("@supabase/supabase-js");
-const { get } = require("../routes/planRoutes");
 const { SUPABASE_KEY: supabaseKey, SUPABASE_URL: supabaseUrl } = process.env;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
