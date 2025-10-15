@@ -13,12 +13,46 @@ document.addEventListener("DOMContentLoaded", () => {
 // ======================================================
 
 // --- 페이지 초기화 함수 ---
-function initAiPlanResultPage() {
-    // 목 데이터를 Local Storage에 저장하고 화면에 렌더링
-    localStorage.setItem('aiTripResult', JSON.stringify(mockAiTripResult));
-    renderSchedule(mockAiTripResult);
-}
+async function initAiPlanResultPage() {
+    // 1️⃣ 먼저 Local Storage에서 데이터 확인
+    const savedTripResult = localStorage.getItem('aiTripResult');
+    if (savedTripResult) {
+        console.log("✅ Local Storage에서 AI 여행 일정 데이터 불러옴");
+        const aiTripResult = JSON.parse(savedTripResult);
+        renderSchedule(aiTripResult); // 저장된 데이터로 화면 렌더링
+        return; // 함수 종료
+    }
+    
+    // 2️⃣ Local Storage에 데이터가 없으면 서버에 요청 (오류가 발생하는 경우에만)
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+    
+    try {
+        // 서버에서 AI 생성 여행 일정 데이터를 GET 요청으로 받아옵니다.
+        // 서버의 올바른 API 엔드포인트로 변경하세요. (예: /plan/1234)
+        // 현재 `/plan` 엔드포인트가 없으므로 404 에러가 발생합니다.
+        const res = await fetch(`${BASE_URL}/plan`); // ⚠️ 이 URL이 올바른지 다시 확인해야 합니다. 
+        if (!res.ok) {
+            throw new Error(`AI 여행 일정을 불러오는 데 실패했습니다. (상태 코드: ${res.status})`);
+        }
 
+        const result = await res.json();
+        const aiTripResult = result.data; // 서버 응답의 data 필드에 실제 데이터가 있다고 가정
+        
+        // 받아온 데이터를 Local Storage에 저장
+        localStorage.setItem('aiTripResult', JSON.stringify(aiTripResult));
+        
+        // 화면에 렌더링
+        renderSchedule(aiTripResult);
+
+    } catch (error) {
+        console.error('AI 일정 로딩 중 오류 발생:', error);
+        // 사용자에게 오류 메시지 표시
+        const mainContainer = document.querySelector('.main-content');
+        if (mainContainer) {
+            mainContainer.innerHTML = '<p class="error-message">여행 일정을 불러오는 데 문제가 발생했습니다. 다시 시도해주세요.</p>';
+        }
+    }
+}
 function initReviewFormPage() {
     // 폼 요소를 찾아서 submit 이벤트 리스너를 연결합니다.
     const form = document.querySelector('#reviewForm');
@@ -85,31 +119,57 @@ function renderSchedule(data) {
 }
 
 // --- 리뷰 작성 폼 페이지 기능 ---
-function handleReviewSubmit(event) {
-    event.preventDefault();
-    const title = document.getElementById('title').value;
-    const content = document.getElementById('content').value;
-    const password = document.getElementById('password').value;
-    const photoFile = document.getElementById('photo-upload').files[0];
-    const ratingChecked = document.querySelector('input[name="rating"]:checked');
+async function handleReviewSubmit(event) {
+    // ... (기존 코드)
 
-    if (!ratingChecked) {
-        alert("별점을 선택해주세요!");
+    const aiTripData = JSON.parse(localStorage.getItem('aiTripResult'));
+    const userKey = aiTripData ? aiTripData.userKey : null;
+    
+    // 이전에 planId를 userKey로 변경했기 때문에 planId 변수 대신 userKey 변수를 사용했습니다.
+    if (!userKey) {
+        alert("여행 일정 정보가 없어 리뷰를 저장할 수 없습니다.");
         return;
     }
-    const rate = parseInt(ratingChecked.value, 10);
 
+    // 2. FormData 객체를 사용하여 이미지 파일과 데이터를 함께 전송 준비
+    const formData = new FormData();
+    // ⚠️ 수정 시작: userKey를 formData에 명시적으로 추가
+    formData.append("userKey", userKey);
+    // ⚠️ 수정 끝
+    formData.append("title", title);
+    formData.append("rate", rate);
+    formData.append("content", content);
+    formData.append("password", password);
+    formData.append("departure", aiTripData.departure);
+    formData.append("arrival", aiTripData.recommendation.destinationName);
+    
     if (photoFile) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img_path = e.target.result;
-            const newReview = createReviewObject(title, rate, content, img_path, password);
-            saveReviewToLocalStorage(newReview);
-        };
-        reader.readAsDataURL(photoFile);
-    } else {
-        const newReview = createReviewObject(title, rate, content, null, password);
-        saveReviewToLocalStorage(newReview);
+        // 파일이 있을 경우 formData에 추가
+        formData.append("img_file", photoFile);
+    }
+
+    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+    
+    try {
+        // 3. 서버에 POST 요청 보내기
+        const res = await fetch(`${BASE_URL}/mypage/${planId}/review`, {
+            method: 'POST',
+            body: formData, // FormData를 body로 보냅니다.
+            // FormData 사용 시 'Content-Type' 헤더는 자동으로 설정됩니다.
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`리뷰 등록에 실패했습니다. (상태 코드: ${res.status}, 에러: ${errorText})`);
+        }
+
+        alert('리뷰가 성공적으로 등록되었습니다!');
+        // 리뷰 저장 후 마이페이지로 이동
+        window.location.href = '../mypage/mypage.html';
+        
+    } catch (error) {
+        console.error('리뷰 등록 중 오류 발생:', error);
+        alert('리뷰 등록 중 문제가 발생했습니다. 다시 시도해주세요.');
     }
 }
 
@@ -177,44 +237,3 @@ function setupDragAndDrop() {
         }
     }
 }
-
-
-// ======================================================
-// ✨ 3. 목 데이터 정의 (파일 하단)
-// ======================================================
-
-// 목 데이터 1: AI 여행 일정 추천 결과
-const mockAiTripResult = {
-    "userKey": 12345, "departure": "청주", "departureDate": "2025-10-19",
-    "companionsType": "친구", "companions": "5", "travelStyles": ["힐링", "먹방여행"],
-    "budget": "2000000", "budgetUnit": "KRW",
-    "recommendation": {
-        "destinationName": "강릉",
-        "destinationDescription": "청주에서 약 2시간 30분~3시간 거리에 위치한 강릉은 동해의 아름다운 바다와 풍부한 해산물, 그리고 고유한 문화와 카페거리까지 완벽한 힐링과 먹방 여행지입니다. 친구들과 함께 멋진 추억을 만들 수 있을 거예요.",
-        "estimatedBudget": { "min": "600000", "max": "800000", "unit": "KRW" },
-        "itinerary": [
-            { "time": "07:00", "activity": "청주 출발", "description": "청주에서 강릉으로 출발합니다...", "transportation": "자가용 또는 렌터카" },
-            { "time": "10:00", "activity": "강릉 안목해변 카페거리 도착 및 해변 산책", "description": "아름다운 동해 바다를 바라보며...", "transportation": "도보" }
-        ],
-        "notes": [
-            "5인 이동 시 자가용 이용이 가장 편리하며...",
-            "강릉은 카페와 맛집이 워낙 많으니...",
-        ]
-    }
-};
-
-// 목 데이터 2: 리뷰 작성용 데이터 (참고용)
-const mockReviewPreset = {
-    "success": true, "statusCode": 200, "message": "성공적으로 조회되었습니다.",
-    "data": [
-        {
-            "id": 5, "rate": 4, "title": "서울 당일치기",
-            "content": "혼자 미술관 투어하고 한강에서 힐링했어요.",
-            "departure": "수원", "arrival": "서울",
-            "companionsType": "나홀로", "companions": 1,
-            "travelStyles": "미술관 탐방",
-            "img_path": "https://images.unsplash.com/photo/1590152285103-6f62d8a4d7b4?q=80&w=400",
-            "ai_schedule": "오전 11시 서울 도착 후 국립현대미술관으로 이동..."
-        }
-    ]
-};
