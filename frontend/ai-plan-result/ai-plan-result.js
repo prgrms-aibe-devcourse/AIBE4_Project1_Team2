@@ -110,36 +110,42 @@ async function savePlan() {
     return;
   }
 
-  const parsedData = JSON.parse(data);
+  let parsedData = JSON.parse(data);
+
+  // AI 응답이 { text: {...} } 형태인 경우 내부 데이터만 꺼냄
+  if (parsedData.text) parsedData = parsedData.text;
 
   // 비밀번호 입력 요청
-  const password = prompt(
+  const userKey = prompt(
     "저장용 비밀번호를 입력해주세요 (숫자 또는 문자 가능):"
   );
-  if (!password || password.trim() === "") {
+  if (!userKey || userKey.trim() === "") {
     alert("비밀번호를 입력해야 저장할 수 있습니다.");
     return;
   }
 
-  /* 테스트 및 배포 시 요청 주소 변경 */
+  // 서버로 전송할 데이터 구성
+  const requestBody = {
+    userKey: userKey.trim(),
+    ...parsedData, // text 없이 펼쳐서 보냄 ✅
+  };
+
+  console.log("📦 서버로 전송되는 데이터:", requestBody);
+
   try {
     const response = await fetch(
       "https://aibe4-project1-team2-m9vr.onrender.com/schedules",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          password: password.trim(),
-          text: parsedData.text || parsedData, // 혹시 {text:{...}} 구조일 수도 있어서
-        }),
+        body: JSON.stringify(requestBody),
       }
     );
 
     const result = await response.json();
 
-    // 응답 상태 확인
     if (result.success && result.statusCode === 201) {
-      alert(`저장되었습니다! (비밀번호: ${password})`);
+      alert(`✅ 저장되었습니다! (비밀번호: ${userKey})`);
       window.location.href = "/AIBE4_Project1_Team2/index.html";
     } else {
       console.error("서버 응답 오류:", result);

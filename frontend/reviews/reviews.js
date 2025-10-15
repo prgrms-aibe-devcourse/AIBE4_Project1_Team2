@@ -43,15 +43,6 @@ btnMyReviews.addEventListener("click", async () => {
   }
 
   try {
-    // 서버 통신 (임시 주석)
-    // const resp = await fetch("http://localhost:3000/api/reviews", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ password: password.trim() }),
-    // });
-    // const result = await resp.json();
-
-    // 서버 미구축 가정: 성공 + 더미 데이터
     const result = {
       success: true,
       data: [
@@ -84,20 +75,340 @@ btnMySchedules.addEventListener("click", async () => {
   }
 
   try {
-    // 서버 통신 (임시 주석)
-    // const resp = await fetch("http://localhost:3000/api/schedules", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify({ password: password.trim() }),
-    // });
-    // const result = await resp.json();
-
-    // 서버 미구축 가정: 성공 + 더미 데이터
+    // ✅ 서버 미구축 가정: 성공 + 긴 일정이 포함된 실제 구조형 더미
     const result = {
       success: true,
       data: [
-        { destination: "강릉", date: "2025-10-19", theme: "힐링" },
-        { destination: "담양", date: "2025-09-28", theme: "자연" },
+        {
+          text: {
+            departure: "청주",
+            departureDate: "2025-10-19",
+            companionsType: "친구",
+            companions: "5",
+            travelStyles: ["힐링", "먹방여행"],
+            recommendation: {
+              destinationName: "강릉",
+              destinationDescription:
+                "청주에서 약 3시간 거리의 강릉은 바다, 카페거리, 먹거리로 완벽한 힐링 여행지입니다.",
+              itinerary: [
+                {
+                  time: "07:00",
+                  activity: "청주 출발",
+                  transportation: "자가용",
+                },
+                {
+                  time: "10:00",
+                  activity: "안목해변 카페거리 산책",
+                  transportation: "도보",
+                },
+                {
+                  time: "11:00",
+                  activity: "테라로사 커피 박물관 방문",
+                  transportation: "도보",
+                },
+                {
+                  time: "12:30",
+                  activity: "초당순두부 점심",
+                  transportation: "도보",
+                },
+                {
+                  time: "14:00",
+                  activity: "경포대 해변 산책",
+                  transportation: "자가용",
+                },
+                {
+                  time: "15:30",
+                  activity: "오죽헌 관람",
+                  transportation: "자가용",
+                },
+                {
+                  time: "17:00",
+                  activity: "중앙시장 저녁 및 커피거리 재방문",
+                  transportation: "자가용",
+                },
+                {
+                  time: "19:00",
+                  activity: "숙소 체크인 및 휴식",
+                  transportation: "도보",
+                },
+                {
+                  time: "09:00",
+                  activity: "둘째 날: 주문진 수산시장 방문",
+                  transportation: "자가용",
+                },
+                {
+                  time: "11:00",
+                  activity: "강릉 출발 → 청주 복귀",
+                  transportation: "자가용",
+                },
+              ],
+              notes: [
+                "강릉 카페거리는 오전보다 오후가 한산합니다.",
+                "오죽헌은 주차장이 협소하니 조심하세요.",
+              ],
+            },
+          },
+        },
+        {
+          text: {
+            departure: "서울",
+            departureDate: "2025-10-22",
+            companionsType: "연인",
+            companions: "2",
+            travelStyles: ["감성", "자연"],
+            recommendation: {
+              destinationName: "남해",
+              destinationDescription:
+                "남해는 드라이브와 감성 숙소가 어우러진 힐링 여행지입니다.",
+              itinerary: [
+                {
+                  time: "08:00",
+                  activity: "서울 출발",
+                  transportation: "자가용",
+                },
+                {
+                  time: "12:00",
+                  activity: "남해 독일마을 점심",
+                  transportation: "자가용",
+                },
+                {
+                  time: "13:30",
+                  activity: "보리암 방문 및 해안 절벽 감상",
+                  transportation: "자가용",
+                },
+                {
+                  time: "15:30",
+                  activity: "남해대교 전망대 방문",
+                  transportation: "도보",
+                },
+                {
+                  time: "17:00",
+                  activity: "숙소 체크인 및 일몰 감상",
+                  transportation: "도보",
+                },
+                {
+                  time: "19:00",
+                  activity: "남해 회센터에서 저녁 식사",
+                  transportation: "택시",
+                },
+                {
+                  time: "21:00",
+                  activity: "카페 거리 산책",
+                  transportation: "도보",
+                },
+                {
+                  time: "09:00",
+                  activity: "둘째 날: 상주은모래비치 조식 피크닉",
+                  transportation: "자가용",
+                },
+                {
+                  time: "11:00",
+                  activity: "서울로 복귀",
+                  transportation: "자가용",
+                },
+              ],
+              notes: [
+                "남해는 드라이브 코스가 많아 차량 이동이 필수입니다.",
+                "일몰 시간대에 숙소 근처 바다 산책을 추천합니다.",
+              ],
+            },
+          },
+        },
+        {
+          text: {
+            departure: "대구",
+            departureDate: "2025-09-28",
+            companionsType: "가족",
+            companions: "4",
+            travelStyles: ["자연", "체험"],
+            recommendation: {
+              destinationName: "안동",
+              destinationDescription:
+                "하회마을, 월영교, 찜닭골목이 있는 문화체험형 여행지입니다.",
+              itinerary: [
+                {
+                  time: "09:00",
+                  activity: "대구 출발",
+                  transportation: "자가용",
+                },
+                {
+                  time: "10:30",
+                  activity: "하회마을 도착 및 관람",
+                  transportation: "도보",
+                },
+                {
+                  time: "12:30",
+                  activity: "찜닭 골목 점심",
+                  transportation: "도보",
+                },
+                {
+                  time: "14:00",
+                  activity: "월영교 산책",
+                  transportation: "도보",
+                },
+                {
+                  time: "15:30",
+                  activity: "안동민속박물관 방문",
+                  transportation: "자가용",
+                },
+                {
+                  time: "17:00",
+                  activity: "전통시장 구경 및 기념품 구매",
+                  transportation: "도보",
+                },
+                {
+                  time: "18:00",
+                  activity: "안동 숙소 체크인",
+                  transportation: "자가용",
+                },
+                {
+                  time: "09:00",
+                  activity: "둘째 날: 병산서원 관람",
+                  transportation: "자가용",
+                },
+                {
+                  time: "11:00",
+                  activity: "대구 복귀",
+                  transportation: "자가용",
+                },
+              ],
+              notes: [
+                "하회마을은 입장료가 있습니다.",
+                "안동은 골목길 주차가 어려워 공영주차장 이용 추천.",
+              ],
+            },
+          },
+        },
+        {
+          text: {
+            departure: "광주",
+            departureDate: "2025-10-05",
+            companionsType: "친구",
+            companions: "3",
+            travelStyles: ["맛집", "힐링"],
+            recommendation: {
+              destinationName: "순천",
+              destinationDescription:
+                "순천만 습지와 드라마 세트장이 어우러진 감성 힐링 여행지입니다.",
+              itinerary: [
+                {
+                  time: "08:30",
+                  activity: "광주 출발",
+                  transportation: "자가용",
+                },
+                {
+                  time: "10:00",
+                  activity: "순천만 습지 산책",
+                  transportation: "도보",
+                },
+                {
+                  time: "11:30",
+                  activity: "전망대 오르기 및 갈대밭 사진 촬영",
+                  transportation: "도보",
+                },
+                {
+                  time: "13:00",
+                  activity: "순천만 근처 한식당 점심",
+                  transportation: "도보",
+                },
+                {
+                  time: "14:30",
+                  activity: "순천 드라마 세트장 방문",
+                  transportation: "자가용",
+                },
+                {
+                  time: "16:30",
+                  activity: "순천시내 카페거리 방문",
+                  transportation: "자가용",
+                },
+                {
+                  time: "18:00",
+                  activity: "저녁 식사 후 광주 복귀",
+                  transportation: "자가용",
+                },
+                {
+                  time: "19:30",
+                  activity: "광주 도착 및 해산",
+                  transportation: "자가용",
+                },
+              ],
+              notes: [
+                "순천만은 일몰 직전이 가장 아름답습니다.",
+                "갈대밭은 바람이 강하니 모자를 챙기세요.",
+              ],
+            },
+          },
+        },
+        {
+          text: {
+            departure: "부산",
+            departureDate: "2025-10-15",
+            companionsType: "혼자",
+            companions: "1",
+            travelStyles: ["액티비티"],
+            recommendation: {
+              destinationName: "통영",
+              destinationDescription:
+                "통영은 루지, 케이블카, 벽화마을 등 다양한 즐길 거리가 있는 해양 도시입니다.",
+              itinerary: [
+                {
+                  time: "09:00",
+                  activity: "부산 출발",
+                  transportation: "고속버스",
+                },
+                {
+                  time: "11:30",
+                  activity: "통영 도착 후 충무김밥 점심",
+                  transportation: "도보",
+                },
+                {
+                  time: "13:00",
+                  activity: "통영 스카이라인 루지 체험",
+                  transportation: "택시",
+                },
+                {
+                  time: "15:00",
+                  activity: "한려수도 케이블카 탑승",
+                  transportation: "택시",
+                },
+                {
+                  time: "17:00",
+                  activity: "동피랑 벽화마을 산책",
+                  transportation: "도보",
+                },
+                {
+                  time: "18:30",
+                  activity: "통영 중앙시장 해산물 저녁",
+                  transportation: "도보",
+                },
+                {
+                  time: "20:00",
+                  activity: "강구안 야경 감상",
+                  transportation: "도보",
+                },
+                {
+                  time: "09:00",
+                  activity: "둘째 날: 이순신공원 산책",
+                  transportation: "택시",
+                },
+                {
+                  time: "11:00",
+                  activity: "통영 특산품 기념품 구매",
+                  transportation: "도보",
+                },
+                {
+                  time: "12:30",
+                  activity: "부산으로 복귀",
+                  transportation: "고속버스",
+                },
+              ],
+              notes: [
+                "루지와 케이블카는 오전에 사람이 적습니다.",
+                "중앙시장은 현금이 편리합니다.",
+              ],
+            },
+          },
+        },
       ],
     };
 
