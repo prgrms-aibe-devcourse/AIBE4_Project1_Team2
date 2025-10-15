@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘트립 | 내 리뷰</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="my-reviews.css"> 
+</head>
+<body>
+
+    <div class="container">
+        <main>
+            <div class="page-title">
+                <h2>내 리뷰</h2>
+            </div>
+
+            <div class="content-area">
+                <section id="reviews" class="tab-content active">
+                    <div class="review-list">
+                        </div>
+                    <div class="pagination">
+                        </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div id="reviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            <header class="review-header">
+                <h1 id="modalReviewTitle"></h1>
+                <div id="modalReviewAuthor" class="author-info"></div>
+                <div id="modalReviewRating" class="star-rating-display"></div>
+            </header>
+            <main class="review-body">
+                <img id="modalReviewPhoto" src="" alt="리뷰 상세 사진" class="review-photo">
+                <p id="modalReviewContent" class="review-text"></p>
+            </main>
+        </div>
+    </div>
+    <div id="modifyModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-button">&times;</button>
+            
+            <div class="review-form-container">
+                <form id="modifyForm">
+                    <h1>✍️ 여행 리뷰 수정하기</h1>
+                    <input type="hidden" id="modifyReviewId">
+
+                    <div class="form-group">
+                        <label for="modifyTitle">제목</label>
+                        <input type="text" id="modifyTitle" placeholder="리뷰의 제목을 입력해주세요" required>
+                    </div>
+                    <div class="form-group">
+                        <label>별점</label>
+                        <div class="star-rating" id="modifyRating">
+                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="modifyContent">내용</label>
+                        <textarea id="modifyContent" rows="8" placeholder="상세한 여행 후기를 남겨주세요"></textarea>
+                    </div>
+                    <!-- 드래그 앤 드롭  -->
+                    <div class="form-group">
+                        <label for="modifyPhotoUpload">사진 첨부</label>
+                        <div class="drop-zone" id="modifyDropZone">
+                            <input type="file" id="modifyPhotoUpload" accept="image/*" hidden />
+                            <label for="modifyPhotoUpload" class="drop-zone-prompt">
+                                <svg></svg>
+                                <span>사진을 여기에 드래그하거나 클릭하여 업로드하세요.</span>
+                            </label>
+                            <div id="modifyImagePreview" class="image-preview"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modifyPassword">비밀번호</label>
+                        <input type="password" id="modifyPassword" placeholder="리뷰 수정/삭제 시 필요해요" required>
+                    </div>
+                    
+                    <button type="submit">수정 완료</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="my-reviews.js"></script>
+</body>
+</html>
