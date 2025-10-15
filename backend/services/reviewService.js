@@ -1,6 +1,4 @@
-const { createClient } = require("@supabase/supabase-js");
-const { SUPABASE_KEY: supabaseKey, SUPABASE_URL: supabaseUrl } = process.env;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const { supabase } = require("../utils/supabase");
 
 const reviewService = {
   getAllReviews: async (page, limit) => {
