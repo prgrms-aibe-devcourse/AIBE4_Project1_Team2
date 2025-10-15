@@ -40,18 +40,11 @@ const mypageService = {
 
     // 새 후기 생성
     const newReview = {
-      // scheduleId: scheduleId,
       userKey: reviewData.userKey,
       rate: Number(reviewData.rate),
       title: reviewData.title,
       content: reviewData.content,
-      // companioonsType: reviewData.companioonsType,
-      // travleStyles: reviewData.travleStyles,
-      // budget: reviewData.budget,
-      img_path: reviewData.img_path,
-      // departure: schedule.departure,
-      // arrival: schedule.arrival,
-      // createdAt: new Date(),
+      img_path: reviewData.img_path
     };
 
     const { data, error } = await supabase.from('review').insert([newReview]).select('reviewId')
