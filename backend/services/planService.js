@@ -92,12 +92,11 @@ async function generateTravelPlan(userInput) {
 
 // 생성된 여행 일정 저장
 async function savePlan(plan) {
-  const { data, error } = await supabase.from("ai").insert(plan);
+  const { error } = await supabase.from("ai").insert(plan);
   if (error) {
     console.error(error);
     throw error;
   }
-  return data;
 }
 
 module.exports = { generateTravelPlan, savePlan };
