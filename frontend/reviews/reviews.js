@@ -34,6 +34,7 @@ const DATA_TYPE = {
  * @returns {HTMLDivElement} - 생성된 카드 div 요소
  */
 function createReviewCard(review) {
+  console.log(review.img_path)
   const card = document.createElement("div");
   card.className = "review-card clickable";
   card.innerHTML = `
