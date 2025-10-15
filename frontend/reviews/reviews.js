@@ -39,7 +39,7 @@ function createReviewCard(review) {
   card.className = "review-card clickable";
   card.innerHTML = `
     <div class="card-image">
-      <img src="${review.img_path}" alt="${review.title}" />
+      <img src=${review.img_path} alt="${review.title}" />
     </div>
     <div class="card-content">
       <h3>${review.title}</h3>
