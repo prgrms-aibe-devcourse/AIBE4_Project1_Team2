@@ -3,36 +3,101 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오늘 트립 | O-neul Trip</title>
+    <title>오늘 트립 | AI 추천 일정 결과</title>
+
+    <!-- SEO & OG Meta -->
+    <meta
+      name="description"
+      content="오늘 트립 | AI가 당신에게 맞는 맞춤형 당일치기 여행 일정을 추천해드립니다. 쉽고 빠르게 떠나는 여행 플래너!"
+    />
+    <meta property="og:title" content="오늘 트립 | AI 추천 일정 결과" />
+    <meta
+      property="og:description"
+      content="AI가 추천하는 맞춤 당일치기 여행 일정!"
+    />
+    <meta property="og:image" content="../public/logo/logo.png" />
+
+    <!-- favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../public/favicon/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../public/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="mask-icon"
+      href="../public/favicon/favicon-32x32.png"
+      color="#f5c563"
+    />
+    <link rel="manifest" href="../public/favicon/site.webmanifest" />
+
+    <!-- font / css -->
+    <link rel="stylesheet" href="../public/font.css" />
     <link rel="stylesheet" href="./ai-plan-result.css" />
   </head>
+
   <body>
-    <div class="result-container">
-      <!-- 헤더 -->
-      <div class="header">
-        <h1 class="main-title" id="trip-title"></h1>
-        <p class="subtitle" id="trip-info"></p>
-      </div>
+    <div class="container">
+      <header class="top-bar">
+        <div class="header-inner">
+          <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
+            <img
+              src="../public/logo/logo.png"
+              alt="오늘 트립 로고"
+              class="logo-img"
+            />
+          </a>
 
-      <!-- 여행지 설명 -->
-      <div class="destination-description" id="destination-description"></div>
+          <button
+            class="review-btn"
+            onclick="window.location.href='../reviews/reviews.html'"
+          >
+            여행자들의 후기
+          </button>
+        </div>
+      </header>
 
-      <!-- 일정 타임라인 -->
-      <div class="timeline" id="timeline"></div>
+      <main class="main-content">
+        <section class="result-container">
+          <div class="header">
+            <h1 class="main-title" id="trip-title"></h1>
+            <p class="subtitle" id="trip-info"></p>
+          </div>
 
-      <!-- 여행 팁 -->
-      <div class="notes-section">
-        <h2>💡 여행 팁</h2>
-        <ul id="notes-list"></ul>
-      </div>
+          <div
+            class="destination-description"
+            id="destination-description"
+          ></div>
+          <div class="timeline" id="timeline"></div>
 
-      <!-- 버튼 -->
-      <div class="bottom-btn">
-        <button class="btn-back" id="btnBack">◀ 다시 계획하기</button>
-        <button class="btn-save" id="btnSave">💾 저장하기</button>
-      </div>
+          <div class="notes-section">
+            <h2>💡 여행 팁</h2>
+            <ul id="notes-list"></ul>
+          </div>
+
+          <div class="bottom-btn">
+            <button class="btn-back" id="btnBack">◀ 다시 계획하기</button>
+            <button class="btn-save" id="btnSave">💾 저장하기</button>
+          </div>
+        </section>
+      </main>
+
+      <footer class="bottom-bar">
+        <p class="footer-text">돔황챠(2조)</p>
+      </footer>
     </div>
 
-    <script src="./ai-plan-result.js"></script>
+    <script src="./ai-plan-result.js" defer></script>
   </body>
 </html>

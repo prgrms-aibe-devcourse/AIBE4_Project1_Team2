@@ -1,230 +1,219 @@
-html,
-body {
+:root {
+  --main-yellow: #f5c563;
+  --main-orange: #ff9b6b;
+  --main-yellow-light: #ffd93d;
+  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
+  --transition: all 0.3s ease;
+}
+
+/* ============================= */
+/* 1. 기본 설정 */
+/* ============================= */
+* {
   margin: 0;
   padding: 0;
-  height: 100%;
-  font-family: "Malgun Gothic", sans-serif;
-  background-color: #f8f9fa;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.top-bar,
-.bottom-bar {
-  background-color: #f5c563;
-  height: 15vh;
-  min-height: 80px;
-}
-
-.main-content {
-  background-color: #ffffff;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
   box-sizing: border-box;
 }
 
-.logo-container {
-  text-align: left;
-  margin-bottom: 40px;
+html,
+body {
+  height: 100%;
+  font-family: var(--font-primary);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-.logo {
+/* ============================= */
+/* 2. 전체 레이아웃 */
+/* ============================= */
+.container {
   display: flex;
-  align-items: center;
-  gap: 15px;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
-.logo-icon {
-  width: 100px;
-  height: 100px;
-  position: relative;
-}
-
-.balloon {
-  width: 80px;
-  height: 90px;
-  background-color: #f5c563;
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  position: relative;
-}
-
-.balloon::before {
-  content: "";
-  position: absolute;
-  width: 60px;
-  height: 2px;
-  background-color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.balloon::after {
-  content: "";
-  position: absolute;
-  width: 2px;
-  height: 60px;
-  background-color: #fff;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.logo-text {
-  font-size: 96px;
-  font-weight: 900;
-  color: #000;
-  letter-spacing: -2px;
-  line-height: 1;
-}
-
-.logo-subtitle {
-  font-size: 20px;
-  color: #666;
-  margin-top: 10px;
-  text-align: right;
-  letter-spacing: 2px;
-}
-
-.button-container {
+/* 상단 / 하단 바 */
+.top-bar,
+.bottom-bar {
+  background: linear-gradient(135deg, var(--main-yellow) 0%, #f7d082 100%);
+  height: clamp(40px, 8vh, 70px);
+  flex-shrink: 0;
   display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
 }
 
-.btn-custom {
-  font-size: 22px;
-  font-weight: 700;
-  padding: 16px 80px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
+/* ============================= */
+/* 3. 메인 콘텐츠 */
+/* ============================= */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background: #fff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: clamp(20px, 5vw, 60px);
 }
 
+/* 장식 효과 */
+.main-content::before,
+.main-content::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.main-content::before {
+  top: 10%;
+  right: 5%;
+  width: 25vw;
+  height: 25vw;
+  background: radial-gradient(
+    circle,
+    rgba(255, 217, 61, 0.08) 0%,
+    transparent 70%
+  );
+}
+
+.main-content::after {
+  bottom: 10%;
+  left: 5%;
+  width: 20vw;
+  height: 20vw;
+  background: radial-gradient(
+    circle,
+    rgba(255, 155, 107, 0.08) 0%,
+    transparent 70%
+  );
+}
+
+/* ============================= */
+/* 4. 로고 */
+/* ============================= */
+.logo-container {
+  margin-bottom: clamp(80px, 8vh, 120px);
+  animation: fadeIn 0.8s ease-out;
+}
+
+.logo-link {
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.site-logo {
+  width: clamp(200px, 60vw, 800px);
+  height: auto;
+  max-width: 100%;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+}
+
+/* ============================= */
+/* 5. 버튼 */
+/* ============================= */
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(20px, 5vw, 60px);
+  flex-wrap: wrap;
+  animation: fadeIn 1s ease-out 0.2s both;
+}
+
+.btn-custom {
+  font-family: var(--font-primary);
+  font-size: clamp(16px, 2vw, 26px);
+  font-weight: 700;
+  padding: clamp(14px, 3vh, 22px) clamp(50px, 10vw, 100px);
+  border-radius: 60px;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  white-space: nowrap;
+  min-height: 48px;
+}
+
+.btn-custom:hover,
+.btn-custom:focus {
+  transform: translateY(-5px);
+}
+
+/* AI 일정 버튼 */
 .btn-ai {
-  background-color: #ff9b6b;
-  color: #000;
+  color: #fff;
+  background: linear-gradient(135deg, var(--main-orange) 0%, #ff8556 100%);
 }
 
 .btn-ai:hover {
-  background-color: #ff8a56;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 155, 107, 0.4);
+  color: #000;
+  box-shadow: 0 8px 20px rgba(255, 155, 107, 0.4);
 }
 
+/* 후기 버튼 */
 .btn-review {
-  background-color: #ffd93d;
-  color: #000;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    var(--main-yellow-light) 0%,
+    #ffc920 100%
+  );
 }
 
 .btn-review:hover {
-  background-color: #ffd020;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+  color: #000;
+  box-shadow: 0 8px 20px rgba(255, 217, 61, 0.4);
 }
 
-@media (max-width: 1024px) {
-  .logo-text {
-    font-size: 72px;
-  }
-
-  .logo-subtitle {
-    font-size: 18px;
-  }
-
-  .logo-icon {
-    width: 80px;
-    height: 80px;
-  }
-
+/* ============================= */
+/* 6. 반응형 */
+/* ============================= */
+@media (max-width: 900px) {
   .button-container {
-    gap: 16px;
-  }
-
-  .btn-custom {
-    font-size: 20px;
-    padding: 14px 60px;
-  }
-}
-
-@media (max-width: 768px) {
-  .logo {
     flex-direction: column;
-    text-align: center;
-  }
-
-  .logo-container {
-    margin-bottom: 30px;
-  }
-
-  .logo-icon {
-    width: 70px;
-    height: 70px;
-  }
-
-  .logo-text {
-    font-size: 56px;
-  }
-
-  .logo-subtitle {
-    font-size: 16px;
-    text-align: center;
+    gap: 25px;
   }
 
   .btn-custom {
-    font-size: 18px;
-    padding: 12px 50px;
     width: 100%;
     max-width: 300px;
+    font-size: 1rem;
   }
 
-  .button-container {
-    flex-direction: column;
-    width: 100%;
+  .site-logo {
+    width: clamp(180px, 70vw, 450px);
   }
 
   .top-bar,
   .bottom-bar {
-    height: 12vh;
+    height: clamp(40px, 8vh, 70px);
   }
 }
 
-@media (max-width: 480px) {
-  .logo-text {
-    font-size: 42px;
+/* ============================= */
+/* 7. 애니메이션 */
+/* ============================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
   }
-
-  .logo-subtitle {
-    font-size: 14px;
-  }
-
-  .logo-icon {
-    width: 60px;
-    height: 60px;
-  }
-
-  .btn-custom {
-    font-size: 16px;
-    padding: 10px 40px;
-  }
-
-  .button-container {
-    gap: 12px;
-  }
-
-  .top-bar,
-  .bottom-bar {
-    height: 10vh;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
