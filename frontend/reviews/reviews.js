@@ -10,9 +10,7 @@ const DOM = {
   },
   modal: {
     overlay: document.getElementById("reviewModal"),
-    closeButton: document
-      .getElementById("reviewModal")
-      .querySelector(".close-button"),
+    closeButton: document.getElementById("reviewModal").querySelector(".close-button"),
     title: document.getElementById("modal-title"),
     rate: document.getElementById("modal-rate"),
     image: document.getElementById("modal-image"),
@@ -111,11 +109,9 @@ function renderReviews(reviews) {
 // ======================================================
 function openModal(review) {
   DOM.modal.title.textContent = review?.title || "제목 없음";
-  DOM.modal.image.src =
-    review?.img_path || "https://placehold.co/600x400?text=No+Image";
+  DOM.modal.image.src = review?.img_path || "https://placehold.co/600x400?text=No+Image";
   DOM.modal.content.textContent = review?.content || "내용이 없습니다.";
-  DOM.modal.rate.textContent =
-    "★".repeat(review?.rate || 0) + "☆".repeat(5 - (review?.rate || 0));
+  DOM.modal.rate.textContent = "★".repeat(review?.rate || 0) + "☆".repeat(5 - (review?.rate || 0));
 
   DOM.modal.overlay.classList.add("active");
   DOM.body.classList.add("modal-open");
@@ -202,7 +198,6 @@ DOM.modal.closeButton?.addEventListener("click", closeModal);
 DOM.modal.overlay?.addEventListener("click", (e) => {
   if (e.target === DOM.modal.overlay) closeModal();
 });
-
 window.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && DOM.modal.overlay.classList.contains("active")) {
     closeModal();
