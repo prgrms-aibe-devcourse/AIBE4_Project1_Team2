@@ -143,7 +143,7 @@ function handleModifySubmit(event) {
     const newRating = document.querySelector('input[name="modifyRating"]:checked').value;
 
     // 1. Local Storage에서 전체 리뷰 데이터 가져오기
-    let reviews = JSON.parse(localStorage.getItem('savedReviews'));
+    let reviews = JSON.parse(localStorage.getItem('reviews'));
 
     // 2. 수정할 리뷰 찾아서 내용 업데이트
     const reviewIndex = reviews.findIndex(review => review.id === id);
@@ -154,7 +154,7 @@ function handleModifySubmit(event) {
     }
 
     // 3. 수정된 전체 데이터를 다시 Local Storage에 저장
-    localStorage.setItem('savedReviews', JSON.stringify(reviews));
+    localStorage.setItem('reviews', JSON.stringify(reviews));
 
     // 4. 화면 다시 그리기 및 모달 닫기
     renderMyReviews();
@@ -176,7 +176,7 @@ function handleDelete(button) {
 
 function handleDetailView(item) {
     const index = parseInt(item.dataset.index, 10);
-    const reviews = JSON.parse(localStorage.getItem('savedReviews'));
+    const reviews = JSON.parse(localStorage.getItem('reviews'));
     populateReviewModal(reviews[index]);
     openModal(document.getElementById('reviewModal'));
 }
