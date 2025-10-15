@@ -1,9 +1,7 @@
 const { GoogleGenAI, Type } = require("@google/genai");
 const ai = new GoogleGenAI({});
 
-const { createClient } = require("@supabase/supabase-js");
-const { SUPABASE_KEY: supabaseKey, SUPABASE_URL: supabaseUrl } = process.env;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const { supabase } = require("../utils/supabase");
 
 // 사용자의 입력에 따라 여행 일정 생성
 async function generateTravelPlan(userInput) {
