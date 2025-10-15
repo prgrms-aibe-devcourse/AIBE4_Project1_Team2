@@ -19,9 +19,9 @@ const reviewService = {
       // 페이지네이션된 리뷰 조회
       const { data, error } = await supabase
         .from('review')
-        .select('id, title, rate, content, img_path')
+        .select('reviewId, title, rate, content, img_path')
         .range(startIndex, startIndex + limit - 1)
-        .order('id', { ascending: false });
+        .order('reviewId', { ascending: false });
 
       if (error) {
         console.error('리뷰 조회 오류:', error);
@@ -43,12 +43,12 @@ const reviewService = {
   },
 
   // 특정 리뷰 상세 조회
-  getReviewById: async (id) => {
+  getReviewById: async (reviewId) => {
     try {
       const { data, error } = await supabase
         .from('review')
         .select('*')
-        .eq('id', id)
+        .eq('reviewId', reviewId)
         .single();
 
       if (error) {
