@@ -8,4 +8,7 @@ router.post("/plans", planController.createPlan);
 // AI 출력 결과 저장
 router.post("/schedules", planController.savePlan);
 
+// 내가 저장한 일정 조회
+router.get("/mypage/schedules", planController.getMyPlans);
+
 module.exports = router;
