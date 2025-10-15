@@ -1,236 +1,166 @@
-// ======================================================
-// ✨ 1. 코드 실행 부분
-// ======================================================
 document.addEventListener("DOMContentLoaded", () => {
-    initAiPlanResultPage(); // AI 여행 일정 결과 초기화
-    initReviewFormPage();   // 리뷰 작성 페이지 초기화
+  const selectedPlanId = localStorage.getItem("selectedPlanId");
+  const savedPlans = JSON.parse(localStorage.getItem("aiSchedules")) || [];
+
+  // === 일정 요약 정보 ===
+  const plan = savedPlans.find((p) => p.planId === Number(selectedPlanId));
+  if (!plan) {
+    document.getElementById("plan-detail").innerHTML =
+      "<p>⚠️ 일정을 찾을 수 없습니다.</p>";
+    return;
+  }
+
+  const rec = plan.recommendation;
+  const date = plan.departureDate;
+  const companionType = plan.companionsType;
+  const companions = plan.companions;
+  const styles = plan.travelStyles.join(", ");
+  const budget = plan.budget.toLocaleString() + plan.budgetUnit;
+  const description = rec.destinationDescription;
+  const shortItinerary = rec.itinerary
+    .slice(0, 5)
+    .map((i) => i.activity)
+    .join(", ");
+
+  document.getElementById("plan-detail").innerHTML = `
+    <h2>${plan.departure} → <span style="color:#ff7b42">${rec.destinationName}</span></h2>
+    <p>${date} | ${companionType} | 총 ${companions}명 | ${styles}</p>
+    <p>예산 약 ${budget}</p>
+    <p style="margin-top:10px; line-height:1.5;">${description}</p>
+    <p style="margin-top:10px; font-weight:600;">추천일:
+      <span style="font-weight:400;">${shortItinerary}</span>
+    </p>
+  `;
+
+  // === 별점 ===
+  const starWrap = document.getElementById("star-rating");
+  const starBtns = Array.from(starWrap.querySelectorAll(".star"));
+  const ratingInput = document.getElementById("review-rating");
+  let currentRating = 0;
+
+  function paintStars(n) {
+    starBtns.forEach((btn, i) => {
+      btn.classList.toggle("is-filled", i < n);
+      btn.setAttribute("aria-checked", i === n - 1 ? "true" : "false");
+    });
+  }
+
+  function setRating(n) {
+    currentRating = n;
+    ratingInput.value = String(n);
+    paintStars(n);
+  }
+
+  starBtns.forEach((btn) => {
+    btn.addEventListener("click", () => setRating(Number(btn.dataset.value)));
+  });
+
+  starWrap.addEventListener("keydown", (e) => {
+    const focusIndex = starBtns.indexOf(document.activeElement);
+    if (e.key === "ArrowRight" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const next = Math.min(
+        focusIndex >= 0 ? focusIndex + 1 : currentRating,
+        4
+      );
+      starBtns[next].focus();
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const prev = Math.max(
+        focusIndex >= 0 ? focusIndex - 1 : currentRating - 2,
+        0
+      );
+      starBtns[prev].focus();
+    } else if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      const idx = focusIndex >= 0 ? focusIndex : currentRating - 1;
+      setRating(idx + 1);
+    }
+  });
+
+  paintStars(0);
+
+  // === 드래그 앤 드롭 ===
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("review-image");
+  const previewImg = document.getElementById("preview");
+  const instruction = document.getElementById("dz-instruction");
+  let selectedFile = null;
+
+  function showPreview(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      previewImg.src = reader.result;
+      previewImg.style.display = "block";
+      instruction.style.display = "none";
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function acceptFile(file) {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있어요.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      alert("파일 크기는 최대 10MB까지 가능합니다.");
+      return;
+    }
+    selectedFile = file;
+    showPreview(file);
+  }
+
+  dropzone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => acceptFile(e.target.files[0]));
+
+  ["dragenter", "dragover"].forEach((ev) =>
+    dropzone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add("dragover");
+    })
+  );
+
+  ["dragleave", "dragend", "drop"].forEach((ev) =>
+    dropzone.addEventListener(ev, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove("dragover");
+    })
+  );
+
+  dropzone.addEventListener("drop", (e) => {
+    const file = e.dataTransfer.files && e.dataTransfer.files[0];
+    acceptFile(file);
+  });
+
+  // === 폼 제출 ===
+  const form = document.getElementById("review-form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    if (!ratingInput.value) {
+      alert("별점을 선택해주세요.");
+      return;
+    }
+
+    const payload = new FormData();
+    payload.append(
+      "title",
+      document.getElementById("review-title").value.trim()
+    );
+    payload.append(
+      "content",
+      document.getElementById("review-content").value.trim()
+    );
+    payload.append("userKey", document.getElementById("review-userKey").value);
+    payload.append("rating", ratingInput.value);
+    payload.append("planId", selectedPlanId);
+    if (selectedFile) payload.append("image", selectedFile);
+
+    alert("✅ 리뷰가 등록되었습니다! (서버 연동 시 실제 응답으로 변경)");
+    window.location.href = "../reviews/reviews.html";
+  });
 });
-
-// ======================================================
-// ✨ 2. 함수 정의
-// ======================================================
-
-// --- AI 여행 일정 결과 페이지 초기화 ---
-async function initAiPlanResultPage() {
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
-    const savedTripResult = localStorage.getItem('aiTripResult');
-
-    if (savedTripResult) {
-        console.log("✅ LocalStorage에서 일정 불러옴");
-        renderSchedule(JSON.parse(savedTripResult));
-        return;
-    }
-
-    try {
-        // userKey를 URL 파라미터에서 가져오기 (예: plan.html?userKey=abcd1234)
-        const params = new URLSearchParams(window.location.search);
-        const userKey = params.get('userKey');
-
-        if (!userKey) {
-            throw new Error("userKey가 없습니다. URL에 ?userKey=값 을 추가하세요.");
-        }
-
-        console.log(`🌐 서버에서 일정 불러오는 중... /plan/${userKey}`);
-        const res = await fetch(`${BASE_URL}/plan/${userKey}`);
-
-        if (!res.ok) {
-            throw new Error(`서버 응답 오류 (status: ${res.status})`);
-        }
-
-        const result = await res.json();
-        const aiTripResult = result.data;
-
-        // LocalStorage에 저장
-        localStorage.setItem('aiTripResult', JSON.stringify(aiTripResult));
-        renderSchedule(aiTripResult);
-    } catch (error) {
-        console.error('🚨 AI 일정 로딩 오류:', error);
-        const mainContainer = document.querySelector('.main-content');
-        if (mainContainer) {
-            mainContainer.innerHTML = `<p class="error-message">${error.message}</p>`;
-        }
-    }
-}
-
-// --- AI 일정 결과 화면 렌더링 ---
-function renderSchedule(data) {
-    if (!data) return;
-
-    console.log("🎯 렌더링할 데이터:", data);
-
-    // 제목
-    const tripTitleEl = document.getElementById('trip-title');
-    if (tripTitleEl) {
-        tripTitleEl.innerHTML = `
-            <span class="title-black">${data.departure || '출발지'}</span> →
-            <span class="highlight">${data.region || '목적지'}</span> 여행 일정
-        `;
-    }
-
-    // 부가 정보
-    const tripInfoEl = document.getElementById('trip-info');
-    if (tripInfoEl) {
-        const companionsType = data.companionsType || '동행';
-        const companions = data.companions || '0';
-        const styles = data.travelStyles ? data.travelStyles.join(', ') : '';
-        tripInfoEl.textContent = `${companionsType} ${companions}명 | ${styles}`;
-    }
-
-    // 여행지 설명 (없을 수 있음)
-    const descriptionEl = document.getElementById('destination-description');
-    if (descriptionEl) {
-        descriptionEl.textContent = data.total_duration
-            ? `총 여행 시간: ${data.total_duration}`
-            : '';
-    }
-
-    // 타임라인
-    const timelineEl = document.getElementById('timeline');
-    if (timelineEl) {
-        timelineEl.innerHTML = '';
-        if (Array.isArray(data.schedule)) {
-            data.schedule.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'timeline-item';
-                div.innerHTML = `
-                    <div class="time">${item.time || ''}</div>
-                    <div class="details">
-                        <div class="activity">${item.activity || ''}</div>
-                        <div class="description">${item.location || ''}</div>
-                    </div>
-                `;
-                timelineEl.appendChild(div);
-            });
-        } else {
-            timelineEl.innerHTML = '<p>일정 정보가 없습니다.</p>';
-        }
-    }
-
-    // 여행 팁 (없을 수 있음)
-    const notesEl = document.getElementById('trip-notes');
-    if (notesEl) {
-        notesEl.innerHTML = '';
-        if (Array.isArray(data.notes)) {
-            data.notes.forEach(note => {
-                const li = document.createElement('li');
-                li.textContent = note;
-                notesEl.appendChild(li);
-            });
-        }
-    }
-}
-
-
-// ======================================================
-// ✨ 리뷰 작성 기능
-// ======================================================
-
-function initReviewFormPage() {
-    const form = document.querySelector('#reviewForm');
-    if (!form) return;
-    form.addEventListener("submit", handleReviewSubmit);
-    setupDragAndDrop();
-}
-
-async function handleReviewSubmit(event) {
-    event.preventDefault();
-
-    const title = document.querySelector('#review-title')?.value.trim();
-    const rate = document.querySelector('#review-rate')?.value.trim();
-    const content = document.querySelector('#review-content')?.value.trim();
-    const password = document.querySelector('#review-password')?.value.trim();
-    const photoFile = document.querySelector('#photo-upload')?.files[0];
-
-    if (!title || !rate || !content || !password) {
-        alert("모든 필드를 입력해주세요!");
-        return;
-    }
-
-    const aiTripData = JSON.parse(localStorage.getItem('aiTripResult'));
-    const userKey = aiTripData?.userKey;
-
-    if (!userKey) {
-        alert("⚠️ 여행 일정 정보가 없습니다. 다시 시도해주세요.");
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append("userKey", userKey);
-    formData.append("title", title);
-    formData.append("rate", rate);
-    formData.append("content", content);
-    formData.append("password", password);
-    formData.append("departure", aiTripData.departure);
-    formData.append("arrival", aiTripData.recommendation.destinationName);
-    if (photoFile) formData.append("img_file", photoFile);
-
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
-
-    try {
-        console.log(`🚀 리뷰 등록 요청 → /mypage/${userKey}/review`);
-        const res = await fetch(`${BASE_URL}/mypage/${userKey}/review`, {
-            method: 'POST',
-            body: formData
-        });
-
-        if (!res.ok) {
-            const errText = await res.text();
-            throw new Error(`리뷰 등록 실패 (status: ${res.status}, 내용: ${errText})`);
-        }
-
-        alert("🎉 리뷰가 성공적으로 등록되었습니다!");
-        window.location.href = '../my-reviews/my-reviews.html';
-    } catch (error) {
-        console.error("리뷰 등록 중 오류:", error);
-        alert("리뷰 등록에 실패했습니다. 다시 시도해주세요.");
-    }
-}
-
-// ======================================================
-// ✨ 파일 드래그 & 드롭
-// ======================================================
-function setupDragAndDrop() {
-    const dropZone = document.querySelector('.drop-zone');
-    if (!dropZone) return;
-
-    const photoUpload = document.getElementById('photo-upload');
-    const imagePreview = document.getElementById('image-preview');
-    const dropZonePrompt = document.querySelector('.drop-zone-prompt');
-
-    dropZone.addEventListener('dragover', e => {
-        e.preventDefault();
-        dropZone.classList.add('drag-over');
-    });
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.classList.remove('drag-over');
-    });
-    dropZone.addEventListener('drop', e => {
-        e.preventDefault();
-        dropZone.classList.remove('drag-over');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            photoUpload.files = files;
-            updateImagePreview();
-        }
-    });
-    dropZone.addEventListener('click', () => photoUpload.click());
-    photoUpload.addEventListener('change', updateImagePreview);
-
-    function updateImagePreview() {
-        if (!imagePreview) return;
-        imagePreview.innerHTML = '';
-        const file = photoUpload.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                imagePreview.appendChild(img);
-                if (dropZonePrompt) dropZonePrompt.style.display = 'none';
-            };
-            reader.readAsDataURL(file);
-        } else {
-            if (dropZonePrompt) dropZonePrompt.style.display = 'flex';
-        }
-    }
-}

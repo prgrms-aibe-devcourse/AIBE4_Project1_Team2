@@ -1,90 +1,137 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘트립 | AI 여행 일정 및 리뷰 작성</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="review-form.css">
-</head>
-<body>
-    <div class="page-container">
-        
-        <div class="result-container">
-            <div class="header">
-                <h1 class="main-title" id="trip-title"></h1>
-                <p class="subtitle" id="trip-info"></p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오늘 트립 | 여행 후기 작성</title>
+
+    <link rel="stylesheet" href="./review-form.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- 왼쪽 일정 상세 -->
+      <section id="plan-detail" class="plan-section">
+        <h2 id="plan-title"></h2>
+        <p id="plan-meta"></p>
+        <p id="plan-desc"></p>
+
+        <ul id="itinerary-list" class="itinerary"></ul>
+
+        <div id="plan-notes" class="notes"></div>
+      </section>
+
+      <!-- 오른쪽 리뷰 작성 폼 -->
+      <section class="review-section">
+        <!-- 폼 시작 -->
+        <form id="review-form">
+          <label>제목</label>
+          <input
+            type="text"
+            id="review-title"
+            placeholder="리뷰의 제목을 입력해주세요"
+            required
+          />
+
+          <label>별점</label>
+          <div
+            id="star-rating"
+            class="stars"
+            role="radiogroup"
+            aria-label="별점 선택"
+          >
+            <!-- 탭/화살표로 이동 가능, 스페이스/엔터로 선택 -->
+            <button
+              type="button"
+              class="star"
+              data-value="1"
+              role="radio"
+              aria-checked="false"
+              aria-label="1점"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star"
+              data-value="2"
+              role="radio"
+              aria-checked="false"
+              aria-label="2점"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star"
+              data-value="3"
+              role="radio"
+              aria-checked="false"
+              aria-label="3점"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star"
+              data-value="4"
+              role="radio"
+              aria-checked="false"
+              aria-label="4점"
+            >
+              ★
+            </button>
+            <button
+              type="button"
+              class="star"
+              data-value="5"
+              role="radio"
+              aria-checked="false"
+              aria-label="5점"
+            >
+              ★
+            </button>
+          </div>
+          <input type="hidden" id="review-rating" name="rating" required />
+
+          <label>내용</label>
+          <textarea
+            id="review-content"
+            rows="6"
+            placeholder="상세한 여행 후기를 남겨주세요"
+            required
+          ></textarea>
+
+          <label>사진 첨부</label>
+          <div
+            id="dropzone"
+            class="file-upload"
+            tabindex="0"
+            aria-label="이미지 드래그 앤 드롭 영역"
+          >
+            <input type="file" id="review-image" accept="image/*" hidden />
+            <div id="dz-instruction">
+              <div style="font-size: 2rem">☁️</div>
+              <p>사진을 여기로 드래그하거나 클릭하여 업로드</p>
+              <small>(JPG/PNG, 최대 10MB)</small>
             </div>
-            <div class="destination-description" id="destination-description"></div>
-            <div class="timeline" id="timeline"></div>
-            <div class="notes-section">
-                <h2>💡 여행 팁</h2>
-                <ul id="trip-notes"></ul>
-            </div>
-        </div>
+            <img id="preview" alt="미리보기" style="display: none" />
+          </div>
 
-        <div class="review-form-container">
-            <form id="reviewForm" action="#">
-                <h1>✍️ 여행 리뷰 작성하기</h1>
-                <p>소중한 여행 경험을 공유해주세요!</p>
+          <label>고유번호</label>
+          <input
+            type="password"
+            id="review-userKey"
+            placeholder="리뷰 수정/삭제 시 필요해요"
+            required
+          />
 
-                <div class="form-group">
-                    <label for="title">제목</label>
-                    <input type="text" id="title" placeholder="리뷰의 제목을 입력해주세요" required>
-                </div>
-
-                <div class="form-group">
-                    <label>별점</label>
-                    <div class="star-rating">
-                        <input type="radio" id="5-stars" name="rating" value="5" /><label for="5-stars">★</label>
-                        <input type="radio" id="4-stars" name="rating" value="4" /><label for="4-stars">★</label>
-                        <input type="radio" id="3-stars" name="rating" value="3" /><label for="3-stars">★</label>
-                        <input type="radio" id="2-stars" name="rating" value="2" /><label for="2-stars">★</label>
-                        <input type="radio" id="1-star" name="rating" value="1" /><label for="1-star">★</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="content">내용</label>
-                    <textarea id="content" rows="8" placeholder="상세한 여행 후기를 남겨주세요"></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label for="photo-upload">사진 첨부</label>
-                    <div class="drop-zone">
-                        <input 
-                            type="file" 
-                            id="photo-upload" 
-                            name="photos" 
-                            accept="image/*" 
-                            multiple hidden />
-                        <label for="photo-upload" class="drop-zone-prompt">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg" 
-                                width="50" height="50" fill="currentColor" 
-                                class="bi bi-cloud-arrow-up" 
-                                viewBox="0 0 16 16">
-                                <path 
-                                fill-rule="evenodd" 
-                                d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708l2-2z"/>
-                                <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383zm.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
-                            </svg>
-                            <span>사진을 여기에 드래그하거나 클릭하여 업로드하세요.</span>
-                        </label>
-                        <div id="image-preview" class="image-preview"></div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">비밀번호</label>
-                    <input type="password" id="password" placeholder="리뷰 수정/삭제 시 필요해요" required>
-                </div>
-
-                <button type="submit">리뷰 등록하기</button>
-            </form>
-        </div>
+          <button type="submit" class="submit-btn">리뷰 등록하기</button>
+        </form>
+        <!-- 폼 끝 -->
+      </section>
     </div>
 
-    <script src="review-form.js"></script>
-</body>
+    <script src="./review-form.js"></script>
+  </body>
 </html>
