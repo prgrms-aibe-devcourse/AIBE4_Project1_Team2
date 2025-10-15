@@ -47,3 +47,18 @@ exports.getMyPlans = async (req, res) => {
     handleError(res, "내 일정 조회에 실패했습니다.", error);
   }
 };
+
+// 내가 작성한 리뷰 조회
+exports.getMyReviews = async (req, res) => {
+  try {
+    const { userKey } = req.body;
+    const result = await planService.getMyReviews(userKey);
+
+    console.log(result);
+
+    handleSuccess(res, 200, "작성한 리뷰가 조회되었습니다.", result);
+  } catch (error) {
+    console.error("작성한 리뷰 조회에 실패했습니다.", error);
+    handleError(res, "작성한 리뷰 조회에 실패했습니다.", error);
+  }
+};
