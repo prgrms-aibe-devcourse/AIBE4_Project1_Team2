@@ -16,7 +16,7 @@ const reviewController = {
 
   getReviewById: async (req, res) => {
     try {
-      const reviewId = parseInt(req.params.id, 10);
+      const reviewId = parseInt(req.params.planId, 10);
       const review = await reviewService.getReviewById(reviewId);
 
       if (!review) {

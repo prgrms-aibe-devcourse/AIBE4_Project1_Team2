@@ -22,10 +22,10 @@ const mypageService = {
   },
 
   // 일정에 후기 작성
-  createReview: async (scheduleId, reviewData) => {
+  createReview: async (reviewData) => {
     // 일정이 존재하는지 확인
     const { data: aiData, error: aiError } = await supabase
-    .from('ai').select('*').eq('planId', scheduleId)
+    .from('ai').select('*').eq('planId', reviewData.planId)
 
     if (aiError || !aiData || aiData.length === 0) {
       console.log("aiError")
@@ -67,41 +67,13 @@ const mypageService = {
   },
 
   // 후기 삭제
-  deleteReview: async (reviewId, userKey) => {
-    // 일정이 존재하는지 확인
-    const { data: aiData, error: aiError } = await supabase
-    .from('ai').select('*').eq('userKey', userKey)
-
-    if (aiError || !aiData || aiData.length === 0) {
-      return { success: false };
-    }
-
-    // const reviewIndex = reviews.findIndex((r) => r.id === reviewId);
-
-    // if (reviewIndex === -1) {
-    //   return { success: false };
-    // }
-
-    // const review = reviews[reviewIndex];
-
-    // 비밀번호 확인
-    // if (review.userKey !== userKey) {
-    //   return { success: false };
-    // }
+  deleteReview: async (planId) => {
 
     // 후기 삭제
-    const { error } = await supabase.from('review').delete().eq('userKey', userKey)
+    const { error } = await supabase.from('review').delete().eq('planId', planId)
     if (error) {
       return { success: false };
     }
-
-    // reviews.splice(reviewIndex, 1);
-
-    // 해당 일정의 hasReview를 false로 변경
-    // const schedule = schedules.find((s) => s.id === review.scheduleId);
-    // if (schedule) {
-    //   schedule.hasReview = false;
-    // }
 
     return { success: true };
   },
