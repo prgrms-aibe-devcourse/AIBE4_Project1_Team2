@@ -154,6 +154,8 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("삭제되었습니다.");
     closeModal();
     // renderScheduleCards();
+  })
+
   nextBtn?.addEventListener("click", () => {
     if (currentIndex < savedPlans.length - 1) openModal(currentIndex + 1);
     else alert("다음 일정이 없습니다.");
