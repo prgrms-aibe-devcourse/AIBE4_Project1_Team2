@@ -65,7 +65,6 @@
     <link rel="manifest" href="../public/favicon/site.webmanifest" />
 
     <!-- font / css -->
-    <link rel="stylesheet" href="../public/css/font.css" />
     <link rel="stylesheet" href="../public/css/common.css" />
     <link rel="stylesheet" href="./reviews.css" />
   </head>
@@ -114,7 +113,11 @@
           <p class="subtitle">전국 여행자들의 생생한 이야기를 만나보세요.</p>
         </div>
 
-        <section class="review-list" id="reviewsContainer"></section>
+        <section
+          class="review-list"
+          id="reviewsContainer"
+          aria-live="polite"
+        ></section>
       </main>
 
       <footer class="bottom-bar">
@@ -122,24 +125,34 @@
       </footer>
     </div>
 
-    <div class="modal-overlay" id="reviewModal">
-      <div class="modal-content">
-        <button class="close-button">&times;</button>
+    <div class="modal-overlay" id="reviewModal" aria-hidden="true">
+      <div
+        class="modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitle"
+      >
+        <button class="close-button" aria-label="닫기">&times;</button>
 
         <header class="review-header">
+          <div
+            id="modalRate"
+            class="star-rating-display"
+            aria-label="별점"
+          ></div>
           <h1 id="modalTitle"></h1>
-          <div id="modalRate" class="star-rating-display"></div>
         </header>
 
-        <main class="review-body">
-          <img class="review-photo" id="modalImage" alt="리뷰 이미지" />
-          <p class="review-text" id="modalContent"></p>
-        </main>
+        <main class="review-body"></main>
 
         <div class="bottom-btn">
-          <button class="btn-prev" id="prevBtn">◀</button>
+          <button class="btn-prev" id="prevBtn" aria-label="이전 후기 보기">
+            ◀
+          </button>
           <button class="btn-plan" id="viewPlan">일정 확인하기</button>
-          <button class="btn-next" id="nextBtn">▶</button>
+          <button class="btn-next" id="nextBtn" aria-label="다음 후기 보기">
+            ▶
+          </button>
         </div>
       </div>
     </div>

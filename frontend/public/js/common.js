@@ -49,7 +49,7 @@ async function fetchPublicReviews() {
     const reviews = data?.reviews ?? [];
 
     if (success === false || !Array.isArray(reviews) || reviews.length === 0) {
-      return handleError(message || "유효한 리뷰 데이터가 없습니다.");
+      return handleError(message || "유효한 후기 데이터가 없습니다.");
     }
 
     localStorage.setItem(storageKey, JSON.stringify(reviews));
