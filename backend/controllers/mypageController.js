@@ -96,10 +96,10 @@ const mypageController = {
     }
   },
 
-  // 후기 삭제
-  deleteReview: async (req, res) => {
+  // 일정 삭제
+  deletePlan: async (req, res) => {
     try {
-      const reviewId = parseInt(req.params.reviewId, 10);
+      const planId = parseInt(req.params.planId, 10);
       // const { userKey } = req.body;
 
       if (!userKey) {
@@ -111,7 +111,7 @@ const mypageController = {
         });
       }
 
-      const result = await mypageService.deleteReview(reviewId);
+      const result = await mypageService.deleteReview(planId);
 
       if (!result.success) {
         if (result.statusCode === 404) {
