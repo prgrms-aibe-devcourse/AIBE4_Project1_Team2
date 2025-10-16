@@ -24,8 +24,5 @@ app.use("/", planRoutes);
 const reviewRoutes = require("./backend/routes/reviewRoutes");
 app.use("/reviews", reviewRoutes);
 
-const mypageRoutes = require("./backend/routes/mypageRoutes");
-app.use("/mypage", mypageRoutes);
-
 const myReviewRoutes = require("./backend/routes/myReviewRoutes");
 app.use("/my-review", myReviewRoutes);
