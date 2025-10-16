@@ -5,133 +5,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>오늘 트립 | 여행 후기 작성</title>
 
+    <!-- SEO & OG Meta -->
+    <meta
+      name="description"
+      content="오늘 트립 | AI가 당신에게 맞는 맞춤형 당일치기 여행 일정을 추천해드립니다. 쉽고 빠르게 떠나는 여행 플래너!"
+    />
+    <meta property="og:title" content="오늘 트립 | 여행 후기 작성" />
+    <meta
+      property="og:description"
+      content="AI가 추천하는 맞춤 당일치기 여행 일정!"
+    />
+    <meta
+      property="og:image"
+      content="https://prgrms-aibe-devcourse.github.io/AIBE4_Project1_Team2/frontend/public/logo/og-logo.png"
+    />
+    <meta property="og:image:width" content="1100" />
+    <meta property="og:image:height" content="550" />
+    <meta property="og:image:type" content="image/png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../public/favicon/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../public/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="../public/favicon/android-chrome-192x192.png"
+    />
+    <link
+      rel="mask-icon"
+      href="../public/favicon/favicon-32x32.png"
+      color="#f5c563"
+    />
+    <link rel="manifest" href="../public/favicon/site.webmanifest" />
+
+    <!-- font / css -->
+    <link rel="stylesheet" href="../public/font.css" />
+    <link rel="stylesheet" href="../public/css/common.css" />
     <link rel="stylesheet" href="./review-form.css" />
   </head>
 
   <body>
     <div class="container">
-      <!-- 왼쪽 일정 상세 -->
-      <section id="plan-detail" class="plan-section">
-        <h2 id="plan-title"></h2>
-        <p id="plan-meta"></p>
-        <p id="plan-desc"></p>
+      <header class="top-bar">
+        <div class="nav-container">
+          <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
+            <img
+              src="../public/logo/logo.png"
+              alt="오늘 트립 로고"
+              class="logo-img"
+            />
+          </a>
 
-        <ul id="itinerary-list" class="itinerary"></ul>
+          <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+          </button>
 
-        <div id="plan-notes" class="notes"></div>
-      </section>
+          <nav class="nav-menu" id="navMenu">
+            <button class="nav-btn my-ai-plans" id="btnMyAiPlans">
+              📅 내가 저장한 일정
+            </button>
+            <button class="nav-btn my-reviews" id="btnMyReviews">
+              📝 내가 작성한 후기
+            </button>
+            <button
+              class="nav-btn ai-plan"
+              onclick="window.location.href='../ai-plan/ai-plan.html'"
+            >
+              🧭 AI에게 일정 추천받기
+            </button>
+            <button class="nav-btn reviews" id="btnReviews">
+              💬 여행자들의 후기
+            </button>
+          </nav>
+        </div>
+      </header>
 
-      <!-- 오른쪽 리뷰 작성 폼 -->
-      <section class="review-section">
-        <!-- 폼 시작 -->
-        <form id="review-form">
-          <label>제목</label>
-          <input
-            type="text"
-            id="review-title"
-            placeholder="리뷰의 제목을 입력해주세요"
-            required
-          />
-
-          <label>별점</label>
-          <div
-            id="star-rating"
-            class="stars"
-            role="radiogroup"
-            aria-label="별점 선택"
-          >
-            <!-- 탭/화살표로 이동 가능, 스페이스/엔터로 선택 -->
-            <button
-              type="button"
-              class="star"
-              data-value="1"
-              role="radio"
-              aria-checked="false"
-              aria-label="1점"
-            >
-              ★
-            </button>
-            <button
-              type="button"
-              class="star"
-              data-value="2"
-              role="radio"
-              aria-checked="false"
-              aria-label="2점"
-            >
-              ★
-            </button>
-            <button
-              type="button"
-              class="star"
-              data-value="3"
-              role="radio"
-              aria-checked="false"
-              aria-label="3점"
-            >
-              ★
-            </button>
-            <button
-              type="button"
-              class="star"
-              data-value="4"
-              role="radio"
-              aria-checked="false"
-              aria-label="4점"
-            >
-              ★
-            </button>
-            <button
-              type="button"
-              class="star"
-              data-value="5"
-              role="radio"
-              aria-checked="false"
-              aria-label="5점"
-            >
-              ★
-            </button>
+      <main class="main-content">
+        <div class="form-container">
+          <div class="header">
+            <h1 class="main-title">여행 후기를 작성해주세요!</h1>
+            <p class="subtitle">
+              당신의 소중한 여행 경험을 다른 여행자들과 공유해보세요.
+            </p>
           </div>
-          <input type="hidden" id="review-rating" name="rating" required />
 
-          <label>내용</label>
-          <textarea
-            id="review-content"
-            rows="6"
-            placeholder="상세한 여행 후기를 남겨주세요"
-            required
-          ></textarea>
-
-          <label>사진 첨부</label>
-          <div
-            id="dropzone"
-            class="file-upload"
-            tabindex="0"
-            aria-label="이미지 드래그 앤 드롭 영역"
-          >
-            <input type="file" id="review-image" accept="image/*" hidden />
-            <div id="dz-instruction">
-              <div style="font-size: 2rem">☁️</div>
-              <p>사진을 여기로 드래그하거나 클릭하여 업로드</p>
-              <small>(JPG/PNG, 최대 10MB)</small>
+          <form id="reviewForm" class="review-form" novalidate>
+            <div class="form-row align-stars">
+              <div class="title-star-group">
+                <input
+                  type="text"
+                  id="reviewTitle"
+                  name="title"
+                  class="form-control"
+                  placeholder="제목을 입력해주세요."
+                  required
+                />
+                <div class="stars" id="starRating">
+                  <button type="button" class="star" data-value="1">★</button>
+                  <button type="button" class="star" data-value="2">★</button>
+                  <button type="button" class="star" data-value="3">★</button>
+                  <button type="button" class="star" data-value="4">★</button>
+                  <button type="button" class="star" data-value="5">★</button>
+                  <input type="hidden" id="reviewRating" required />
+                </div>
+              </div>
             </div>
-            <img id="preview" alt="미리보기" style="display: none" />
-          </div>
 
-          <label>고유번호</label>
-          <input
-            type="password"
-            id="review-userKey"
-            placeholder="리뷰 수정/삭제 시 필요해요"
-            required
-          />
+            <textarea
+              id="reviewContent"
+              class="form-control"
+              rows="5"
+              placeholder="내용을 작성해주세요."
+              required
+            ></textarea>
 
-          <button type="submit" class="submit-btn">리뷰 등록하기</button>
-        </form>
-        <!-- 폼 끝 -->
-      </section>
+            <div id="dropzone" class="file-upload" tabindex="0">
+              <input
+                type="file"
+                id="reviewImage"
+                accept="image/*"
+                required
+                hidden
+              />
+              <div id="dz-instruction">
+                <div style="font-size: 2rem">☁️</div>
+                <p>사진을 클릭하거나 드래그하여 업로드</p>
+                <small>(JPG/PNG, 최대 10MB)</small>
+              </div>
+              <img id="preview" alt="미리보기" style="display: none" />
+            </div>
+
+            <button type="submit" class="btn-submit">후기 등록하기</button>
+          </form>
+        </div>
+      </main>
+
+      <footer class="bottom-bar">
+        <p class="footer-text">돔황챠 (2조)</p>
+      </footer>
     </div>
 
-    <script src="./review-form.js"></script>
+    <script src="../public/js/common.js" defer></script>
+    <script src="./review-form.js" defer></script>
   </body>
 </html>

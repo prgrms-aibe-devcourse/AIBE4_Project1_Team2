@@ -18,9 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
     },
   };
 
-  // ======================================================
-  // 일정 상세 모달 생성 (공통 구조)
-  // ======================================================
+  // 일정 상세 모달
   const planModal = document.createElement("div");
   planModal.className = "modal-overlay";
   planModal.innerHTML = `
@@ -47,20 +45,13 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentIndex = 0;
 
   // ======================================================
-  // 리뷰 카드 생성
+  // 후기 카드 생성
   // ======================================================
   function createReviewCard(review, index) {
     const card = document.createElement("div");
     card.className = "review-card";
 
-    const planData = review.plan || {};
-    const routeText =
-      planData.departure && planData.recommendation
-        ? `${planData.departure} → ${planData.recommendation.destinationName}`
-        : "출발지 정보 없음";
-
     card.innerHTML = `
-      <h4 class="card-route">${routeText}</h4>
       <img src="${review.img_path || "../public/images/default-trip.jpg"}"
            alt="${review.title || "여행 이미지"}"
            class="card-image" />
@@ -70,16 +61,15 @@ document.addEventListener("DOMContentLoaded", () => {
       <h3 class="card-title">${review.title || "제목 없음"}</h3>
     `;
     card.addEventListener("click", () => openModal(index));
-
     return card;
   }
 
   // ======================================================
-  // 리뷰 목록 렌더링
+  // 후기 목록 렌더링
   // ======================================================
   function renderReviews(reviewsData) {
     if (!Array.isArray(reviewsData) || reviewsData.length === 0) {
-      DOM.reviewsContainer.innerHTML = "<p>표시할 리뷰가 없습니다.</p>";
+      DOM.reviewsContainer.innerHTML = "<p>표시할 후기가 없습니다.</p>";
       return;
     }
 
@@ -90,25 +80,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ======================================================
-  // 리뷰 상세 모달 열기
+  // 후기 상세 모달 열기
   // ======================================================
   function openModal(index) {
     const review = reviews[index];
     currentIndex = index;
 
-    const planData = review.plan || {};
-    const routeText =
-      planData.departure && planData.recommendation
-        ? `${planData.departure} → ${planData.recommendation.destinationName}`
-        : "출발지 정보 없음";
-
     const modalBody = DOM.modal.overlay.querySelector(".review-body");
     modalBody.innerHTML = `
       <div class="review-detail">
-        <div class="modal-route">${routeText}</div>
         <img
           src="${review.img_path || "../public/images/default-trip.jpg"}"
-          alt="리뷰 이미지"
+          alt="후기 이미지"
           class="modal-image"
         />
         <div class="modal-rate">
@@ -124,56 +107,38 @@ document.addEventListener("DOMContentLoaded", () => {
     DOM.modal.overlay.scrollTop = 0;
     document.body.style.overflow = "hidden";
 
-    // 일정 보기 버튼
-    DOM.modal.planBtn.onclick = () => {
+    // 일정 보기 버튼 클릭 시 API 요청
+    DOM.modal.planBtn.onclick = async () => {
       if (!review.planId) {
-        alert("이 리뷰에는 연결된 일정이 없습니다.");
+        alert("이 후기에는 연결된 일정이 없습니다.");
         return;
       }
 
-      const targetPlan = reviews.find((r) => r.planId === review.planId)?.plan;
-      if (!targetPlan) {
-        alert("일정 정보를 찾을 수 없습니다.");
-        return;
-      }
+      try {
+        const res = await fetch(
+          `https://aibe4-project1-team2-m9vr.onrender.com/plan/${review.planId}`
+        );
+        const result = await res.json();
 
-      showPlanModal(targetPlan);
+        if (!res.ok || !result.success || !result.data) {
+          alert("일정 정보를 불러오지 못했습니다.");
+          console.error(result);
+          return;
+        }
+
+        showPlanModal(result.data);
+      } catch (err) {
+        console.error("일정 조회 중 오류:", err);
+        alert("일정 정보를 불러오는 중 문제가 발생했습니다.");
+      }
     };
   }
 
   // ======================================================
-  // 모달 닫기 (공통)
-  // ======================================================
-  DOM.modal.closeButton.addEventListener("click", () =>
-    DOM.modal.overlay.classList.remove("active")
-  );
-
-  DOM.modal.overlay.addEventListener("click", (e) => {
-    if (e.target === DOM.modal.overlay) {
-      DOM.modal.overlay.classList.remove("active");
-      document.body.style.overflow = "auto";
-    }
-  });
-
-  // ======================================================
-  // 이전 / 다음 버튼 (끝에서 멈춤)
-  // ======================================================
-  DOM.modal.prev?.addEventListener("click", () => {
-    if (currentIndex > 0) openModal(currentIndex - 1);
-    else alert("이전 후기가 없습니다.");
-  });
-
-  DOM.modal.next?.addEventListener("click", () => {
-    if (currentIndex < reviews.length - 1) openModal(currentIndex + 1);
-    else alert("다음 후기가 없습니다.");
-  });
-
-  // ======================================================
-  // 일정 상세 모달
+  // 일정 상세 모달 표시
   // ======================================================
   function showPlanModal(plan) {
     const container = planModal.querySelector("#plan-container");
-
     const {
       departure,
       companions,
@@ -185,16 +150,20 @@ document.addEventListener("DOMContentLoaded", () => {
       budgetUnit,
     } = plan;
 
-    const routeTitle = `${departure} → ${recommendation.destinationName}`;
+    const route = `${departure} → ${recommendation.destinationName}`;
+    const estimated = recommendation.estimatedBudget;
+    const formattedBudget = `${Number(estimated.min).toLocaleString()} ~ ${Number(
+      estimated.max
+    ).toLocaleString()} ${estimated.unit}`;
 
     container.innerHTML = `
       <section class="plan-header">
-        <h1 class="destination-title">${routeTitle}</h1>
+        <h1 class="destination-title">${route}</h1>
         <p class="destination-desc">${recommendation.destinationDescription}</p>
         <div class="plan-summary">
-          <span>🗓️ 출발일: ${departureDate}</span>
-          <span>👥 ${companionsType} (총 ${companions}명)</span>
-          <span>💰 예산: ${budget.toLocaleString()} ${budgetUnit}</span>
+          <span>📅 출발일: ${departureDate}</span>
+          <span>👥 ${companionsType} (${companions}명)</span>
+          <span>💰 예산: ${formattedBudget}</span>
           <span>🎨 여행 스타일: ${travelStyles.join(", ")}</span>
         </div>
       </section>
@@ -230,15 +199,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ======================================================
-  // 로컬스토리지 데이터 불러오기
+  // 후기 데이터 불러오기
   // ======================================================
   try {
     const saved = JSON.parse(localStorage.getItem("reviews"));
     reviews = Array.isArray(saved) ? saved : saved?.data?.reviews || [];
     renderReviews(reviews);
   } catch (e) {
-    console.error("리뷰 데이터 파싱 오류:", e);
+    console.error("후기 데이터 파싱 오류:", e);
     DOM.reviewsContainer.innerHTML =
-      "<p>리뷰 데이터를 불러오는 중 문제가 발생했습니다.</p>";
+      "<p>후기 데이터를 불러오는 중 문제가 발생했습니다.</p>";
   }
 });

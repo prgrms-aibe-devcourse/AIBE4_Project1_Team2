@@ -1,176 +1,154 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const selectedPlanId = localStorage.getItem("selectedPlanId");
-  const savedPlans = JSON.parse(localStorage.getItem("aiSchedules")) || [];
+  const form = document.getElementById("reviewForm");
+  const stars = document.querySelectorAll(".star");
+  const ratingInput = document.getElementById("reviewRating");
+  const fileInput = document.getElementById("reviewImage");
+  const dropzone = document.getElementById("dropzone");
+  const preview = document.getElementById("preview");
+  const instruction = document.getElementById("dz-instruction");
 
-  // === 일정 요약 정보 ===
-  const plan = savedPlans.find((p) => p.planId === Number(selectedPlanId));
-  if (!plan) {
-    document.getElementById("plan-detail").innerHTML =
-      "<p>⚠️ 일정을 찾을 수 없습니다.</p>";
-    return;
+  let base64Image = "";
+
+  /* ======================================================
+     1. 별점 클릭 (data-value 기반)
+  ====================================================== */
+  stars.forEach((star) => {
+    star.addEventListener("click", (e) => {
+      e.preventDefault();
+      const value = Number(star.dataset.value);
+      ratingInput.value = value;
+
+      // 클릭한 별 이하 모두 활성화
+      stars.forEach((s) =>
+        s.classList.toggle("active", Number(s.dataset.value) <= value)
+      );
+    });
+  });
+
+  /* ======================================================
+     2. 이미지 미리보기 및 리사이즈 (용량 제한)
+  ====================================================== */
+  dropzone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", handleFile);
+
+  dropzone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropzone.style.borderColor = "var(--main-yellow)";
+  });
+
+  dropzone.addEventListener("dragleave", () => {
+    dropzone.style.borderColor = "#ddd";
+  });
+
+  dropzone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) previewFile(file);
+  });
+
+  async function handleFile(e) {
+    const file = e.target.files[0];
+    if (file) await previewFile(file);
   }
 
-  const rec = plan.recommendation;
-  const date = plan.departureDate;
-  const companionType = plan.companionsType;
-  const companions = plan.companions;
-  const styles = plan.travelStyles.join(", ");
-  const budget = plan.budget.toLocaleString() + plan.budgetUnit;
-  const description = rec.destinationDescription;
-  const shortItinerary = rec.itinerary
-    .slice(0, 5)
-    .map((i) => i.activity)
-    .join(", ");
+  async function previewFile(file) {
+    const resizedBase64 = await resizeImage(file);
+    base64Image = resizedBase64;
+    preview.src = resizedBase64;
+    preview.style.display = "block";
+    instruction.style.display = "none";
+  }
 
-  document.getElementById("plan-detail").innerHTML = `
-    <h2>${plan.departure} → <span style="color:#ff7b42">${rec.destinationName}</span></h2>
-    <p>${date} | ${companionType} | 총 ${companions}명 | ${styles}</p>
-    <p>예산 약 ${budget}</p>
-    <p style="margin-top:10px; line-height:1.5;">${description}</p>
-    <p style="margin-top:10px; font-weight:600;">추천일:
-      <span style="font-weight:400;">${shortItinerary}</span>
-    </p>
-  `;
+  /* ======================================================
+     3. 이미지 리사이즈 함수
+     - 800px 기준으로 비율 유지
+     - JPEG 품질 0.7로 압축
+  ====================================================== */
+  function resizeImage(file, maxWidth = 800, maxHeight = 800) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
 
-  // === 별점 ===
-  const starWrap = document.getElementById("star-rating");
-  const starBtns = Array.from(starWrap.querySelectorAll(".star"));
-  const ratingInput = document.getElementById("review-rating");
-  let currentRating = 0;
+          if (width > height && width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+          } else if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+          }
 
-  function paintStars(n) {
-    starBtns.forEach((btn, i) => {
-      btn.classList.toggle("is-filled", i < n);
-      btn.setAttribute("aria-checked", i === n - 1 ? "true" : "false");
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressedBase64 = canvas.toDataURL("image/jpeg", 0.7);
+          resolve(compressedBase64);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
     });
   }
 
-  function setRating(n) {
-    currentRating = n;
-    ratingInput.value = String(n);
-    paintStars(n);
-  }
-
-  starBtns.forEach((btn) => {
-    btn.addEventListener("click", () => setRating(Number(btn.dataset.value)));
-  });
-
-  starWrap.addEventListener("keydown", (e) => {
-    const focusIndex = starBtns.indexOf(document.activeElement);
-    if (e.key === "ArrowRight" || e.key === "ArrowUp") {
-      e.preventDefault();
-      const next = Math.min(
-        focusIndex >= 0 ? focusIndex + 1 : currentRating,
-        4
-      );
-      starBtns[next].focus();
-    } else if (e.key === "ArrowLeft" || e.key === "ArrowDown") {
-      e.preventDefault();
-      const prev = Math.max(
-        focusIndex >= 0 ? focusIndex - 1 : currentRating - 2,
-        0
-      );
-      starBtns[prev].focus();
-    } else if (e.key === " " || e.key === "Enter") {
-      e.preventDefault();
-      const idx = focusIndex >= 0 ? focusIndex : currentRating - 1;
-      setRating(idx + 1);
-    }
-  });
-
-  paintStars(0);
-
-  // === 드래그 앤 드롭 ===
-  const dropzone = document.getElementById("dropzone");
-  const fileInput = document.getElementById("review-image");
-  const previewImg = document.getElementById("preview");
-  const instruction = document.getElementById("dz-instruction");
-  let selectedFile = null;
-
-  function showPreview(file) {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      previewImg.src = reader.result;
-      previewImg.style.display = "block";
-      instruction.style.display = "none";
-    };
-    reader.readAsDataURL(file);
-  }
-
-  function acceptFile(file) {
-    if (!file) return;
-    if (!file.type.startsWith("image/")) {
-      alert("이미지 파일만 업로드할 수 있어요.");
-      return;
-    }
-    if (file.size > 10 * 1024 * 1024) {
-      alert("파일 크기는 최대 10MB까지 가능합니다.");
-      return;
-    }
-    selectedFile = file;
-    showPreview(file);
-  }
-
-  dropzone.addEventListener("click", () => fileInput.click());
-  fileInput.addEventListener("change", (e) => acceptFile(e.target.files[0]));
-
-  ["dragenter", "dragover"].forEach((ev) =>
-    dropzone.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.add("dragover");
-    })
-  );
-
-  ["dragleave", "dragend", "drop"].forEach((ev) =>
-    dropzone.addEventListener(ev, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.remove("dragover");
-    })
-  );
-
-  dropzone.addEventListener("drop", (e) => {
-    const file = e.dataTransfer.files && e.dataTransfer.files[0];
-    acceptFile(file);
-  });
-
-  // === 폼 제출 ===
-  const form = document.getElementById("review-form");
+  /* ======================================================
+     4. 폼 제출 (Base64 JSON 전송)
+  ====================================================== */
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    if (!ratingInput.value) {
-      alert("별점을 선택해주세요.");
+    const title = document.getElementById("reviewTitle").value.trim();
+    const content = document.getElementById("reviewContent").value.trim();
+    const rating = ratingInput.value;
+    const planId = localStorage.getItem("selectedPlanId");
+
+    if (!title || !content || !rating || !base64Image || !planId) {
+      alert("모든 항목을 입력해주세요.");
       return;
     }
 
-    const payload = new FormData();
-    payload.append(
-      "title",
-      document.getElementById("review-title").value.trim()
-    );
-    payload.append(
-      "content",
-      document.getElementById("review-content").value.trim()
-    );
-    payload.append("userKey", document.getElementById("review-userKey").value);
-    payload.append("rating", ratingInput.value);
-    payload.append("planId", selectedPlanId);
-    if (selectedFile) payload.append("image", selectedFile);
-    
-    const response = await fetch(
-        `https://aibe4-project1-team2-m9vr.onrender.com/my-review/save`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      }
-    )
-    const data = await response.json()
+    const reviewData = {
+      planId: Number(planId),
+      rate: Number(rating),
+      title,
+      content,
+      img_path: base64Image,
+    };
 
-    alert(`✅ 리뷰가 등록되었습니다! ${data.message}`);
-    window.location.href = "../reviews/reviews.html";
+    try {
+      const response = await fetch(
+        "https://aibe4-project1-team2-m9vr.onrender.com/my-review/save",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(reviewData),
+        }
+      );
+
+      const result = await response.json();
+      console.log("서버 응답:", result);
+
+      if (!response.ok || !result.success) {
+        alert(result.message || "리뷰 등록 중 오류가 발생했습니다.");
+        console.error("서버 응답:", result);
+        return;
+      }
+
+      alert("리뷰가 성공적으로 등록되었습니다!");
+      localStorage.removeItem("selectedPlanId");
+      form.reset();
+      stars.forEach((s) => s.classList.remove("active"));
+      preview.style.display = "none";
+      instruction.style.display = "block";
+
+      window.location.href = "../my-reviews/my-reviews.html";
+    } catch (error) {
+      console.error("서버 요청 중 오류:", error);
+      alert("서버 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    }
   });
 });
