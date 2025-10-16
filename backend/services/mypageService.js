@@ -1,4 +1,4 @@
-const { supabase } = require("../utils/supabase")
+const { supabase } = require("../utils/supabase");
 
 const mypageService = {
   // 저장된 일정 상세 조회
@@ -9,71 +9,57 @@ const mypageService = {
       return null;
     }
 
-    // userKey는 응답에서 제외 (보안)
-    const { userKey, ...scheduleData } = schedule;
-
-    // hasReview 필드 추가 (이 일정에 후기가 있는지 확인)
-    const hasReview = reviews.some((r) => r.scheduleId === scheduleId);
+    const hasReview = reviews.some((r) => r.planId === scheduleId);
 
     return {
-      ...scheduleData,
+      ...schedule,
       hasReview,
     };
   },
 
   // 일정에 후기 작성
-  createReview: async (reviewData) => {
+  createReview: async (planId, reviewData) => {
     // 일정이 존재하는지 확인
-    const { data: aiData, error: aiError } = await supabase
-    .from('ai').select('*').eq('planId', reviewData.planId)
+    const schedule = schedules.find((s) => s.id === planId);
 
-    if (aiError || !aiData || aiData.length === 0) {
-      console.log("aiError")
+    if (!schedule) {
       return { success: false };
     }
-
-    // const schedule = schedules.find((s) => s.id === scheduleId);
-
-    // if (!schedule) {
-    //   return { success: false };
-    // }
 
     // 새 후기 생성
     const newReview = {
-      userKey: reviewData.userKey,
-      rate: Number(reviewData.rate),
+      id: nextReviewId++,
+      planId: planId,
+      rate: reviewData.rate,
       title: reviewData.title,
       content: reviewData.content,
-      img_path: reviewData.img_path
+      companioonsType: reviewData.companioonsType,
+      travleStyles: reviewData.travleStyles,
+      budget: reviewData.budget,
+      img_path: reviewData.img_path,
+      departure: schedule.departure,
+      arrival: schedule.recommendation?.destinationName || schedule.arrival,
+      createdAt: new Date(),
     };
 
-    const { data: insertData, error: insertError } = await supabase.from('review').insert([newReview]).select('reviewId')
-    if (insertError) {
-      console.error(insertError)
-      return { success: false };
-    }
-
-    const { data: updatedData, error: updatedError } = await supabase.from('ai')
-    .update({ reviewId: insertData[0].reviewId }).eq('planId', scheduleId).select()
-    if (updatedError) {
-      console.error(updatedError)
-      return { success: false };
-    }
+    reviews.push(newReview);
 
     return {
       success: true,
-      reviewId: insertData[0].reviewId,
+      reviewId: newReview.id,
     };
   },
 
   // 후기 삭제
-  deleteReview: async (planId) => {
+  deleteReview: async (reviewId) => {
+    const reviewIndex = reviews.findIndex((r) => r.id === reviewId);
+
+    if (reviewIndex === -1) {
+      return { success: false, statusCode: 404 };
+    }
 
     // 후기 삭제
-    const { error } = await supabase.from('review').delete().eq('planId', planId)
-    if (error) {
-      return { success: false };
-    }
+    reviews.splice(reviewIndex, 1);
 
     return { success: true };
   },

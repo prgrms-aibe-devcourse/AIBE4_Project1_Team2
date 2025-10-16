@@ -4,7 +4,7 @@ const mypageController = {
   // 저장된 일정 상세 조회
   getScheduleDetail: async (req, res) => {
     try {
-      const scheduleId = parseInt(req.params.planId, 10);
+      const scheduleId = parseInt(req.params.scheduleId, 10);
       const schedule = await mypageService.getScheduleDetail(scheduleId);
 
       if (!schedule) {
@@ -34,10 +34,8 @@ const mypageController = {
   // 일정에 후기 작성
   createReview: async (req, res) => {
     try {
-      // const scheduleId = parseInt(req.params.scheduleId, 10);
+      const planId = parseInt(req.body.planId, 10);
       const {
-        planId,
-        userKey,
         rate,
         title,
         content,
@@ -48,7 +46,7 @@ const mypageController = {
       } = req.body;
 
       // 필수 입력값 검증
-      if (!userKey || !rate || !title || !content) {
+      if (!planId || !rate || !title || !content) {
         return res.status(400).json({
           success: false,
           statusCode: 400,
@@ -57,9 +55,7 @@ const mypageController = {
         });
       }
 
-      const result = await mypageService.createReview({
-        planId,
-        userKey,
+      const result = await mypageService.createReview(planId, {
         rate,
         title,
         content,
@@ -84,7 +80,7 @@ const mypageController = {
         message: "일정에 대한 후기가 성공적으로 작성되었습니다.",
         data: {
           reviewId: result.reviewId,
-          scheduleId: scheduleId,
+          planId: planId,
         },
       });
     } catch (error) {
@@ -96,22 +92,12 @@ const mypageController = {
     }
   },
 
-  // 일정 삭제
-  deletePlan: async (req, res) => {
+  // 후기 삭제
+  deleteReview: async (req, res) => {
     try {
-      const planId = parseInt(req.params.planId, 10);
-      // const { userKey } = req.body;
+      const reviewId = parseInt(req.params.reviewId, 10);
 
-      if (!userKey) {
-        return res.status(400).json({
-          success: false,
-          statusCode: 400,
-          message: "비밀번호를 입력해주세요.",
-          data: null,
-        });
-      }
-
-      const result = await mypageService.deleteReview(planId);
+      const result = await mypageService.deleteReview(reviewId);
 
       if (!result.success) {
         if (result.statusCode === 404) {
@@ -119,15 +105,6 @@ const mypageController = {
             success: false,
             statusCode: 404,
             message: "해당 후기를 찾을 수 없습니다.",
-            data: null,
-          });
-        }
-
-        if (result.statusCode === 401) {
-          return res.status(401).json({
-            success: false,
-            statusCode: 401,
-            message: "비밀번호가 일치하지 않아 삭제 권한이 없습니다.",
             data: null,
           });
         }

@@ -4,7 +4,8 @@ const mypageController = require("../controllers/mypageController");
 
 // 후기 작성
 router.post("/save", mypageController.createReview);
-// 일정 삭제
-router.delete("/:planId", mypageController.deletePlan);
+
+// 후기 삭제
+router.delete("/:reviewId", mypageController.deleteReview);
 
 module.exports = router;
