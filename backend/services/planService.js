@@ -13,6 +13,7 @@ const planService = {
       companionsType,
       companions,
       travelStyles,
+      additionalInfo,
       budget,
     } = userInput;
 
@@ -23,6 +24,7 @@ const planService = {
     - 동반 유형: ${companionsType}
     - 여행객 수: ${companions}명
     - 여행 스타일: ${travelStyles}
+    - 추가 요청 사항: ${additionalInfo}
     - 예산: ${budget}원
 
     응답은 반드시 한국어로 해야돼.   
@@ -124,7 +126,7 @@ const planService = {
     }
   },
 
-    // planId로 특정 일정 상세 조회
+  // planId로 특정 일정 상세 조회
   getPlanById: async (planId) => {
     const { data, error } = await supabase
       .from("ai")
@@ -142,7 +144,7 @@ const planService = {
     }
 
     return data;
-  }
+  },
 };
 
 module.exports = planService;
