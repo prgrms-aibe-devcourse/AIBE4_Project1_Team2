@@ -2,22 +2,29 @@
 //  1. 상수 및 DOM 요소 관리
 // ======================================================
 const DOM = {
-  body: document.body,
-  reviewsContainer: document.getElementById("reviews-container"),
-  buttons: {
-    myReviews: document.getElementById("btnMyReviews"),
-    mySchedules: document.getElementById("btnMySchedules"),
-  },
-  modal: {
-    overlay: document.getElementById("reviewModal"),
-    closeButton: document
-      .getElementById("reviewModal")
-      .querySelector(".close-button"),
-    title: document.getElementById("modal-title"),
-    rate: document.getElementById("modal-rate"),
-    image: document.getElementById("modal-image"),
-    content: document.getElementById("modal-content"),
-  },
+    body: document.body,
+    reviewsContainer: document.getElementById("reviews-container"),
+    buttons: {
+        myReviews: document.getElementById("btnMyReviews"),
+        mySchedules: document.getElementById("btnMySchedules"),
+    },
+    search: {
+        keyword: document.getElementById("keyword"),
+        region: document.getElementById("region"),
+        partner: document.getElementById("partner"),
+        type: document.getElementById("type"),
+        minRate: document.getElementById("minRate"),
+    },
+    modal: {
+        overlay: document.getElementById("reviewModal"),
+        closeButton: document
+        .getElementById("reviewModal")
+        .querySelector(".close-button"),
+        title: document.getElementById("modal-title"),
+        rate: document.getElementById("modal-rate"),
+        image: document.getElementById("modal-image"),
+        content: document.getElementById("modal-content"),
+    },
 };
 
 // =============================
@@ -123,12 +130,26 @@ async function handleMyReviewsClick() {
 // ======================================================
 //  서버에서 모든 공개 리뷰를 가져오는 함수
 // ======================================================
-const fetchReviews = async () => {
+const fetchReviews = async (params = {}) => {
   const API_URL = "https://aibe4-project1-team2-m9vr.onrender.com/reviews";
   console.log(`[API 요청] 고정 URL: ${API_URL}`);
 
+  const queryParams = new URLSearchParams();
+    for (const key in params) {
+      // 값이 있는 경우에만 쿼리 파라미터에 추가
+      if (params[key]) {
+        queryParams.append(key, params[key]);
+      }
+    }
+  
+    const queryString = queryParams.toString();
+    // 쿼리 스트링이 있으면 URL에 추가, 없으면 기본 URL 사용
+    const fullUrl = queryString ? `${API_URL}?${queryString}` : API_URL;
+  
+    console.log(`[API 요청] URL: ${fullUrl}`);
+
   try {
-    const response = await fetch(API_URL);
+    const response = await fetch(fullUrl);
 
     // 응답이 정상적이지 않으면 에러 처리
     if (!response.ok) {
@@ -197,6 +218,34 @@ async function handleMyReviewsClick() {
     alert("⚠️ 서버 연결에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
   }
 }
+
+// 검색 버튼 클릭 이벤트 핸들러
+async function handleSearchClick() {
+    const params = {
+      keyword: DOM.search.keyword.value.trim(),
+      region: DOM.search.region.value.trim(),
+      partner: DOM.search.partner.value.trim(),
+      type: DOM.search.type.value.trim(),
+      minRate: DOM.search.minRate.value,
+    };
+  
+    try {
+      DOM.reviewsContainer.innerHTML = `<p class="loading-message">🔍 리뷰를 검색하고 있습니다...</p>`;
+      
+      const result = await fetchReviews(params);
+      const reviewsArray = result.success && Array.isArray(result.data) ? result.data : [];
+      
+      renderReviews(reviewsArray);
+      
+      if (reviewsArray.length === 0) {
+        DOM.reviewsContainer.innerHTML = `<p>🤔 검색 결과에 해당하는 리뷰가 없습니다.</p>`;
+      }
+      
+    } catch (error) {
+      console.error("🚨 검색 중 오류 발생:", error);
+      DOM.reviewsContainer.innerHTML = `<p>검색 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</p>`;
+    }
+  }
 
 // ======================================================
 //  6. 초기화 (DOMContentLoaded)
