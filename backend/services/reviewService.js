@@ -40,7 +40,8 @@ const reviewService = {
 
         return {
           ...reviewData, // reviewId, title, rate, content, img_path
-          plan: planData // planId를 포함한 나머지 일정 정보를 'plan' 객체로 묶음
+          planId: planData.planId, 
+          plan: planData, 
         };
       });
 
