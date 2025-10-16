@@ -217,7 +217,7 @@ button:hover {
 /* 7. 푸터 */
 /* ====================================================== */
 .bottom-bar {
-  background: transparent;
+  background-color: #243763;
   height: clamp(20px, 4vh, 35px);
   flex-shrink: 0;
   display: flex;
@@ -226,8 +226,8 @@ button:hover {
 }
 
 .footer-text {
-  color: var(--main-yellow);
-  font-weight: 500;
+  color: #fff;
+  font-weight: 600;
   font-size: clamp(12px, 1.3vw, 15px);
   text-align: center;
   letter-spacing: 0.5px;
@@ -236,10 +236,11 @@ button:hover {
 /* ====================================================== */
 /* 8. 접근성 향상 */
 /* ====================================================== */
-button:focus,
-a:focus {
-  outline: 3px solid var(--main-yellow);
-  outline-offset: 4px;
+button:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(245, 197, 99, 0.4);
+  transition: box-shadow 0.2s ease;
 }
 
 /* ====================================================== */
@@ -344,7 +345,7 @@ a:focus {
 /* ====================================================== */
 /* 10. 반응형 */
 /* ====================================================== */
-@media (max-width: 960px) {
+@media (max-width: 1100px) {
   .nav-toggle {
     display: flex;
   }
