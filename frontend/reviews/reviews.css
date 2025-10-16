@@ -1,293 +1,366 @@
-/* =================================
-   1. 전역 스타일 및 변수 정의 (Global & Variables)
-   ================================= */
-
-/* :root에서 변수를 선언하면 나중에 색상, 폰트 등을 한 번에 쉽게 바꿀 수 있습니다. */
 :root {
-  --primary-color: #333;
-  --secondary-color: #555;
-  --background-color: #f9fafc;
-  --white-color: #fff;
-  --accent-gradient: linear-gradient(90deg, #ff9b6b, #ffd93d);
-  --accent-color-start: #ff9b6b;
-  --font-family-main: "Noto Sans KR", sans-serif;
-  --border-radius-main: 16px;
-  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --main-yellow: #f5c563;
+  --main-orange: #ff9b6b;
+  --main-yellow-light: #ffd93d;
+  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
+  --transition: all 0.3s ease;
 }
 
+/* ============================= */
+/* 1. 기본 설정 */
+/* ============================= */
 * {
-  box-sizing: border-box; /* 레이아웃 계산을 쉽게 만듭니다. */
-}
-
-html {
-  scroll-behavior: smooth; /* 부드러운 스크롤 효과 */
-}
-
-body {
-  font-family: var(--font-family-main);
-  background-color: var(--background-color);
-  color: var(--primary-color);
   margin: 0;
-  -webkit-font-smoothing: antialiased; /* 폰트를 더 부드럽게 렌더링 */
-  text-rendering: optimizeLegibility;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
+html,
+body {
+  height: 100%;
+  font-family: var(--font-primary);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  overflow: hidden;
+  scroll-behavior: smooth;
 }
 
-/* =================================
-   2. 헤더 (Header)
-   ================================= */
-.header {
+/* ============================= */
+/* 2. 상단 바 */
+/* ============================= */
+.top-bar {
+  background: linear-gradient(135deg, var(--main-yellow) 0%, #f7d082 100%);
+  height: clamp(40px, 8vh, 70px);
+  flex-shrink: 0;
+}
+
+.header-inner {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 50px;
-  flex-wrap: wrap;
-  gap: 20px;
+  height: 100%;
+  padding: 0 30px;
 }
 
-.title-wrap h1 {
-  font-size: 2.2rem;
-  margin: 0 0 8px;
-  color: var(--primary-color);
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-img {
+  width: clamp(120px, 20vw, 180px);
+  height: clamp(40px, 8vh, 60px);
+  object-fit: contain;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: clamp(6px, 1.5vh, 10px) clamp(10px, 2vw, 16px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.logo-link:hover .logo-img {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+.plan-btn {
+  background-color: #fff;
+  color: var(--main-orange);
+  font-weight: 700;
+  border: 2px solid var(--main-orange);
+  border-radius: 30px;
+  padding: 10px 26px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: var(--font-primary);
+  transition: var(--transition);
+}
+
+.plan-btn:hover {
+  color: #000;
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(245, 197, 99, 0.3);
+}
+
+/* ============================= */
+/* 3. 메인 콘텐츠 */
+/* ============================= */
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background: #fff;
+  overflow-y: auto;
+  padding: 40px 20px;
+}
+
+.content-container {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 40px clamp(4vw, 5%, 50px) 50px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+  animation: fadeIn 0.8s ease-out;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 20px;
+}
+
+.main-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 800;
+  color: #333;
+  line-height: 1.5;
 }
 
 .subtitle {
-  color: #777;
-  font-size: 1rem;
-  margin: 0;
+  font-size: clamp(14px, 2vw, 17px);
+  color: #555;
+  margin-top: 8px;
+  line-height: 1.8;
 }
 
+/* ============================= */
+/* 4. 버튼 그룹 */
+/* ============================= */
 .btn-group {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 40px;
 }
 
-/* 버튼 스타일 */
 .btn-main {
-  background: var(--accent-gradient);
-  color: var(--white-color);
+  background: var(--main-orange);
+  color: #fff;
   border: none;
   border-radius: 10px;
   padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  font-weight: 700;
+  transition: var(--transition);
 }
-
 .btn-main:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(255, 155, 107, 0.3);
 }
 
-/* 접근성을 위한 focus 상태 추가 */
-.btn-main:focus-visible {
-  outline: 3px solid var(--accent-color-start);
-  outline-offset: 2px;
-}
-
-/* =================================
-   3. 리뷰 카드 섹션 (Review Cards)
-   ================================= */
-.region-section {
-  margin-bottom: 60px;
-}
-
-.region-section h2 {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  margin-bottom: 25px;
-  border-left: 5px solid var(--accent-color-start);
-  padding-left: 15px;
-}
-
-.review-grid {
+/* ============================= */
+/* 5. 리뷰 카드 리스트 (3열) */
+/* ============================= */
+.review-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 30px;
+  justify-content: start;
+  justify-items: start;
 }
 
 .review-card {
-  background: var(--white-color);
-  border-radius: var(--border-radius-main);
-  overflow: hidden;
-  box-shadow: var(--shadow-light);
-  transition: all 0.25s ease;
-}
-
-.review-card.clickable {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+  padding: 25px;
+  text-align: center;
   cursor: pointer;
+  transition: var(--transition);
+}
+.review-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 25px rgba(255, 155, 107, 0.2);
 }
 
-.review-card.clickable:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-medium);
-}
-
-.card-image img {
+.review-card img {
   width: 100%;
-  height: 200px;
+  border-radius: 12px;
+  margin-bottom: 15px;
   object-fit: cover;
-  transition: transform 0.3s ease; /* 이미지 확대 효과 */
+  height: 200px;
 }
 
-.review-card:hover .card-image img {
-  transform: scale(1.05);
-}
-
-.card-content {
-  padding: 20px 25px;
-}
-
-.card-content h3 {
-  margin: 0 0 10px;
+.review-card h3 {
   font-size: 1.2rem;
-  color: var(--primary-color);
-}
-.card-content p {
-  font-size: 0.95rem;
-  color: var(--secondary-color);
-  line-height: 1.6;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-/* =================================
-   4. 모달 (Modal)
-   ================================= */
+.review-card p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.card-rate {
+  color: var(--main-yellow);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* ============================= */
+/* 6. 모달 (디자인 개선) */
+/* ============================= */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex; /* none -> flex로 변경, 투명도로 제어 */
+  background: rgba(0, 0, 0, 0.45);
+  display: none;
   justify-content: center;
   align-items: center;
-  opacity: 0;
-  visibility: hidden; /* display: none 대신 사용 */
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1000;
+  z-index: 999;
+  backdrop-filter: blur(4px);
 }
 
 .modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
+  display: flex;
 }
 
 .modal-content {
-  background: var(--white-color);
-  border-radius: var(--border-radius-main);
-  padding: 30px 40px;
-  width: 90%;
-  max-width: 700px;
+  background: #fff;
+  border-radius: 22px;
+  width: min(90%, 850px);
   max-height: 90vh;
   overflow-y: auto;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  padding: 40px 50px 50px;
   position: relative;
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-}
-.modal-overlay.active .modal-content {
-  transform: scale(1);
+  animation: fadeInUp 0.4s ease;
 }
 
 .close-button {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 2rem;
-  border: none;
+  top: 16px;
+  right: 24px;
   background: none;
-  color: #aaa;
+  border: none;
+  font-size: 1.8rem;
+  color: #999;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: 0.2s;
 }
 .close-button:hover {
-  color: var(--primary-color);
+  color: #000;
+  transform: scale(1.15);
 }
 
+/* 모달 내용 */
+.review-header {
+  text-align: center;
+  margin-bottom: 25px;
+}
 .review-header h1 {
   font-size: 1.8rem;
-  margin-bottom: 15px;
+  color: #333;
+  font-weight: 800;
+  margin-bottom: 10px;
 }
-
 .star-rating-display {
-  color: #ffd93d;
-  font-size: 1.3rem;
-  margin-bottom: 20px;
+  color: var(--main-yellow);
+  font-size: 1.4rem;
+  font-weight: 700;
 }
 
-.review-body .review-photo {
+.review-photo {
   width: 100%;
-  border-radius: 10px;
-  margin: 10px 0 20px;
+  height: auto;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
 }
 
-.review-body .review-text {
-  font-size: 1.05rem;
+.review-text {
+  background: #fffef6;
+  border-radius: 12px;
+  border: 1.5px solid #ffe6b0;
+  padding: 24px;
+  color: #444;
   line-height: 1.8;
-  color: var(--secondary-color);
+  font-size: 1.05rem;
+  box-shadow: 0 3px 10px rgba(255, 215, 120, 0.15);
 }
 
-body.modal-open {
-  overflow: hidden;
-}
-
-/* =================================
-   5. 모바일 반응형 (Responsive)
-   ================================= */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 25px;
-  }
-
-  .title-wrap h1 {
-    font-size: 1.8rem;
-  }
-
-  .container {
-    margin: 30px auto;
-  }
-
-  .review-grid {
-    gap: 20px;
-  }
-}
-.search-section {
-  background: var(--white-color);
-  padding: 25px 30px;
-  border-radius: var(--border-radius-main);
-  box-shadow: var(--shadow-light);
-  margin-bottom: 40px;
-}
-
-.search-section h2 {
-  margin: 0 0 15px;
-  font-size: 1.3rem;
-  color: var(--primary-color);
-}
-
-.search-form {
+/* 모달 하단 버튼 */
+.bottom-btn {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin-top: 40px;
   flex-wrap: wrap;
-  gap: 10px;
 }
 
-.search-form input {
-  flex: 1;
-  min-width: 160px;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+.btn-back {
+  background: #fff;
+  border: 2px solid #bbb;
+  color: #777;
+  padding: 10px 24px;
+  border-radius: 60px;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+.btn-back:hover {
+  transform: scale(1.05);
+}
+
+.bottom-btn button:nth-child(2) {
+  background: var(--main-orange);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 32px;
+  font-weight: 700;
   font-size: 1rem;
+  transition: var(--transition);
+}
+.bottom-btn button:nth-child(2):hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 155, 107, 0.3);
 }
 
-.search-form button {
-  flex-shrink: 0;
+/* ============================= */
+/* 7. 반응형 */
+/* ============================= */
+@media (max-width: 1024px) {
+  .review-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .review-list {
+    grid-template-columns: 1fr;
+  }
+  .modal-content {
+    padding: 30px 25px;
+  }
+  .review-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================= */
+/* 8. 애니메이션 */
+/* ============================= */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

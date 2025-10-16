@@ -63,43 +63,58 @@
       color="#f5c563"
     />
     <link rel="manifest" href="../public/favicon/site.webmanifest" />
-    
+
     <!-- font / css -->
     <link rel="stylesheet" href="../public/font.css" />
     <link rel="stylesheet" href="./reviews.css" />
   </head>
 
   <body>
-    <section class="search-section">
-      <h2>🔍 후기 검색</h2>
-      <div class="search-form">
-          <input type="text" id="keyword" placeholder="검색 키워드 (예: 맛집)" />
-          <input type="text" id="region" placeholder="지역 (예: 부산)" />
-          <input type="text" id="partner" placeholder="동반자 (예: 친구, 연인)" />
-          <input type="text" id="type" placeholder="여행 타입 (예: 힐링, 맛집)" />
-          <input type="number" id="minRate" min="1" max="5" placeholder="별점 (1~5)" />
-          <button id="btnSearch" class="btn-main">검색</button>
-      </div>
-    </section>
     <div class="container">
-      <header class="header">
-        <div class="title-wrap">
-          <h1>✨ 전국 여행 리뷰 모음</h1>
-          <p class="subtitle">여행자들이 남긴 생생한 후기들을 만나보세요</p>
-        </div>
-        <div class="btn-group">
-          <button id="btnMyReviews" class="btn-main">
-            📝 내가 작성한 후기 전체 보기
-          </button>
-          <button id="btnMyPlans" class="btn-main">
-            📅 내가 저장한 AI 일정 보기
+      <header class="top-bar">
+        <div class="header-inner">
+          <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
+            <img
+              src="../public/logo/logo.png"
+              alt="오늘 트립 로고"
+              class="logo-img"
+            />
+          </a>
+          <button
+            class="plan-btn"
+            onclick="window.location.href='../ai-plan/ai-plan.html'"
+          >
+            일정 추천받기
           </button>
         </div>
       </header>
 
-      <main id="reviews-container"></main>
+      <main class="main-content">
+        <div class="content-container">
+          <div class="header">
+            <h1 class="main-title">여행자들의 후기를 확인하세요!</h1>
+            <p class="subtitle">전국 여행자들의 생생한 이야기를 만나보세요.</p>
+          </div>
+
+          <div class="btn-group">
+            <button id="btnMyReviews" class="btn-main">
+              내가 작성한 후기 보기
+            </button>
+            <button id="btnMyPlans" class="btn-main">
+              내가 저장한 일정 보기
+            </button>
+          </div>
+
+          <section id="reviews-container" class="review-list"></section>
+        </div>
+      </main>
+
+      <footer class="bottom-bar">
+        <p class="footer-text">돔황챠(2조)</p>
+      </footer>
     </div>
 
+    <!-- 상세보기 모달 -->
     <div id="reviewModal" class="modal-overlay">
       <div class="modal-content">
         <button class="close-button">&times;</button>
@@ -108,12 +123,17 @@
           <div id="modal-rate" class="star-rating-display"></div>
         </header>
         <main class="review-body">
-          <img id="modal-image" src="" alt="리뷰 사진" class="review-photo" />
+          <img id="modal-image" src="" alt="리뷰 이미지" class="review-photo" />
           <p id="modal-content" class="review-text"></p>
         </main>
+        <div class="bottom-btn">
+          <button class="btn-back" id="prevPlan">◀</button>
+          <button>일정 확인하기</button>
+          <button class="btn-back" id="nextPlan">▶</button>
+        </div>
       </div>
     </div>
 
-    <script src="reviews.js"></script>
+    <script src="./reviews.js"></script>
   </body>
 </html>
