@@ -7,6 +7,7 @@ const DOM = {
     buttons: {
         myReviews: document.getElementById("btnMyReviews"),
         mySchedules: document.getElementById("btnMySchedules"),
+        search: document.getElementById("btnSearch"),
     },
     search: {
         keyword: document.getElementById("keyword"),
@@ -289,7 +290,53 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 // '내 리뷰 보기' 버튼에 새로운 핸들러 연결
-DOM.buttons.myReviews.addEventListener("click", handleMyReviewsClick);
+// "내가 작성한 후기 전체 보기" 클릭 했을 
+DOM.buttons.myReviews.addEventListener("click", async () => {
+  const userKey = prompt("고유번호를 입력해주세요:");
+
+  if (!userKey) {
+    alert("⚠️ 고유번호를 입력해야 합니다.");
+    return;
+  }
+
+  const API_URL = "https://aibe4-project1-team2-m9vr.onrender.com/reviews/my-reviews";
+
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userKey }),
+    });
+
+    const result = await response.json();
+    console.log("📦 서버 응답 데이터:", result);
+
+    if (!response.ok || !result.data) {
+      alert(result.message || "❌ 일정을 불러오지 못했습니다.");
+      return;
+    }
+
+    // LocalStorage에 저장
+    localStorage.setItem("savedReviews", JSON.stringify(result.data));
+    alert("✅ 저장된 리뷰를 불러왔습니다!");
+
+    window.location.href = "../my-reviews/my-reviews.html";
+  } catch (error) {
+    console.error("🚨 요청 중 오류 발생:", error);
+    alert("⚠️ 서버 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.");
+  }
+});
+
+// 검색 버튼 클릭 이벤트 연결
+DOM.buttons.search.addEventListener("click", handleSearchClick);
+
+Object.values(DOM.search).forEach((input) => {
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            handleSearchClick();
+        }
+    });
+});
 
 // 모달 닫기 이벤트들
 DOM.modal.closeButton.addEventListener("click", closeModal);
