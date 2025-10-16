@@ -146,22 +146,22 @@ body {
 /* 4. 일정 카드 리스트 */
 /* ============================= */
 .plan-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(350px, 1fr));
   gap: 30px;
+  justify-content: center;
+  justify-items: center;
 }
 
 .plan-card {
-  flex: 1 1 calc(45% - 20px);
-  min-width: 380px;
+  width: 100%;
+  max-width: 480px;
   background: #fff;
   border-radius: 18px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
-  transition: var(--transition);
   padding: 30px 24px;
   text-align: center;
-  cursor: pointer;
+  transition: var(--transition);
 }
 
 .plan-card:hover {
@@ -438,6 +438,13 @@ button {
 /* ============================= */
 /* 8. 반응형 */
 /* ============================= */
+@media (max-width: 768px) {
+  .plan-list {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+}
+
 @media (max-width: 600px) {
   .plan-btn {
     width: 100%;
