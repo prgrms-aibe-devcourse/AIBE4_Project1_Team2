@@ -54,7 +54,7 @@ const reviewController = {
   getMyReviews: async (req, res) => {
     try {
       const { userKey } = req.body;
-      const result = await reviewService.getMyReviews(userKey);
+      const result = await reviewService.fetchMyReviews(userKey);
 
       console.log(result);
 
