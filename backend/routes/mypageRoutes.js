@@ -9,6 +9,6 @@ router.get("/:scheduleId", mypageController.getScheduleDetail);
 router.post("/:scheduleId/review", mypageController.createReview);
 
 // 후기 삭제
-router.delete("/my-review/:reviewId", mypageController.deleteReview);
+router.delete("/my-review/:reviewId", mypageController.deletePlan);
 
 module.exports = router;
