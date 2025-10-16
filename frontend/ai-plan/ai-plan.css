@@ -175,26 +175,37 @@
 }
 
 /* ====================================================== */
-/* 8. 로딩 오버레이 */
+/* 8. 로딩 오버레이 (Fade-in/out 적용) */
 /* ====================================================== */
-.loading-overlay {
+#loadingOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.85);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  z-index: 999;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+  font-family: "Pretendard", sans-serif;
+  color: #333;
 }
 
-.loading-spinner {
+#loadingOverlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.spinner {
   width: 60px;
   height: 60px;
-  border: 5px solid #eee;
-  border-top-color: var(--main-orange);
+  border: 6px solid #ddd;
+  border-top-color: #ff9b6b;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 12px;
 }
 
 .loading-text {
@@ -228,5 +239,16 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

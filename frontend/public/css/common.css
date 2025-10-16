@@ -6,8 +6,7 @@
   --main-yellow-light: #ffe89c;
   --main-orange: #ff9b6b;
   --main-orange-light: #ffd0a1;
-  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
-    sans-serif;
+  --font-primary: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
   --transition: all 0.3s ease;
 }
 
