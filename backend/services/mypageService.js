@@ -54,7 +54,7 @@ const mypageService = {
     }
 
     const { data: updatedData, error: updatedError } = await supabase.from('ai')
-    .update({ reviewId: insertData[0].reviewId }).eq('planId', scheduleId).select()
+    .update({ reviewId: insertData[0].reviewId }).eq('planId', reviewData.planId).select()
     if (updatedError) {
       console.error(updatedError)
       return { success: false };
@@ -72,6 +72,7 @@ const mypageService = {
     // 후기 삭제
     const { error } = await supabase.from('review').delete().eq('planId', planId)
     if (error) {
+      console.error(error)
       return { success: false };
     }
 
