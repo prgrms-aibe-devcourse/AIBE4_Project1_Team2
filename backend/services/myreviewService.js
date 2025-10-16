@@ -2,7 +2,7 @@ const { supabase } = require("../utils/supabase");
 
 const myreviewService = {
   saveReview: async (reviewData) => {
-    const { planId, rate, title, content, companionsType, travelStyles, budget, img_path } = reviewData;
+    const { planId, rate, title, content, img_path } = reviewData;
 
     try {
       // 1. 먼저 해당 planId가 존재하는지 확인
@@ -24,7 +24,7 @@ const myreviewService = {
           rate,
           title,
           content,
-          img_path: img_path || null
+          img_path: img_path || null,
         })
         .select("reviewId")
         .single();
@@ -51,9 +51,8 @@ const myreviewService = {
 
       return {
         reviewId: newReviewId,
-        planId: planId
+        planId: planId,
       };
-
     } catch (error) {
       console.error("myreviewService.saveReview 오류:", error);
       throw error;
@@ -106,12 +105,11 @@ const myreviewService = {
       }
 
       return { success: true };
-
     } catch (error) {
       console.error("myreviewService.deleteReview 오류:", error);
       throw error;
     }
-  }
+  },
 };
 
 module.exports = myreviewService;
