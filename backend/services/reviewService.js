@@ -23,9 +23,7 @@ const reviewService = {
         rate,
         content,
         img_path,
-        ai!inner (
-          planId
-        )
+        ai!inner(*)
       `)
       .range(startIndex, startIndex + limit - 1)
       .order('reviewId', { ascending: false });
@@ -35,17 +33,19 @@ const reviewService = {
         throw new Error(error.message);
       }
 
-      const flattenedData = data?.map(review => ({
-        reviewId: review.reviewId,
-        planId: review.ai.planId,
-        title: review.title,
-        rate: review.rate,
-        content: review.content,
-        img_path: review.img_path
-      }));
+      // userKey 같은 민감 정보를 제거하고 데이터 구조를 재구성합니다.
+      const processedData = data?.map(item => {
+        const { ai, ...reviewData } = item;
+        const { userKey, ...planData } = ai; // ai 객체에서 userKey 제거
+
+        return {
+          ...reviewData, // reviewId, title, rate, content, img_path
+          plan: planData // planId를 포함한 나머지 일정 정보를 'plan' 객체로 묶음
+        };
+      });
 
       return {
-        reviews: flattenedData || [],
+        reviews: processedData || [],
         pagination: {
           currentPage: page,
           totalPages: Math.ceil(count / limit),
