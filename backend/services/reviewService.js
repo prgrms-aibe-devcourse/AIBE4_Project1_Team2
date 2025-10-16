@@ -1,4 +1,4 @@
-const { supabase } = require('../utils/supabase');
+const { supabase } = require("../utils/supabase");
 
 const reviewService = {
   // 모든 리뷰 조회
@@ -7,11 +7,11 @@ const reviewService = {
       const startIndex = (page - 1) * limit;
 
       const { count, error: countError } = await supabase
-        .from('review')
-        .select('*', { count: 'exact', head: true });
+        .from("review")
+        .select("*", { count: "exact", head: true });
 
       if (countError) {
-        console.error('리뷰 개수 조회 오류:', countError);
+        console.error("리뷰 개수 조회 오류:", countError);
         throw new Error(countError.message);
       }
 
@@ -29,7 +29,7 @@ const reviewService = {
       .order('reviewId', { ascending: false });
 
       if (error) {
-        console.error('리뷰 조회 오류:', error);
+        console.error("리뷰 조회 오류:", error);
         throw new Error(error.message);
       }
 
@@ -53,28 +53,28 @@ const reviewService = {
         },
       };
     } catch (error) {
-      console.error('getAllReviews 오류:', error);
+      console.error("getAllReviews 오류:", error);
       throw error;
     }
   },
 
   // 특정 리뷰 상세 조회
-  getReviewById: async (id) => {
+  getReviewById: async (reviewId) => {
     try {
       const { data, error } = await supabase
-        .from('review')
-        .select('*')
-        .eq('id', id)
+        .from("review")
+        .select("*")
+        .eq("reviewId", reviewId)
         .single();
 
       if (error) {
-        console.error('리뷰 상세 조회 오류:', error);
+        console.error("리뷰 상세 조회 오류:", error);
         return null;
       }
 
       return data;
     } catch (error) {
-      console.error('getReviewById 오류:', error);
+      console.error("getReviewById 오류:", error);
       return null;
     }
   },
@@ -82,7 +82,7 @@ const reviewService = {
   // 리뷰 검색 (키워드만)
   searchReviews: async ({ keyword }) => {
     try {
-      let query = supabase.from('review').select('*');
+      let query = supabase.from("review").select("*");
 
       if (keyword) {
         query = query.or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`);
@@ -91,16 +91,31 @@ const reviewService = {
       const { data, error } = await query;
 
       if (error) {
-        console.error('리뷰 검색 오류:', error);
+        console.error("리뷰 검색 오류:", error);
         throw new Error(error.message);
       }
 
       return data || [];
     } catch (error) {
-      console.error('searchReviews 오류:', error);
+      console.error("searchReviews 오류:", error);
       throw error;
     }
-  }
+  },
+
+  // 내가 작성한 리뷰조회
+  fetchMyReviews: async (userKey) => {
+    const { data, error } = await supabase
+      .from("review")
+      .select("id, rate, title, content, img_path")
+      .eq("userKey", userKey);
+
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+
+    return data;
+  },
 };
 
 module.exports = reviewService;

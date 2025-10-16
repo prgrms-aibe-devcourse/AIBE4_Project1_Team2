@@ -3,151 +3,239 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>오늘 트립 | O-neul Trip</title>
+    <title>오늘 트립 | AI 추천 일정 생성</title>
+
+    <!-- SEO & OG Meta -->
+    <meta
+      name="description"
+      content="오늘 트립 | AI가 당신에게 맞는 맞춤형 당일치기 여행 일정을 추천해드립니다. 쉽고 빠르게 떠나는 여행 플래너!"
+    />
+    <meta property="og:title" content="오늘 트립 | AI 추천 일정 생성" />
+    <meta
+      property="og:description"
+      content="AI가 추천하는 맞춤 당일치기 여행 일정!"
+    />
+    <meta
+      property="og:image"
+      content="https://prgrms-aibe-devcourse.github.io/AIBE4_Project1_Team2/frontend/public/logo/og-logo.png"
+    />
+    <meta property="og:image:width" content="1100" />
+    <meta property="og:image:height" content="550" />
+    <meta property="og:image:type" content="image/png" />
+
+    <!-- favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../public/favicon/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../public/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="../public/favicon/android-chrome-192x192.png"
+    />
+    <link
+      rel="mask-icon"
+      href="../public/favicon/favicon-32x32.png"
+      color="#f5c563"
+    />
+    <link rel="manifest" href="../public/favicon/site.webmanifest" />
+
+    <!-- font / css -->
+    <link rel="stylesheet" href="../public/font.css" />
     <link rel="stylesheet" href="./ai-plan.css" />
   </head>
+
   <body>
     <div class="container">
-      <div class="header">
-        <h1 class="main-title">✈️ 어디로 떠나볼까요?</h1>
-        <p class="subtitle">
-          세부 정보를 입력하고 맞춤 여행 계획을 받아보세요.
-        </p>
-      </div>
+      <header class="top-bar">
+        <div class="header-inner">
+          <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
+            <img
+              src="../public/logo/logo.png"
+              alt="오늘 트립 로고"
+              class="logo-img"
+            />
+          </a>
 
-      <form id="travelForm" class="travel-form" novalidate>
-        <!-- 출발지 / 출발 날짜 -->
-        <div class="row">
-          <div class="col-md-6">
+          <button
+            class="review-btn"
+            onclick="window.location.href='../reviews/reviews.html'"
+          >
+            여행자들의 후기
+          </button>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="form-container">
+          <div class="header">
+            <h1 class="main-title">어디로 떠나볼까요?</h1>
+            <p class="subtitle">
+              세부 정보를 입력하고 맞춤 여행 일정을 받아보세요.
+            </p>
+          </div>
+
+          <form id="travelForm" class="travel-form" novalidate>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required">출발지 (Departure)</label>
+                  <input
+                    type="text"
+                    id="departure"
+                    name="departure"
+                    class="form-control"
+                    placeholder="예: 서울"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required">
+                    출발 날짜 (Departure Date)
+                  </label>
+                  <input
+                    type="date"
+                    id="departureDate"
+                    name="departureDate"
+                    class="form-control"
+                    required
+                    onclick="this.showPicker()"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required">
+                    누구와 함께하는지 (With Whom)
+                  </label>
+                  <input
+                    type="text"
+                    id="companionsType"
+                    name="companionsType"
+                    class="form-control"
+                    placeholder="예: 가족, 친구, 연인, 혼자"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="form-label required">
+                    동행인 수 (Companions)
+                  </label>
+                  <input
+                    type="number"
+                    id="companions"
+                    name="companions"
+                    class="form-control"
+                    value="1"
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
             <div class="form-group">
-              <label class="form-label required">출발지 (Departure)</label>
+              <label class="form-label">여행 스타일 (Travel Style)</label>
+              <div class="style-buttons" id="styleButtons">
+                <button type="button" class="style-btn" data-style="관광">
+                  #관광
+                </button>
+                <button type="button" class="style-btn" data-style="휴양">
+                  #휴양
+                </button>
+                <button type="button" class="style-btn" data-style="맛집탐방">
+                  #맛집탐방
+                </button>
+                <button type="button" class="style-btn" data-style="액티비티">
+                  #액티비티
+                </button>
+                <button
+                  type="button"
+                  class="style-btn custom-style-btn"
+                  id="customInputBtn"
+                >
+                  #직접입력
+                </button>
+              </div>
               <input
                 type="text"
+                id="customStyleInput"
                 class="form-control"
-                id="departure"
-                placeholder="예: 서울"
-                required
+                placeholder="예: 자연, 힐링, 문화탐방 등"
               />
             </div>
-          </div>
 
-          <div class="col-md-6">
             <div class="form-group">
-              <label class="form-label required">
-                출발 날짜 (Departure Date)
+              <label class="form-label">
+                기타 세부 정보 (Additional Notes)
+              </label>
+              <textarea
+                id="additionalInfo"
+                name="additionalInfo"
+                class="form-control"
+                rows="4"
+                placeholder="특별히 원하는 장소, 일정, 활동 등을 적어주세요."
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">
+                예산 (Budget):
+                <span id="budgetValue">0</span>
+                원
               </label>
               <input
-                type="date"
-                class="form-control"
-                id="departureDate"
-                required
+                type="range"
+                id="budget"
+                name="budget"
+                class="form-range"
+                min="0"
+                max="1000000"
+                step="10000"
+                value="0"
               />
             </div>
-          </div>
-        </div>
 
-        <!-- 누구와 함께 / 동행인 수 -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label required">
-                누구와 함께하는지 (With Whom)
-              </label>
-              <input
-                type="text"
-                class="form-control"
-                id="companionsType"
-                placeholder="예: 가족, 친구, 연인, 혼자"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="col-md-6">
-            <div class="form-group">
-              <label class="form-label required">동행인 수 (Companions)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="companions"
-                value="1"
-                min="1"
-                required
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- 여행 스타일 -->
-        <div class="form-group">
-          <label class="form-label">여행 스타일 (Travel Style)</label>
-          <div class="style-buttons" id="styleButtons">
-            <button type="button" class="style-btn" data-style="휴양">
-              #휴양
+            <button type="submit" class="btn-submit">
+              나를 위한 여행 일정 만들기
             </button>
-            <button type="button" class="style-btn" data-style="액티비티">
-              #액티비티
-            </button>
-            <button type="button" class="style-btn" data-style="관광">
-              #관광
-            </button>
-            <button type="button" class="style-btn" data-style="맛집탐방">
-              #맛집탐방
-            </button>
-            <button
-              type="button"
-              class="style-btn custom-style-btn"
-              id="customInputBtn"
-            >
-              #직접입력
-            </button>
-          </div>
-
-          <input
-            type="text"
-            id="customStyleInput"
-            class="form-control"
-            placeholder="예: 자연, 힐링, 문화탐방 등"
-            style="display: none; margin-top: 15px"
-          />
+          </form>
         </div>
+      </main>
 
-        <!-- 기타 세부 정보 -->
-        <div class="form-group">
-          <label class="form-label">기타 세부 정보 (Additional Notes)</label>
-          <textarea
-            class="form-control"
-            id="additionalInfo"
-            rows="4"
-            placeholder="특별히 원하는 장소, 일정, 활동 등이 있다면 적어주세요."
-          ></textarea>
-        </div>
-
-        <!-- 예산 -->
-        <div class="form-group">
-          <label class="form-label">
-            적정 예산 (Budget):
-            <span id="budgetValue">0</span>
-            원
-          </label>
-          <input
-            type="range"
-            class="form-range"
-            id="budget"
-            min="0"
-            max="1000000"
-            step="10000"
-            value="0"
-          />
-        </div>
-
-        <button type="submit" class="btn-submit">
-          나만의 여행 계획 만들기
-        </button>
-      </form>
+      <footer class="bottom-bar">
+        <p class="footer-text">돔황챠(2조)</p>
+      </footer>
     </div>
 
-    <!-- 로딩 오버레이 -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none">
       <div class="loading-spinner"></div>
       <p class="loading-text">
@@ -155,6 +243,6 @@
       </p>
     </div>
 
-    <script src="./ai-plan.js"></script>
+    <script src="./ai-plan.js" defer></script>
   </body>
 </html>
