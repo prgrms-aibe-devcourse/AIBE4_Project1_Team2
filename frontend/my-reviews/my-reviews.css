@@ -1,306 +1,522 @@
-/* 기본 & 레이아웃 */
-body {
-    font-family: 'Noto Sans KR', sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-    margin: 0;
+/* ========================================
+ Variables & Global Styles (변수 및 전역 스타일)
+========================================
+*/
+:root {
+  /* Color Palette */
+  --main-yellow: #f5c563;
+  --main-orange: #ff9b6b;
+  --main-yellow-light: #ffd93d;
+  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
+    sans-serif;
+  --primary-color: #3498db;  /* 주요 색상 (버튼, 활성 상태 등) - 추가 */
+  --secondary-color: #2ecc71; /* 보조 색상 (성공, 제출 버튼 등) - 추가 */
+  --error-color: #e74c3c;     /* 에러 색상 (삭제 버튼 등) - 추가 */
+  --white-color: #ffffff;
+  --light-gray-color: #e0e0e0; /* 연한 회색 (경계선 등) */
+  --dark-gray-color: #666666;  /* 어두운 회색 (부제목, 설명 등) */
+  --text-color: #333333;       /* 기본 텍스트 색상 */
+  
+  /* Style Helpers */
+  --border-radius: 12px;
+  --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --transition: all 0.3s ease;
 }
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  background: #f8f9fa;
+  color: var(--text-color);
+  overflow: hidden; /* body 자체 스크롤은 숨김 */
+}
+
+/* 스크롤바가 생겼을 때 모달창이 흔들리는 현상 방지 */
+body.modal-open {
+  overflow: hidden;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* ========================================
+ #1. Layout (레이아웃)
+========================================
+*/
 .container {
-    max-width: 1000px;
-    margin: 20px auto;
-    background-color: #fff;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 30px;
-}
-header {
-    text-align: right;
-    margin-bottom: 20px;
-}
-.my-page-link {
-    text-decoration: none;
-    color: #6c757d;
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* 화면 전체 높이를 차지하도록 설정 */
 }
 
-/* ✨ 페이지 제목 스타일*/
+/* 상단바 */
+.top-bar {
+  background: linear-gradient(135deg, var(--main-yellow) 0%, #f7d082 100%);
+  height: clamp(50px, 8vh, 70px);
+  flex-shrink: 0; /* 높이가 줄어들지 않도록 고정 */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 로고 */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-img {
+  width: clamp(120px, 20vw, 160px);
+  height: clamp(35px, 6vh, 50px);
+  object-fit: contain;
+  background-color: var(--white-color);
+  border-radius: var(--border-radius);
+  padding: 8px 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+  transition: var(--transition);
+}
+
+.logo-link:hover .logo-img {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* 전체 후기 보기 버튼 */
+.plan-btn {
+  background-color: var(--white-color);
+  color: var(--main-orange);
+  font-weight: 700;
+  border: 2px solid var(--main-orange);
+  border-radius: 30px;
+  padding: 8px 24px;
+  font-size: 0.95rem;
+  transition: var(--transition);
+}
+
+.plan-btn:hover {
+  color: var(--white-color);
+  background-color: var(--main-orange);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(255, 155, 107, 0.4);
+}
+
+/* 메인 콘텐츠 영역 */
+.main-content {
+  flex: 1; /* 상단바, 하단바를 제외한 모든 공간을 차지 */
+  overflow-y: auto; /* 내용이 많아지면 이 영역만 스크롤됨 */
+  padding: 40px 20px;
+}
+
+.content-container {
+  background: var(--white-color);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px;
+  box-shadow: var(--box-shadow);
+}
+
 .page-title {
-    border-bottom: 1px solid #e9ecef;
-    margin-bottom: 30px;
-    padding-bottom: 15px;
-}
-.page-title h2 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: #343a40;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid var(--light-gray-color);
+  text-align: center;
 }
 
-/* 탭 콘텐츠 공통 스타일 (구조 유지를 위해 남겨둠) */
-.tab-content.active {
-    display: block;
+.page-title h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-color);
 }
 
-/* '내 리뷰' 페이지 스타일 */
+/* 하단바 */
+.bottom-bar {
+  background-color: #343a40;
+  color: var(--white-color);
+  padding: 15px 0;
+  text-align: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ========================================
+ #2. Review List (리뷰 목록)
+========================================
+*/
+.review-list {
+    display: flex; 
+    flex-wrap: wrap; 
+    gap: 25px;
+}
+
 .review-item {
-    display: flex;
-    align-items: center;
-    background-color: #ffffff; /* 배경과 구분되도록 흰색으로 변경 */
-    border: 1px solid #e9ecef; /* 얇은 테두리 추가 */
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-}
-.review-photo {
-    width: 120px;
-    height: 120px;
-    border-radius: 8px;
-    object-fit: cover;
-    margin-right: 20px;
-}
-.review-details {
-    flex-grow: 1; 
-    padding-right: 20px;
-}
-.review-details h3 { margin: 0 0 5px 0; }
-.review-details p { margin: 0 0 10px 0; color: #6c757d; }
-
-/* 버튼 그룹 스타일 */
-.reviewBtn-group {
-    width: 70px;
+    flex: 1 1 calc(50% - 13px);
+    min-width: 280px;
+    background-color: var(--white-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    margin-left: 15px;
-    align-self: flex-end; /* 오른쪽 하단 정렬 */
-}
-.review-btn:hover {
-    background-color: #ced4da; 
-}
-/* 수정하기 버튼 */
-.reviewModifyBtn {
-    background-color: #dee2e6;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 0.8rem;
-    cursor: pointer;
-}
-/* 삭제하기 버튼 */
-.deleteModifyBtn {
-    background-color: #dee2e6;
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 5px 12px;
-    font-size: 0.8rem;
-    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* 페이지네이션 */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 40px;
-    gap: 10px;
-}
-.pagination a {
-    text-decoration: none;
-    color: #6c757d;
-    padding: 5px 10px;
-}
-.pagination a.active {
-    font-weight: 700;
-    color: #fff;
-    background-color: #495057;
-    border-radius: 4px;
-}
-
-/* 클릭 가능한 요소에 대한 스타일 */
 .review-item.clickable {
-    cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-.review-item.clickable:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
-/* --- 모달 공통 스타일 --- */
+.review-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.review-photo {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.review-details {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.review-details h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.review-details p {
+  font-size: 0.9rem;
+  color: var(--dark-gray-color);
+  margin-bottom: 15px;
+}
+
+.star-rating-display {
+  color: #f39c12;
+  font-size: 1.1rem;
+  margin-top: auto; /* 별점을 항상 카드 하단에 위치시킴 */
+}
+
+/* 수정/삭제 버튼 그룹 */
+.reviewBtn-group {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px 20px; /* details 패딩과 맞춤 */
+}
+
+.reviewModifyBtn,
+.deleteModifyBtn {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.reviewModifyBtn {
+  background-color: #f5c563;
+  color: #fff;
+}
+.reviewModifyBtn:hover {
+  transform: scale(1.05);
+}
+
+.deleteModifyBtn {
+  background-color: #fff;
+  border: 2px solid #d9534f;
+  color:#d9534f;
+}
+.deleteModifyBtn:hover {
+  transform: scale(1.05);
+}
+
+.no-reviews {
+  text-align: center;
+  padding: 50px;
+  color: var(--dark-gray-color);
+  grid-column: 1 / -1; /* grid의 모든 열을 차지 */
+  font-size: 1.1rem;
+}
+
+/* ========================================
+ #3. Modal (모달)
+========================================
+*/
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+
 .modal-overlay.active {
-    display: flex;
-    opacity: 1;
+  opacity: 1;
+  visibility: visible;
 }
+
 .modal-content {
-    background-color: #ffffff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 720px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-    transform: scale(0.9);
-    transition: transform 0.3s ease;
+  background-color: var(--white-color);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(-20px) scale(0.95);
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
+
 .modal-overlay.active .modal-content {
-    transform: scale(1);
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
+
 .close-button {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: none;
-    border: none;
-    font-size: 2rem;
-    color: #aaa;
-    cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--dark-gray-color);
+  background: none;
+  border: none;
+  line-height: 1;
 }
-body.modal-open {
-    overflow: hidden;
+.close-button:hover {
+  color: var(--text-color);
 }
 
-/* --- 리뷰 모달 내부 콘텐츠 스타일 --- */
-.review-header h1 { font-size: 1.8rem; margin-bottom: 15px; text-align: left; }
-.author-info { display: flex; align-items: center; margin-bottom: 15px; }
-.avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;}
-.star-rating-display { font-size: 1.2rem; color: #ffc700; }
-.review-body .review-photo { width: 100%; border-radius: 8px; margin: 20px 0; }
-.review-body .review-text { font-size: 1rem; line-height: 1.7; white-space: pre-wrap; }
+/* 3-1. 리뷰 상세 보기 모달 */
+.review-header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--light-gray-color);
+}
+.review-header h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+.author-info {
+  font-size: 14px;
+  color: var(--dark-gray-color);
+  margin-bottom: 10px;
+}
+.review-rating {
+  font-size: 20px;
+  color: #f39c12;
+}
 
-/* --- 리뷰 수정 폼 스타일 --- */
-.review-form-container {
-    width: 100%;
+.review-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
-.review-form-container h1 { font-size: 1.8rem; text-align: center; margin-bottom: 20px; }
-.form-group { margin-bottom: 20px; }
-.form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
-input[type="text"], input[type="password"], textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    box-sizing: border-box;
+.review-photo-large {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: var(--border-radius);
+  background-color: #f9f9f9;
 }
-textarea { resize: vertical; }
+.review-text {
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-wrap; /* 줄바꿈 및 공백 유지 */
+}
+
+/* 3-2. 리뷰 수정 모달 (폼) */
+.review-form-container h1 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  text-align: center;
+}
+.form-group {
+  margin-bottom: 20px;
+}
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--light-gray-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-group input[type="text"]:focus,
+.form-group input[type="password"]:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+/* 별점 */
 .star-rating {
-    display: flex;
-    flex-direction: row-reverse; /* 아이템 순서를 거꾸로 배치 */
-    justify-content: flex-end; /* 오른쪽부터 채워지도록 */
+  font-size: 28px;
+  color: var(--light-gray-color);
+}
+.star-rating > span {
+  cursor: pointer;
+}
+.star-rating > span.selected,
+.star-rating > span:hover,
+.star-rating > span:hover ~ span {
+  color: #f39c12;
 }
 
-/* 실제 라디오 버튼은 숨김 */
-.star-rating input[type="radio"] {
-    display: none;
-}
-
-/* 별 모양 라벨 */
-.star-rating {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-}
-.star-rating input[type="radio"] { display: none; }
-.star-rating label { font-size: 2rem; color: #ddd; cursor: pointer; transition: color 0.2s; }
-.star-rating label:hover,
-.star-rating label:hover ~ label { color: #ffc107; }
-.star-rating input[type="radio"]:checked ~ label { color: #ffc107; }
-
-/* --- 드래그 앤 드롭 영역 스타일링 --- */
+/* 이미지 업로드 */
 .drop-zone {
-    position: relative; /* 자식 요소의 위치 기준이 됨 */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 150px;
-    border: 2px dashed #ccc;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s, border-color 0.2s;
-}
-.drop-zone:hover {
-    background-color: #f9f9f9;
+  border: 2px dashed var(--light-gray-color);
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
 }
 .drop-zone.drag-over {
-    background-color: #f0f8ff;
-    border-color: #007bff;
+  border-color: var(--primary-color);
+  background-color: #f0f8ff;
 }
 .drop-zone-prompt {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: #888;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: var(--dark-gray-color);
 }
-
 .drop-zone-prompt svg {
-    width: 40px;
-    height: 40px;
-    margin-bottom: 10px;
-    color: #aaa;
+  color: var(--primary-color);
 }
-
-.drop-zone-prompt span {
-    font-size: 1rem;
-}
-
-/* 드롭 영역에 마우스를 올렸을 때 */
-.drop-zone:hover {
-    border-color: #007bff;
-    background-color: #f4f8ff;
-}
-.drop-zone:hover .drop-zone-prompt {
-    color: #007bff;
-}
-.drop-zone:hover svg {
-    color: #007bff;
-}
-/* 이미지 미리보기 영역 */
 .image-preview {
-    position: absolute; /* drop-zone 내부에 꽉 차도록 설정 */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px; /* 테두리와 이미지 사이에 약간의 여백 */
-    box-sizing: border-box;
+  margin-top: 15px;
 }
-/* 미리보기 이미지 스타일 */
 .image-preview img {
-    max-width: 100%;
-    max-height: 100%;
-    border-radius: 5px;
-    object-fit: cover; /* 이미지가 영역에 꽉 차도록 비율 유지하며 자르기 */
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 8px;
 }
 
-/* 제출 버튼 */
-.review-form-container button[type="submit"] {
-    width: 100%;
-    padding: 12px;
-    background-color: #0d6efd;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
+.submit-btn {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--main-yellow);
+  color: var(--white-color);
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.submit-btn:hover {
+  background-color: var(--main-orange);
+}
+
+/* ========================================
+ #4. Pagination (페이지네이션)
+========================================
+*/
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  gap: 8px;
+}
+
+.pagination button {
+  background-color: var(--white-color);
+  border: 1px solid var(--light-gray-color);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination button:hover {
+  background-color: #e9ecef;
+}
+
+.pagination button.active {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-color: var(--primary-color);
+}
+
+/* ========================================
+ #5. Responsive (반응형)
+========================================
+*/
+@media (max-width: 768px) {
+  .content-container {
+    padding: 25px;
+  }
+
+  .page-title h1 {
+    font-size: 24px;
+  }
+  
+  .review-list {
+    /* 모바일에서는 1열로 보이도록 설정 */
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .modal-content {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .review-form-container h1 {
+    font-size: 20px;
+  }
 }

@@ -8,12 +8,7 @@ const reviewController = {
       const limit = parseInt(req.query.limit) || 10;
       const result = await reviewService.getAllReviews(page, limit);
 
-      let { data, error } = await supabase.from('review').select('*')
-      if (error) {
-        handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
-      }
-
-      handleSuccess(res, 200, "성공적으로 조회되었습니다.", data);
+      handleSuccess(res, 200, "성공적으로 조회되었습니다.", result);
     } catch (error) {
       handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
     }
@@ -21,7 +16,7 @@ const reviewController = {
 
   getReviewById: async (req, res) => {
     try {
-      const reviewId = parseInt(req.params.id, 10);
+      const reviewId = parseInt(req.params.planId, 10);
       const review = await reviewService.getReviewById(reviewId);
 
       if (!review) {
@@ -42,12 +37,14 @@ const reviewController = {
   // 리뷰 검색
   searchReviews: async (req, res) => {
     try {
-      const { departure, arrival, keyword } = req.query;
-      const reviews = await reviewService.searchReviews({
-        departure,
-        arrival,
-        keyword,
-      });
+      // req.query에서 minRate를 숫자로 변환합니다.
+      const filters = {
+        ...req.query,
+        minRate: req.query.minRate ? parseInt(req.query.minRate, 10) : undefined,
+      };
+
+      // 변환된 필터를 서비스로 전달합니다.
+      const reviews = await reviewService.searchReviews(filters);
 
       handleSuccess(res, 200, "성공적으로 조회되었습니다.", reviews);
     } catch (error) {
@@ -59,7 +56,7 @@ const reviewController = {
   getMyReviews: async (req, res) => {
     try {
       const { userKey } = req.body;
-      const result = await reviewService.getMyReviews(userKey);
+      const result = await reviewService.fetchMyReviews(userKey);
 
       console.log(result);
 

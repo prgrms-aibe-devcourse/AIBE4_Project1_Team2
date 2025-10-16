@@ -1,291 +1,304 @@
-// [초기화: 페이지 로딩이 완료되면 실행]햣
 document.addEventListener('DOMContentLoaded', () => {
-    renderMyReviews();
-    setupEventListeners();
-});
-
-
-// [데이터 렌더링 (화면 그리기)]
-async function renderMyReviews() {
-    const listContainer = document.querySelector('.review-list');
-    listContainer.innerHTML = '';
-
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+    // ----------------------------------------
+    // #1. 전역 변수 및 DOM 요소 선택
+    // ----------------------------------------
+    const reviewList = document.querySelector('.review-list');
     
-    try {
-        // API 경로를 '/my-reviews' -> '/reviews'로 변경
-        const res = await fetch(`${BASE_URL}/reviews`); 
-        
-        if (!res.ok) {
-            console.error(`Fetch failed with status: ${res.status}`);
-            throw new Error(`리뷰를 불러오는 데 실패했습니다. (상태 코드: ${res.status})`);
-        }
+    // 모달 요소들
+    const reviewModal = document.getElementById('reviewModal');
+    const modalReviewTitle = document.getElementById('modalReviewTitle');
+    const modalReviewAuthor = document.getElementById('modalReviewAuthor');
+    const modalReviewRating = document.getElementById('modalReviewRating');
+    const modalReviewPhoto = document.getElementById('modalReviewPhoto');
+    const modalReviewContent = document.getElementById('modalReviewContent');
 
-        const result = await res.json();
-        const reviews = result.data;
+    const modifyModal = document.getElementById('modifyModal');
+    const modifyForm = document.getElementById('modifyForm');
+    const modifyReviewId = document.getElementById('modifyReviewId');
+    const modifyTitle = document.getElementById('modifyTitle');
+    const modifyRatingContainer = document.getElementById('modifyRating');
+    const modifyContent = document.getElementById('modifyContent');
+    const modifyPassword = document.getElementById('modifyPassword');
+    
+    const closeButtons = document.querySelectorAll('.close-button');
+    const modalOverlays = document.querySelectorAll('.modal-overlay');
+    
+    // API 기본 URL (실제 운영 서버 주소로 확인 필요)
+    const API_BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com'; 
 
-        if (reviews.length === 0) {
-            listContainer.innerHTML = '<p class="no-data-message">아직 작성된 리뷰가 없습니다. 리뷰를 작성해 보세요!😊</p>';
+    // 전역 데이터 저장소
+    let myReviewsData = [];
+    // 수정 시 최종 별점 값을 가져오기 위한 함수 스코프 변수
+    let getFinalRating = null;
+
+    // ----------------------------------------
+    // #2. 데이터 화면 렌더링 (Data Rendering)
+    // ----------------------------------------
+    const renderReviews = (reviews) => {
+        reviewList.innerHTML = '';
+        if (!reviews || reviews.length === 0) {
+            reviewList.innerHTML = '<p class="no-reviews">작성한 리뷰가 없습니다.</p>';
             return;
         }
-        
-        reviews.forEach((review, index) => {
-            const reviewItem = document.createElement('div');
-            reviewItem.className = 'review-item clickable';
-            reviewItem.dataset.type = 'review';
-            reviewItem.dataset.index = index;
-            reviewItem.dataset.reviewId = review.id;
-            reviewItem.innerHTML = `
-                <img src="${review.img_path}" alt="${review.title}" class="review-photo">
+
+        reviews.forEach(item => {
+            const review = item.review;
+            const card = document.createElement('div');
+            card.className = 'review-item clickable'; 
+            card.dataset.reviewId = review.reviewId;
+
+            let stars = '★'.repeat(review.rate) + '☆'.repeat(5 - review.rate);
+            
+            card.innerHTML = `
+                <img src="${review.img_path || 'default-image.jpg'}" alt="${review.title}" class="review-photo">
                 <div class="review-details">
-                    <h3>${review.title} ${generateStars(review.rate)}</h3>
-                    <p>${review.content.substring(0, 80)}...</p> 
+                    <h3>${review.title}</h3>
+                    <p>${item.departure} → ${item.destinationName}</p>
+                    <div class="star-rating-display">${stars}</div>
                 </div>
                 <div class="reviewBtn-group">
-                    <button class="reviewModifyBtn" data-type="review" data-index="${index}" data-review-id="${review.id}">수정하기</button>
-                    <button class="deleteModifyBtn" data-type="review" data-index="${index}" data-review-id="${review.id}">삭제하기</button>
+                    <button class="reviewModifyBtn" data-review-id="${review.reviewId}">수정</button>
+                    <button class="deleteModifyBtn" data-review-id="${review.reviewId}">삭제</button>
                 </div>
             `;
-            listContainer.appendChild(reviewItem);
+            reviewList.appendChild(card);
         });
-
-    } catch (error) {
-        console.error('리뷰 로딩 중 오류 발생:', error);
-        listContainer.innerHTML = `<p class="error-message">리뷰를 불러오는 데 문제가 발생했습니다. 서버 상태를 확인해주세요. (에러: ${error.message})</p>`;
-    }
-}
-
-
-// [이벤트 리스너 및 기능별 함수들]
-function setupEventListeners() {
-    const contentArea = document.querySelector('.content-area');
-    
-    contentArea.addEventListener('click', (event) => {
-        const target = event.target;
-
-        if (target.matches('.reviewModifyBtn')) {
-            event.stopPropagation();
-            handleModify(target);
-            return;
-        }
-
-        if (target.matches('.deleteModifyBtn')) {
-            event.stopPropagation();
-            handleDelete(target);
-            return;
-        }
-
-        const clickableItem = target.closest('.clickable');
-        if (clickableItem) {
-            handleDetailView(clickableItem);
-        }
-    });
-
-    // 모달 닫기 버튼 이벤트
-    // 1. 페이지에 있는 모든 모달을 선택합니다.
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-        // 1-1. 각 모달의 배경 클릭 시 닫기 이벤트 추가
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                closeModal(modal);
-            }
-        });
-
-        // 1-2. 각 모달 안의 닫기 버튼(X)에 클릭 이벤트 추가
-        const closeButton = modal.querySelector('.close-button');
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                closeModal(modal);
-            });
-        }
-    });
-
-    // 2. Esc 키를 누르면 현재 열려있는 모달을 닫습니다.
-    window.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            // 현재 활성화된(active) 모달을 찾습니다.
-            const activeModal = document.querySelector('.modal-overlay.active');
-            if (activeModal) {
-                closeModal(activeModal);
-            }
-        }
-    });
-}
-
-async function handleModify(button) {
-    const reviewId = button.dataset.reviewId;
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
-    
-    // 로딩 상태를 표시하여 사용자에게 대기 중임을 알림
-    console.log(`리뷰 ID ${reviewId}의 상세 정보를 불러오는 중...`);
-
-    try {
-        // 1. API에 GET 요청 보내기. 리뷰 ID를 URL에 포함합니다.
-        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`);
-        
-        // 2. 응답이 성공적인지 확인
-        if (!res.ok) {
-            throw new Error(`상세 리뷰를 불러오는 데 실패했습니다. (상태 코드: ${res.status})`);
-        }
-
-        // 3. JSON 응답 데이터를 파싱(Parsing)
-        const result = await res.json();
-        const dataToModify = result.data; // 서버 응답에서 'data' 필드에 상세 정보가 있음
-        
-        // 4. 받아온 데이터로 수정 폼 모달 채우기
-        if (dataToModify) {
-            populateModifyForm(dataToModify);
-            // 수정 폼 모달 열기
-            openModal(document.getElementById('modifyModal'));
-        } else {
-            throw new Error('데이터가 존재하지 않습니다.');
-        }
-
-    } catch (error) {
-        console.error('리뷰 수정 데이터 로딩 중 오류 발생:', error);
-        alert('리뷰 수정 정보를 불러오는 데 실패했습니다. 다시 시도해주세요.');
-    }
-}
-
-// 수정 폼 모달에 기존 데이터를 채우는 함수
-function populateModifyForm(data) {
-    document.getElementById('modifyReviewId').value = data.id; // 수정할 리뷰의 id 저장
-    document.getElementById('modifyTitle').value = data.title;
-    document.getElementById('modifyContent').textContent = data.content;
-
-    // 별점 채우기
-    const ratingContainer = document.getElementById('modifyRating');
-    ratingContainer.innerHTML = ''; // 기존 별점 비우기
-    for (let i = 5; i >= 1; i--) {
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.id = `modify-${i}-stars`;
-        input.name = 'modifyRating';
-        input.value = i;
-        if (i === data.rate) {
-            input.checked = true;
-        }
-        
-        const label = document.createElement('label');
-        label.htmlFor = `modify-${i}-stars`;
-        label.textContent = '★';
-        
-        ratingContainer.appendChild(input);
-        ratingContainer.appendChild(label);
-    }
-}
-
-// 수정 폼 제출 처리 함수 
-async function handleModifySubmit(event) {
-    event.preventDefault();
-
-    const reviewId = document.getElementById('modifyReviewId').value;
-    const newTitle = document.getElementById('modifyTitle').value;
-    const newContent = document.getElementById('modifyContent').value;
-    const checkedRating = document.querySelector('input[name="modifyRating"]:checked');
-    const newRating = checkedRating ? parseInt(checkedRating.value, 10) : 0;
-
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
-
-    const updatedData = {
-        title: newTitle,
-        content: newContent,
-        rate: newRating,
-        reviewId: parseInt(reviewId) // API에 필요한 ID를 명시적으로 포함
     };
 
-    try {
-        const res = await fetch(`${BASE_URL}/mypage/1/review`, { // planId는 임시로 1로 설정
-            method: 'POST', // HTTP 메서드를 'POST'로 지정
-            headers: {
-                'Content-Type': 'application/json', // 보내는 데이터가 JSON임을 명시
-            },
-            body: JSON.stringify(updatedData), // 자바스크립트 객체를 JSON 문자열로 변환
+    // ----------------------------------------
+    // #3. 내가 작성한 후기 조회 (Read Reviews)
+    // ----------------------------------------
+    const fetchMyReviews = async () => {
+        // 실제 서버 API 호출 로직
+        const headers = {
+            'Content-Type': 'application/json',
+            // TODO: 실제 로그인 기능 구현 시, 토큰 추가 필요
+            // 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
+        };
+
+        try {
+            // サーバーの `reviews/my-reviews` エンドポイントに POST リクエストを送信します。
+            const response = await fetch(`${API_BASE_URL}/reviews/my-reviews`, {
+                method: 'POST', // API 명세에 따라 GET 또는 POST로 변경
+                headers: headers,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (result.success) {
+                myReviewsData = result.data; // 서버에서 받은 데이터 저장
+                renderReviews(myReviewsData);
+            } else {
+                alert(result.message || '리뷰를 불러오는 데 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('리뷰 조회 중 오류 발생:', error);
+            alert('리뷰를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            // 에러 발생 시 샘플 UI를 보여주지 않도록 목록을 비워줍니다.
+            reviewList.innerHTML = '<p class="no-reviews">리뷰를 불러올 수 없습니다.</p>';
+        }
+    };
+
+    // =======================================================
+    // #4. [수정] 수정 모달을 위한 별점 생성 및 이벤트 처리 함수
+    // =======================================================
+    const createStarRating = (container, currentRating) => {
+        container.innerHTML = '';
+        let newRating = currentRating;
+
+        for (let i = 1; i <= 5; i++) {
+            const star = document.createElement('span');
+            star.innerHTML = '★';
+            star.dataset.value = i;
+            if (i <= currentRating) {
+                star.classList.add('selected');
+            }
+            container.appendChild(star);
+        }
+
+        container.addEventListener('click', (e) => {
+            if (e.target.tagName === 'SPAN') {
+                newRating = parseInt(e.target.dataset.value, 10);
+                const stars = container.querySelectorAll('span');
+                stars.forEach(star => {
+                    star.classList.toggle('selected', parseInt(star.dataset.value, 10) <= newRating);
+                });
+            }
         });
+        
+        return () => newRating; // 현재 선택된 별점 값을 반환하는 함수를 리턴
+    };
 
-        if (!res.ok) {
-            throw new Error('리뷰 수정에 실패했습니다.');
+    // ----------------------------------------
+    // #5. 내가 작성한 후기 수정 (Update Review)
+    // ----------------------------------------
+    const handleModifySubmit = async (event) => {
+        event.preventDefault();
+        
+        const reviewId = modifyReviewId.value;
+        const finalRate = getFinalRating ? getFinalRating() : null; // 최종 별점 값 가져오기
+
+        if (finalRate === null) {
+            alert('별점을 선택해주세요.');
+            return;
         }
 
-        alert('리뷰가 성공적으로 수정되었습니다.');
-        closeModal(document.getElementById('modifyModal'));
-        renderMyReviews();
-    } catch (error) {
-        console.error('리뷰 수정 중 오류 발생:', error);
-        alert('리뷰 수정 중 문제가 발생했습니다.');
-    }
-}
+        const updatedData = new FormData();
+        updatedData.append('title', modifyTitle.value);
+        updatedData.append('content', modifyContent.value);
+        updatedData.append('rate', finalRate);
+        updatedData.append('password', modifyPassword.value);
+        // TODO: 이미지 파일이 있다면 추가 -> updatedData.append('image', fileInput.files[0]);
 
-async function handleDelete(button) {
-    const reviewId = button.dataset.reviewId;
-    const isConfirmed = confirm('정말로 이 리뷰를 삭제하시겠습니까?');
-    if (!isConfirmed) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+                method: 'PUT', // 또는 'PATCH'
+                // FormData 사용 시 Content-Type은 브라우저가 자동으로 설정하므로 헤더에서 제외합니다.
+                body: updatedData,
+            });
 
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+            const result = await response.json();
 
-    try {
-        const res = await fetch(`${BASE_URL}/mypage/my-review/${reviewId}`, {
-            method: 'DELETE', // HTTP 메서드를 'DELETE'로 지정
-        });
-
-        if (!res.ok) {
-            throw new Error('리뷰 삭제에 실패했습니다.');
+            if (result.success) {
+                alert('리뷰가 성공적으로 수정되었습니다.');
+                closeModal(modifyModal);
+                fetchMyReviews(); // 목록 새로고침
+            } else {
+                alert(result.message || '리뷰 수정에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('리뷰 수정 중 오류 발생:', error);
+            alert('리뷰 수정 중 오류가 발생했습니다.');
+        }
+    };
+    
+    // ----------------------------------------
+    // #6. 내가 작성한 후기 삭제 (Delete Review)
+    // ----------------------------------------
+    const handleDeleteReview = async (reviewId) => {
+        if (!confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
+            return;
+        }
+        
+        // TODO: 삭제 시에도 비밀번호를 입력받는 UI가 필요하다면 추가 구현
+        const password = prompt("리뷰 삭제를 위해 비밀번호를 입력하세요:");
+        if (!password) {
+            alert("삭제가 취소되었습니다.");
+            return;
         }
 
-        alert('리뷰가 성공적으로 삭제되었습니다.');
-        renderMyReviews(); // 삭제 후 목록 다시 불러오기
-    } catch (error) {
-        console.error('리뷰 삭제 중 오류 발생:', error);
-        alert('리뷰 삭제 중 문제가 발생했습니다.');
-    }
-}
+        try {
+            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ password: password }),
+            });
 
-async function handleDetailView(item) {
-    const reviewId = item.dataset.reviewId;
-    const BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com';
+            const result = await response.json();
 
-    try {
-        const res = await fetch(`${BASE_URL}/reviews/${reviewId}`);
-        if (!res.ok) {
-            throw new Error('상세 리뷰를 불러오는 데 실패했습니다.');
+            if (result.success) {
+                alert('리뷰가 삭제되었습니다.');
+                fetchMyReviews(); // 목록 새로고침
+            } else {
+                alert(result.message || '리뷰 삭제에 실패했습니다.');
+            }
+        } catch (error) {
+            console.error('리뷰 삭제 중 오류 발생:', error);
+            alert('리뷰 삭제 중 오류가 발생했습니다.');
         }
+    };
 
-        const result = await res.json();
-        const review = result.data; // API 응답 구조에 따라 'data' 필드에 접근
-
-        populateReviewModal(review);
-        openModal(document.getElementById('reviewModal'));
-    } catch (error) {
-        console.error('상세 리뷰 로딩 중 오류 발생:', error);
-        alert('상세 정보를 불러올 수 없습니다.');
-    }
-}
-
-function populateReviewModal(data) {
-    document.getElementById('modalReviewTitle').textContent = data.title;
-    document.getElementById('modalReviewRating').textContent = generateStars(data.rate);
-    document.getElementById('modalReviewPhoto').src = data.img_path;
-    document.getElementById('modalReviewContent').textContent = data.content;
-}
-
-function generateStars(rate) {
-    const filledStar = '★';
-    const emptyStar = '☆';
-    const validRate = Math.min(5, Math.max(0, rate || 0));
-    return filledStar.repeat(validRate) + emptyStar.repeat(5 - validRate);
-}
-
-// 모달 공용 함수
-const body = document.body;
-function openModal(modal) {
-    if (modal) {
+    // ----------------------------------------
+    // #7. 모달 관련 기능 (Modal Functions)
+    // ----------------------------------------
+    const openModal = (modal) => {
         modal.classList.add('active');
-        body.classList.add('modal-open');
-    }
-}
-function closeModal(modal) {
-    if (modal) {
+        document.body.classList.add('modal-open');
+    };
+    const closeModal = (modal) => {
         modal.classList.remove('active');
-        body.classList.remove('modal-open');
-    }
-}
+        document.body.classList.remove('modal-open');
+    };
+
+    const populateReviewModal = (reviewId) => {
+        const reviewData = myReviewsData.find(item => item.review.reviewId === reviewId);
+        if (!reviewData) return;
+
+        const { review, departure, destinationName } = reviewData;
+        modalReviewTitle.textContent = review.title;
+        modalReviewAuthor.textContent = `${departure} → ${destinationName}`;
+        modalReviewPhoto.src = review.img_path || 'default-image.jpg';
+        modalReviewContent.textContent = review.content;
+        modalReviewRating.textContent = '★'.repeat(review.rate) + '☆'.repeat(5 - review.rate);
+
+        openModal(reviewModal);
+    };
+
+    const populateModifyModal = (reviewId) => {
+        const reviewData = myReviewsData.find(item => item.review.reviewId === reviewId);
+        if (!reviewData) return;
+
+        const { review } = reviewData;
+        modifyReviewId.value = review.reviewId;
+        modifyTitle.value = review.title;
+        modifyContent.value = review.content;
+        
+        // 수정 모달이 열릴 때마다 별점 생성 함수를 호출하고,
+        // 그 리턴값(최종 별점을 가져오는 함수)을 전역 변수에 할당
+        getFinalRating = createStarRating(modifyRatingContainer, review.rate);
+        
+        openModal(modifyModal);
+    };
+
+    // ----------------------------------------
+    // #8. 이벤트 리스너 연결 (Event Listeners)
+    // ----------------------------------------
+    reviewList.addEventListener('click', (event) => {
+        const target = event.target;
+        const modifyButton = target.closest('.reviewModifyBtn');
+        const deleteButton = target.closest('.deleteModifyBtn');
+        const reviewCard = target.closest('.review-item.clickable');
+
+        if (modifyButton) {
+            event.stopPropagation(); 
+            const reviewId = parseInt(modifyButton.closest('.review-item').dataset.reviewId, 10);
+            populateModifyModal(reviewId);
+            return;
+        }
+        if (deleteButton) {
+            event.stopPropagation();
+            const reviewId = parseInt(deleteButton.closest('.review-item').dataset.reviewId, 10);
+            handleDeleteReview(reviewId);
+            return;
+        }
+        if (reviewCard) {
+            const reviewId = parseInt(reviewCard.dataset.reviewId, 10);
+            populateReviewModal(reviewId);
+        }
+    });
+    
+    modifyForm.addEventListener('submit', handleModifySubmit);
+
+    closeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            closeModal(button.closest('.modal-overlay'));
+        });
+    });
+
+    modalOverlays.forEach(overlay => {
+        overlay.addEventListener('click', (event) => {
+            if (event.target === overlay) {
+                closeModal(overlay);
+            }
+        });
+    });
+
+    // ----------------------------------------
+    // #9. 초기 데이터 로드 (Initial Load)
+    // ----------------------------------------
+    fetchMyReviews();
+});

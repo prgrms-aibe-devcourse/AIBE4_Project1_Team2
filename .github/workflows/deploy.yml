@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 푸시될 때만 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      # 1. 필수 의존성 설치
+      - name: Install Dependencies
+        run: npm install
+
+      # 2. 유효성 검사 (package.json 수정 후)
+      - name: Run Basic Validation
+        run: npm test
+
+      # 3. Render 배포 트리거
+      - name: Trigger Render Deploy
+        if: success() # 이전 단계가 성공했을 때만 실행
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          curl "$RENDER_DEPLOY_HOOK"

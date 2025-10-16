@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (currentIndex > 0) openModal(currentIndex - 1);
     else alert("이전 일정이 없습니다.");
   });
-
+  
   nextBtn?.addEventListener("click", () => {
     if (currentIndex < savedPlans.length - 1) openModal(currentIndex + 1);
     else alert("다음 일정이 없습니다.");

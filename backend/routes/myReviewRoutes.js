@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const mypageController = require("../controllers/mypageController");
+const myreviewController = require("../controllers/myreviewController");
 
-// 후기 작성
-router.post("/save", mypageController.createReview);
+// POST /my-review/save
+router.post("/save", myreviewController.saveReview);
 
-// 후기 삭제
-router.delete("/:reviewId", mypageController.deleteReview);
+// DELETE /my-review/:reviewId
+router.delete("/:reviewId", myreviewController.deleteReview);
 
 module.exports = router;

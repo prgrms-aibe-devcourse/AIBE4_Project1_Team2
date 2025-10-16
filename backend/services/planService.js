@@ -13,6 +13,7 @@ const planService = {
       companionsType,
       companions,
       travelStyles,
+      additionalInfo,
       budget,
     } = userInput;
 
@@ -23,6 +24,7 @@ const planService = {
     - 동반 유형: ${companionsType}
     - 여행객 수: ${companions}명
     - 여행 스타일: ${travelStyles}
+    - 추가 요청 사항: ${additionalInfo}
     - 예산: ${budget}원
 
     응답은 반드시 한국어로 해야돼.   
@@ -111,6 +113,34 @@ const planService = {
     if (error) {
       console.error(error);
       throw error;
+    }
+
+    return data;
+  },
+
+  deletePlan: async (planId) => {
+    const { error } = await supabase.from("ai").delete().eq("planId", planId);
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+  },
+
+  // planId로 특정 일정 상세 조회
+  getPlanById: async (planId) => {
+    const { data, error } = await supabase
+      .from("ai")
+      .select(
+        "planId, departure, companions, companionsType, travelStyles, budget, recommendation, departureDate, budgetUnit"
+      )
+      .eq("planId", planId)
+      .single(); // planId는 고유하므로 single()을 사용합니다.
+
+    if (error) {
+      // 데이터가 없는 경우(null)도 Supabase는 에러로 처리할 수 있습니다.
+      console.error("getPlanById 서비스 오류:", error.message);
+      // 컨트롤러에서 404 처리를 할 수 있도록 null을 반환합니다.
+      return null;
     }
 
     return data;
