@@ -67,10 +67,10 @@ const mypageService = {
   },
 
   // 후기 삭제
-  deleteReview: async (reviewId) => {
+  deleteReview: async (planId) => {
 
     // 후기 삭제
-    const { error } = await supabase.from('review').delete().eq('planId', reviewId)
+    const { error } = await supabase.from('review').delete().eq('planId', planId)
     if (error) {
       return { success: false };
     }
