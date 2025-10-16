@@ -23,7 +23,7 @@ const reviewService = {
         rate,
         content,
         img_path,
-        ai!inner(*)
+        ai ( planId )
       `)
       .range(startIndex, startIndex + limit - 1)
       .order('reviewId', { ascending: false });
@@ -33,15 +33,12 @@ const reviewService = {
         throw new Error(error.message);
       }
 
-      // userKey 같은 민감 정보를 제거하고 데이터 구조를 재구성합니다.
       const processedData = data?.map(item => {
-        const { ai, ...reviewData } = item;
-        const { userKey, ...planData } = ai; // ai 객체에서 userKey 제거
-
+        // ai 테이블에서 가져온 planId를 최상위 레벨로 이동시킵니다.
+        const planId = item.ai && item.ai.length > 0 ? item.ai[0].planId : null;
         return {
-          ...reviewData, // reviewId, title, rate, content, img_path
-          planId: planData.planId, 
-          plan: planData, 
+          ...item, // reviewId, title, rate, content, img_path
+          planId: planId,
         };
       });
 
@@ -92,7 +89,7 @@ const reviewService = {
         rate,
         content,
         img_path,
-        ai!inner(*)
+        ai ( planId )
       `);
 
       // 1. 키워드 검색 (리뷰 제목 또는 내용)
@@ -116,7 +113,7 @@ const reviewService = {
         query = query.contains("ai.travelStyles", [travelStyles]);
       }
 
-      // 5. 최소 별점 검색 (review 테이블)
+      // 5. 별점 검색 (review 테이블)
       if (minRate) {
         query = query.gte("rate", minRate);
       }
@@ -130,13 +127,10 @@ const reviewService = {
 
       // getAllReviews와 동일한 데이터 구조로 가공하여 반환
       const processedData = data?.map(item => {
-        const { ai, ...reviewData } = item;
-        const { userKey, ...planData } = ai;
-
+        const planId = item.ai && item.ai.length > 0 ? item.ai[0].planId : null;
         return {
-          ...reviewData,
-          planId: planData.planId,
-          plan: planData,
+          ...item,
+          planId: planId,
         };
       });
 

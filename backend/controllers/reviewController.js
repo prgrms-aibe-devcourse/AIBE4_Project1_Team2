@@ -37,7 +37,14 @@ const reviewController = {
   // 리뷰 검색
   searchReviews: async (req, res) => {
     try {
-      const reviews = await reviewService.searchReviews(req.query);
+      // req.query에서 minRate를 숫자로 변환합니다.
+      const filters = {
+        ...req.query,
+        minRate: req.query.minRate ? parseInt(req.query.minRate, 10) : undefined,
+      };
+
+      // 변환된 필터를 서비스로 전달합니다.
+      const reviews = await reviewService.searchReviews(filters);
 
       handleSuccess(res, 200, "성공적으로 조회되었습니다.", reviews);
     } catch (error) {
