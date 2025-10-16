@@ -11,7 +11,4 @@ router.post("/plan-save", planController.savePlan);
 // 내가 저장한 일정 조회
 router.post("/my-plans", planController.getMyPlans);
 
-// 내가 작성한 리뷰 조회
-router.post("/my-reviews", planController.getMyReviews);
-
 module.exports = router;
