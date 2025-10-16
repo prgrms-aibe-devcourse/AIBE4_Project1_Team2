@@ -66,7 +66,7 @@ header {
 
 /* 버튼 그룹 스타일 */
 .reviewBtn-group {
-    width: 70px;
+    width: 80px;
     display: flex;
     flex-direction: column;
     gap: 8px;
