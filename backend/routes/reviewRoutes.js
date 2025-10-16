@@ -7,7 +7,7 @@ router.get("/search", reviewController.searchReviews);
 
 // 리뷰 조회
 router.get("/", reviewController.getAllReviews);
-router.get("/:id", reviewController.getReviewById);
+router.get("/:planId", reviewController.getReviewById);
 
 // 내가 작성한 리뷰 조회
 router.post("/my-reviews", reviewController.getMyReviews);
