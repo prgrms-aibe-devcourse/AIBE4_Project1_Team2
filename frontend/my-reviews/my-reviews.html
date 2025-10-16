@@ -3,9 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>오늘트립 | 내 리뷰</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="my-reviews.css"> 
+    <title>오늘트립 | 내가 작성한 리뷰</title>
+
+    <!-- SEO & OG Meta -->
+    <meta
+      name="description"
+      content="오늘 트립 | AI가 당신에게 맞는 맞춤형 당일치기 여행 일정을 추천해드립니다. 쉽고 빠르게 떠나는 여행 플래너!"
+    />
+    <meta property="og:title" content="오늘 트립 | O-neul Trip" />
+    <meta
+      property="og:description"
+      content="AI가 추천하는 맞춤 당일치기 여행 일정!"
+    />
+    <meta
+      property="og:image"
+      content="https://prgrms-aibe-devcourse.github.io/AIBE4_Project1_Team2/frontend/public/logo/og-logo.png"
+    />
+    <meta property="og:image:width" content="1100" />
+    <meta property="og:image:height" content="550" />
+    <meta property="og:image:type" content="image/png" />
+
+    <!-- favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/favicon-16x16.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="192x192"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/android-chrome-192x192.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/android-chrome-512x512.png"
+    />
+    <link
+      rel="manifest"
+      href="/AIBE4_Project1_Team2/frontend/public/favicon/site.webmanifest"
+    />
+
+    <!-- font / css -->
+    <link rel="stylesheet" href="./frontend/public/font.css" />
+    <link rel="stylesheet" href="my-reviews.css">
 </head>
 <body>
 
@@ -14,13 +69,10 @@
             <div class="page-title">
                 <h2>내 리뷰</h2>
             </div>
-
             <div class="content-area">
                 <section id="reviews" class="tab-content active">
-                    <div class="review-list">
-                        </div>
-                    <div class="pagination">
-                        </div>
+                    <div class="review-list"></div>
+                    <div class="pagination"></div>
                 </section>
             </div>
         </main>
@@ -31,19 +83,21 @@
             <button class="close-button">&times;</button>
             <header class="review-header">
                 <h1 id="modalReviewTitle"></h1>
-                <div id="modalReviewAuthor" class="author-info"></div>
-                <div id="modalReviewRating" class="star-rating-display"></div>
+                <div class="author-info">
+                    <p id="modalReviewAuthor"></p>
+                </div>
+                <div id="modalReviewRating" class="review-rating"></div>
             </header>
             <main class="review-body">
-                <img id="modalReviewPhoto" src="" alt="리뷰 상세 사진" class="review-photo">
+                <img id="modalReviewPhoto" src="" alt="리뷰 상세 사진" class="review-photo-large">
                 <p id="modalReviewContent" class="review-text"></p>
             </main>
         </div>
     </div>
+
     <div id="modifyModal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-button">&times;</button>
-            
             <div class="review-form-container">
                 <form id="modifyForm">
                     <h1>✍️ 여행 리뷰 수정하기</h1>
@@ -53,24 +107,29 @@
                         <label for="modifyTitle">제목</label>
                         <input type="text" id="modifyTitle" placeholder="리뷰의 제목을 입력해주세요" required>
                     </div>
+
                     <div class="form-group">
                         <label>별점</label>
                         <div class="star-rating" id="modifyRating">
                             </div>
                     </div>
+
                     <div class="form-group">
                         <label for="modifyContent">내용</label>
                         <textarea id="modifyContent" rows="8" placeholder="상세한 여행 후기를 남겨주세요"></textarea>
                     </div>
-                    <!-- 드래그 앤 드롭  -->
+
                     <div class="form-group">
                         <label for="modifyPhotoUpload">사진 첨부</label>
                         <div class="drop-zone" id="modifyDropZone">
                             <input type="file" id="modifyPhotoUpload" accept="image/*" hidden />
-                            <label for="modifyPhotoUpload" class="drop-zone-prompt">
-                                <svg></svg>
-                                <span>사진을 여기에 드래그하거나 클릭하여 업로드하세요.</span>
-                            </label>
+                            <div class="drop-zone-prompt">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-cloud-arrow-up" viewBox="0 0 16 16">
+                                  <path fill-rule="evenodd" d="M7.646 5.146a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 6.707V10.5a.5.5 0 0 1-1 0V6.707L6.354 7.854a.5.5 0 1 1-.708-.708z"/>
+                                  <path d="M4.406 3.342A5.53 5.53 0 0 1 8 2c2.69 0 4.923 2 5.166 4.579C14.758 6.804 16 8.137 16 9.773 16 11.569 14.502 13 12.687 13H3.781C1.708 13 0 11.366 0 9.318c0-1.763 1.266-3.223 2.942-3.593.143-.863.698-1.723 1.464-2.383m.653.757c-.757.653-1.153 1.44-1.153 2.056v.448l-.445.049C2.064 6.805 1 7.952 1 9.318 1 10.785 2.23 12 3.781 12h8.906C13.98 12 15 10.988 15 9.773c0-1.216-1.02-2.228-2.313-2.228h-.5v-.5C12.188 4.825 10.328 3 8 3a4.53 4.53 0 0 0-2.941 1.1z"/>
+                                </svg>
+                                <span>사진을 드래그하거나 클릭하여 업로드</span>
+                            </div>
                             <div id="modifyImagePreview" class="image-preview"></div>
                         </div>
                     </div>
@@ -80,7 +139,7 @@
                         <input type="password" id="modifyPassword" placeholder="리뷰 수정/삭제 시 필요해요" required>
                     </div>
                     
-                    <button type="submit">수정 완료</button>
+                    <button type="submit" class="submit-btn">수정 완료</button>
                 </form>
             </div>
         </div>
