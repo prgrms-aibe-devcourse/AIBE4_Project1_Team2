@@ -106,9 +106,22 @@ const reviewService = {
   // 내가 작성한 리뷰조회
   fetchMyReviews: async (userKey) => {
     const { data, error } = await supabase
-      .from("review")
-      .select("id, rate, title, content, img_path")
-      .eq("userKey", userKey);
+      .from("ai")
+      .select(
+        `
+          departure,
+          recommendation->destinationName,
+          review(
+            reviewId,
+            rate,
+            title,
+            content,
+            img_path
+          )
+        `
+      )
+      .eq("userKey", userKey)
+      .not("reviewId", "is", null);
 
     if (error) {
       console.error(error);

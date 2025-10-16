@@ -37,7 +37,6 @@ const reviewController = {
   getMyPlans: async (req, res) => {
     try {
       const { userKey } = req.body;
-      console.log(userKey);
       const result = await planService.getPlans(userKey);
 
       console.log(result);
