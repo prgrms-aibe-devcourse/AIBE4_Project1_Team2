@@ -5,16 +5,7 @@ const myreviewController = {
   // 리뷰 저장
   saveReview: async (req, res) => {
     try {
-      const {
-        planId,
-        rate,
-        title,
-        content,
-        companionsType,
-        travelStyles,
-        budget,
-        img_path,
-      } = req.body;
+      const { planId, rate, title, content, img_path } = req.body;
 
       // 필수 필드 검증
       if (!planId || !rate || !title || !content) {
@@ -41,9 +32,6 @@ const myreviewController = {
         rate,
         title,
         content,
-        companionsType,
-        travelStyles,
-        budget,
         img_path,
       });
 
