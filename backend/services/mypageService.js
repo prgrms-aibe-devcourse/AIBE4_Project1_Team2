@@ -47,15 +47,22 @@ const mypageService = {
       img_path: reviewData.img_path
     };
 
-    const { data, error } = await supabase.from('review').insert([newReview]).select('reviewId')
-    if (error) {
-      console.error(error)
+    const { data: insertData, error: insertError } = await supabase.from('review').insert([newReview]).select('reviewId')
+    if (insertError) {
+      console.error(insertError)
+      return { success: false };
+    }
+
+    const { data: updatedData, error: updatedError } = await supabase.from('ai')
+    .update({ reviewId: insertData[0].reviewId }).eq('planId', scheduleId).select()
+    if (updatedError) {
+      console.error(updatedError)
       return { success: false };
     }
 
     return {
       success: true,
-      reviewId: data[0].reviewId,
+      reviewId: insertData[0].reviewId,
     };
   },
 
