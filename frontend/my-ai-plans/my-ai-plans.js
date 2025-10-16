@@ -135,26 +135,26 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ==================================================
      🔹 삭제 기능
   ================================================== */
-  btnDelete.addEventListener("click", async () => {
-    if (currentIndex === null) return;
-    const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
-    if (confirmDelete) {
-      const response = await fetch(
-        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/my-review/${currentIndex}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" }
-      });
-      const data = await response.json()
-      console.log(data)
-    } else return;
+  // btnDelete.addEventListener("click", async () => {
+  //   if (currentIndex === null) return;
+  //   const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
+  //   if (confirmDelete) {
+  //     const response = await fetch(
+  //       `https://aibe4-project1-team2-m9vr.onrender.com/mypage/my-review/${currentIndex}`,
+  //     {
+  //       method: "DELETE",
+  //       headers: { "Content-Type": "application/json" }
+  //     });
+  //     const data = await response.json()
+  //     console.log(data)
+  //   } else return;
 
-    schedules.splice(currentIndex, 1);
-    localStorage.setItem("schedules", JSON.stringify(schedules));
-    alert("삭제되었습니다.");
-    closeModal();
-    // renderScheduleCards();
-  })
+  //   schedules.splice(currentIndex, 1);
+  //   localStorage.setItem("schedules", JSON.stringify(schedules));
+  //   alert("삭제되었습니다.");
+  //   closeModal();
+  //   // renderScheduleCards();
+  // })
 
   nextBtn?.addEventListener("click", () => {
     if (currentIndex < savedPlans.length - 1) openModal(currentIndex + 1);
@@ -169,9 +169,18 @@ document.addEventListener("DOMContentLoaded", () => {
     window.location.href = "../review-form/review-form.html";
   }
 
-  function handleDelete(planId) {
+  async function handleDelete(planId) {
     if (!confirm("정말 삭제하시겠습니까?")) return;
-    savedPlans = savedPlans.filter((p) => p.planId !== planId);
+
+    const response = await fetch(
+        `https://aibe4-project1-team2-m9vr.onrender.com/my-review/${planId}`,
+      {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" }
+      });
+    const data = await response.json()
+    console.log(data)
+
     localStorage.setItem("aiSchedules", JSON.stringify(savedPlans));
     modal.classList.remove("active");
     location.reload();
