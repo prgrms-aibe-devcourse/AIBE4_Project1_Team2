@@ -132,28 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     else alert("이전 일정이 없습니다.");
   });
 
-  /* ==================================================
-     🔹 삭제 기능
-  ================================================== */
-  btnDelete.addEventListener("click", async () => {
-    if (currentIndex === null) return;
-    const confirmDelete = confirm("정말로 이 일정을 삭제하시겠습니까?");
-    if (confirmDelete) {
-      const response = await fetch(
-        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/my-review/${currentIndex}`,
-      {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" }
-      });
-      const data = await response.json()
-      console.log(data)
-    } else return;
-
-    schedules.splice(currentIndex, 1);
-    localStorage.setItem("schedules", JSON.stringify(schedules));
-    alert("삭제되었습니다.");
-    closeModal();
-    // renderScheduleCards();
   nextBtn?.addEventListener("click", () => {
     if (currentIndex < savedPlans.length - 1) openModal(currentIndex + 1);
     else alert("다음 일정이 없습니다.");
