@@ -1,131 +1,137 @@
-let planData = {}; // AI 파싱 데이터를 저장할 전역 변수
+let planData = {}; // AI 일정 데이터 전역 저장 변수
 
+// =============================
+// 데이터 로드 및 초기화
+// =============================
 document.addEventListener("DOMContentLoaded", () => {
-  const data = JSON.parse(localStorage.getItem("aiTripResult"));
-  if (!data) {
-    alert("일정 데이터가 없습니다. 처음부터 다시 진행해주세요.");
+  const rawData = localStorage.getItem("aiPlanResult");
+
+  if (!rawData) {
+    alert("저장된 일정 데이터가 없습니다.");
     window.location.href = "../ai-plan/ai-plan.html";
     return;
   }
 
-  // 1. AI 응답이 { text: "```json ... ```" } 형태인 경우 처리
-  let raw = data;
-  if (data.text) raw = data.text; // text 필드 안에 JSON 문자열이 있으면 꺼내기
-
-  // 2. ```json ... ``` 제거
-  if (typeof raw === "string") {
-    raw = raw
-      .replace(/```json\s*/g, "") // ```json 제거
-      .replace(/```/g, "") // 닫는 ``` 제거
-      .trim();
-  }
-
-  // 3. 문자열을 실제 JSON으로 변환
   try {
-    // 파싱된 최종 데이터를 전역 변수에 저장
-    planData = typeof raw === "string" ? JSON.parse(raw) : raw;
+    // 1차 파싱
+    let data = JSON.parse(rawData);
+
+    // 여전히 문자열이면 다시 파싱
+    if (typeof data === "string") {
+      data = JSON.parse(data);
+    }
+
+    planData = data;
+    console.log("일정 데이터 로드 완료:", planData);
+    renderSchedule(planData);
   } catch (err) {
-    console.error("JSON 파싱 오류:", err, raw);
+    console.error("JSON 파싱 오류:", err, rawData);
     alert("AI 응답 데이터가 올바르지 않습니다. 다시 시도해주세요.");
     window.location.href = "../ai-plan/ai-plan.html";
-    return;
   }
-
-  console.log("Loaded result data:", planData);
-  renderSchedule(planData);
 });
 
-// 일정 렌더링 함수
+// =============================
+// 일정 렌더링
+// =============================
 function renderSchedule(result) {
-  console.log("Loaded result data:", result);
+  console.log("렌더링 시작:", result);
 
-  // 타이틀 구성
-  const departure = result.departure;
-  const destination = result.recommendation.destinationName;
-  const titleHTML = `
+  // 제목
+  const departure = result.departure || "출발지 미입력";
+  const destination = result.recommendation?.destinationName || "미정";
+  document.getElementById("trip-title").innerHTML = `
     <span class="title-black">${departure}</span>
     <span class="title-black"> → </span>
-    <span class="highlight">${destination}</span>
-    <span class="title-black"> 여행 일정</span>
+    <span class="highlight-destination">${destination}</span>
   `;
-  document.getElementById("trip-title").innerHTML = titleHTML;
 
-  // 서브 정보
-  const info = `${result.departureDate} | ${result.companionsType} | 총 ${
-    result.companions
-  }명 | ${result.travelStyles.join(", ")} | 예산 약 ${Number(
+  // 기본 정보
+  const infoParts = [
+    result.departureDate,
+    result.companionsType,
+    result.companions ? `총 ${result.companions}명` : null,
+    result.travelStyles?.join(", "),
     result.budget
-  ).toLocaleString()}원`;
-  document.getElementById("trip-info").textContent = info;
+      ? `예산 약 ${Number(result.budget).toLocaleString()}원`
+      : null,
+  ].filter(Boolean);
+  document.getElementById("trip-info").textContent = infoParts.join(" | ");
 
   // 여행지 설명
   document.getElementById("destination-description").textContent =
-    result.recommendation.destinationDescription;
+    result.recommendation?.destinationDescription || "설명이 없습니다.";
 
   // 일정 타임라인
   const timeline = document.getElementById("timeline");
-  result.recommendation.itinerary.forEach((item) => {
-    const entry = document.createElement("div");
-    entry.classList.add("timeline-item");
-    entry.innerHTML = `
-      <div class="time">${item.time}</div>
-      <div class="details">
-        <div class="activity"><strong>${item.activity}</strong></div>
-        <div class="desc">${item.description}</div>
-        <div class="transport">🚗 ${item.transportation}</div>
-      </div>
-    `;
-    timeline.appendChild(entry);
-  });
+  timeline.innerHTML = "";
+  if (Array.isArray(result.recommendation?.itinerary)) {
+    result.recommendation.itinerary.forEach((item) => {
+      const entry = document.createElement("div");
+      entry.classList.add("timeline-item");
+      entry.innerHTML = `
+        <div class="time">${item.time || ""}</div>
+        <div class="details">
+          <div class="activity">${item.activity || "활동 없음"}</div>
+          <div class="description">${item.description || ""}</div>
+          ${
+            item.transportation
+              ? `<div class="transport">🚗 ${item.transportation}</div>`
+              : ""
+          }
+        </div>
+      `;
+      timeline.appendChild(entry);
+    });
+  } else {
+    timeline.innerHTML = `<p style="color:#888; text-align:center;">일정 정보가 없습니다.</p>`;
+  }
 
   // 여행 팁
   const notesList = document.getElementById("notes-list");
-  result.recommendation.notes.forEach((note) => {
-    const li = document.createElement("li");
-    li.textContent = note;
-    notesList.appendChild(li);
-  });
+  notesList.innerHTML = "";
+  if (Array.isArray(result.recommendation?.notes)) {
+    result.recommendation.notes.forEach((note) => {
+      const li = document.createElement("li");
+      li.textContent = note;
+      notesList.appendChild(li);
+    });
+  } else {
+    notesList.innerHTML = `<li>추가 여행 팁이 없습니다.</li>`;
+  }
 
   // 버튼 이벤트 등록
   document.getElementById("btnBack").addEventListener("click", goBack);
   document.getElementById("btnSave").addEventListener("click", savePlan);
 }
 
-/**
- * 다시 계획하기 버튼
- * - localStorage 초기화 후 ai-plan 페이지로 이동
- */
+// =============================
+// 다시 계획하기
+// =============================
 function goBack() {
-  localStorage.removeItem("aiTripResult");
+  localStorage.removeItem("aiPlanResult");
   window.location.href = "../ai-plan/ai-plan.html";
 }
 
-/**
- * 저장하기 버튼
- * - 데이터 확인 후 홈(index.html)로 이동
- */
+// =============================
+// 일정 저장하기 (서버 전송)
+// =============================
 async function savePlan() {
-  if (!planData || Object.keys(planData).length === 0) {
-    alert("저장할 데이터가 없습니다.");
+  if (!Object.keys(planData).length) {
+    alert("저장할 일정 데이터가 없습니다.");
     return;
   }
 
-  // 비밀번호 입력 요청
   const userKey = prompt(
-    "저장용 비밀번호를 입력해주세요 (숫자 또는 문자 가능):"
-  );
-  if (!userKey || userKey.trim() === "") {
-    alert("비밀번호를 입력해야 저장할 수 있습니다.");
+    "저장용 고유번호를 입력해주세요. (숫자 또는 문자 가능):"
+  )?.trim();
+  if (!userKey) {
+    alert("고유번호를 입력해야 저장할 수 있습니다.");
     return;
   }
 
-  // 서버로 전송할 데이터 구성 (전역 변수 사용)
-  const requestBody = {
-    userKey: userKey.trim(),
-    ...planData, // ✅ 이제 planData는 문자열이 아닌 올바른 객체입니다.
-  };
-
-  console.log("📦 서버로 전송되는 데이터:", requestBody);
+  const requestBody = { userKey, ...planData };
+  console.log("서버 전송 데이터:", requestBody);
 
   try {
     const response = await fetch(
@@ -138,9 +144,10 @@ async function savePlan() {
     );
 
     const result = await response.json();
+    console.log("서버 응답:", result);
 
     if (result.success && result.statusCode === 201) {
-      alert(`✅ 저장되었습니다! (비밀번호: ${userKey})`);
+      alert(`저장되었습니다. (고유번호: ${userKey})`);
       window.location.href = "/AIBE4_Project1_Team2/index.html";
     } else {
       console.error("서버 응답 오류:", result);

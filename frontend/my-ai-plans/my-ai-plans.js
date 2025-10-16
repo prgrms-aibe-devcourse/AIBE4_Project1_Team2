@@ -1,99 +1,136 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // 🔹 실제 사용 시 localStorage에서 불러오기
-  let schedules = JSON.parse(localStorage.getItem("schedules")) || [];
+  const planList = document.getElementById("plan-list");
+  const modal = document.getElementById("planModal");
+  const closeButton = modal.querySelector(".close-button");
 
-  // 🔹 테스트용 목업 데이터 (비밀번호 1234)
-  // ⚠️ 이제는 자동으로 넣지 않음 — localStorage가 비어 있으면 아무것도 안 보여줌
-  // if (!schedules.length) { ... } 제거됨
+  const modalTitle = modal.querySelector("#modal-title");
+  const modalInfo = modal.querySelector("#modal-info");
+  const modalDescription = modal.querySelector("#modal-description");
+  const modalTimeline = modal.querySelector("#modal-timeline");
+  const modalNotes = modal.querySelector("#modal-notes");
 
-  /* ==================================================
-     🔹 요소 참조
-  ================================================== */
-  const listContainer = document.getElementById("scheduleList");
-  const modalOverlay = document.getElementById("scheduleModal");
-  const modalDetails = document.getElementById("modalDetails");
-  const closeButton = modalOverlay.querySelector(".close-button");
-  const btnDelete = document.getElementById("btnDelete");
-  const btnReview = document.getElementById("btnReview");
+  const prevBtn = modal.querySelector("#prevPlan");
+  const nextBtn = modal.querySelector("#nextPlan");
+  const reviewBtn = modal.querySelector("#modalReviewBtn");
+  const deleteBtn = modal.querySelector("#modalDeleteBtn");
 
-  let currentIndex = null;
+  let savedPlans = JSON.parse(localStorage.getItem("aiSchedules")) || [];
+  let currentIndex = 0;
 
-  renderScheduleCards();
-
-  /* ==================================================
-     🔹 카드 목록 렌더링
-  ================================================== */
-  function renderScheduleCards() {
-    listContainer.innerHTML = "";
-
-    // ⚙️ localStorage가 비어 있으면 아무것도 표시하지 않음
-    if (!schedules.length) return;
-
-    schedules.forEach((item, index) => {
-      const trip = item.text || item;
-      const card = document.createElement("div");
-      card.classList.add("schedule-card");
-      card.innerHTML = `
-        <h3>${trip.departure} → ${trip.recommendation.destinationName}</h3>
-        <div class="schedule-info">
-          <p>📅 ${trip.departureDate}</p>
-          <p>👥 ${trip.companionsType} (${trip.companions}명)</p>
-          <p>🎨 ${trip.travelStyles.join(", ")}</p>
-        </div>
-      `;
-      card.addEventListener("click", () => openModal(trip, index));
-      listContainer.appendChild(card);
-    });
+  // 저장된 일정이 없을 때
+  if (!savedPlans.length) {
+    planList.innerHTML = "<p>저장된 AI 일정이 없습니다.</p>";
+    return;
   }
 
-  /* ==================================================
-     🔹 상세 모달 열기
-  ================================================== */
-  function openModal(trip, index) {
-    currentIndex = index;
+  /** ===============================
+   * 카드 렌더링
+   * =============================== */
+  savedPlans.forEach((plan, index) => {
+    const card = document.createElement("div");
+    card.className = "plan-card";
+    const dest = plan.recommendation.destinationName;
 
-    const itineraryHTML = trip.recommendation.itinerary
-      .map(
-        (i) => `
-        <div class="timeline-item">
-          <div class="time">${i.time}</div>
-          <div class="activity">${i.activity}</div>
-          <div class="transport">🚗 ${i.transportation}</div>
-        </div>`
-      )
-      .join("");
-
-    const notesHTML = trip.recommendation.notes
-      .map((n) => `<li>${n}</li>`)
-      .join("");
-
-    modalDetails.innerHTML = `
-      <h2>${trip.departure} → ${trip.recommendation.destinationName}</h2>
-      <p>${trip.recommendation.destinationDescription}</p>
-
-      <div class="timeline">${itineraryHTML}</div>
-
-      <div class="notes-section">
-        <h3>💡 여행 팁</h3>
-        <ul>${notesHTML}</ul>
+    card.innerHTML = `
+      <h3>${plan.departure} → ${dest}</h3>
+      <div class="plan-summary">
+        ${plan.departureDate}<br>
+        ${plan.companionsType} | 총 ${
+      plan.companions
+    }명 | ${plan.travelStyles.join(", ")}<br>
+        예산 약 ${plan.budget.toLocaleString()}${plan.budgetUnit}
+      </div>
+      <div class="card-btns">
+        <button class="btn-review">✏️ 후기 작성하기</button>
+        <button class="btn-delete">🗑 삭제하기</button>
       </div>
     `;
 
-    modalOverlay.classList.add("active");
-  }
+    // 카드 클릭 → 상세 모달 열기
+    card.addEventListener("click", (e) => {
+      if (e.target.tagName === "BUTTON") return;
+      openModal(index);
+    });
 
-  /* ==================================================
-     🔹 모달 닫기 이벤트
-  ================================================== */
-  closeButton.addEventListener("click", () => closeModal());
-  modalOverlay.addEventListener("click", (e) => {
-    if (e.target === modalOverlay) closeModal();
+    // 후기 버튼
+    card.querySelector(".btn-review").addEventListener("click", (e) => {
+      e.stopPropagation();
+      navigateToReview(plan.planId);
+    });
+
+    // 삭제 버튼
+    card.querySelector(".btn-delete").addEventListener("click", (e) => {
+      e.stopPropagation();
+      handleDelete(plan.planId);
+    });
+
+    planList.appendChild(card);
   });
 
-  function closeModal() {
-    modalOverlay.classList.remove("active");
-    currentIndex = null;
+  /** ===============================
+   * 모달 열기 함수
+   * =============================== */
+  function openModal(index) {
+    currentIndex = index;
+    const plan = savedPlans[index];
+    const rec = plan.recommendation;
+
+    // 제목 & 정보
+    modalTitle.innerHTML = `${plan.departure} → <span class="highlight-destination">${rec.destinationName}</span>`;
+    modalInfo.textContent = `${plan.departureDate} | ${
+      plan.companionsType
+    } | 총 ${plan.companions}명 | ${plan.travelStyles.join(
+      ", "
+    )} | 예산 약 ${plan.budget.toLocaleString()}${plan.budgetUnit}`;
+    modalDescription.textContent = rec.destinationDescription;
+
+    // 일정
+    modalTimeline.innerHTML = rec.itinerary
+      .map(
+        (item) => `
+        <div class="timeline-item">
+          <div class="time">${item.time}</div>
+          <div class="details">
+            <div class="activity">${item.activity}</div>
+            <div>${item.description}</div>
+            ${
+              item.transportation
+                ? `<div class="transport">🚗 ${item.transportation}</div>`
+                : ""
+            }
+          </div>
+        </div>
+      `
+      )
+      .join("");
+
+    // 여행 팁
+    modalNotes.innerHTML = rec.notes.map((note) => `<li>${note}</li>`).join("");
+
+    // 스크롤 맨 위로
+    modal
+      .querySelector(".modal-content")
+      .scrollTo({ top: 0, behavior: "auto" });
+
+    // 모달 활성화
+    modal.classList.add("active");
   }
+
+  /** ===============================
+   * 모달 닫기
+   * =============================== */
+  closeButton.addEventListener("click", () => modal.classList.remove("active"));
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.remove("active");
+  });
+
+  /** ===============================
+   * 이전 / 다음 일정 보기
+   * =============================== */
+  prevBtn?.addEventListener("click", () => {
+    if (currentIndex > 0) openModal(currentIndex - 1);
+    else alert("이전 일정이 없습니다.");
+  });
 
   /* ==================================================
      🔹 삭제 기능
@@ -117,23 +154,39 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("삭제되었습니다.");
     closeModal();
     // renderScheduleCards();
+  nextBtn?.addEventListener("click", () => {
+    if (currentIndex < savedPlans.length - 1) openModal(currentIndex + 1);
+    else alert("다음 일정이 없습니다.");
   });
 
-  /* ==================================================
-     🔹 리뷰 작성 기능
-  ================================================== */
-  btnReview.addEventListener("click", () => {
-    if (currentIndex === null) return;
-    const trip = schedules[currentIndex].text || schedules[currentIndex];
-    localStorage.setItem("selectedScheduleForReview", JSON.stringify(trip));
-    alert("리뷰 작성 페이지로 이동합니다.");
+  /** ===============================
+   * 후기 작성 / 삭제 함수
+   * =============================== */
+  function navigateToReview(planId) {
+    localStorage.setItem("selectedPlanId", planId);
     window.location.href = "../review-form/review-form.html";
+  }
+
+  function handleDelete(planId) {
+    if (!confirm("정말 삭제하시겠습니까?")) return;
+    savedPlans = savedPlans.filter((p) => p.planId !== planId);
+    localStorage.setItem("aiSchedules", JSON.stringify(savedPlans));
+    modal.classList.remove("active");
+    location.reload();
+  }
+
+  reviewBtn?.addEventListener("click", () =>
+    navigateToReview(savedPlans[currentIndex].planId)
+  );
+  deleteBtn?.addEventListener("click", () =>
+    handleDelete(savedPlans[currentIndex].planId)
+  );
+
+  /** ===============================
+   * 뒤로가기 버튼 (선택적)
+   * =============================== */
+  const backBtn = document.getElementById("btnBack");
+  backBtn?.addEventListener("click", () => {
+    window.location.href = "/AIBE4_Project1_Team2/index.html";
   });
 });
-
-/* ==================================================
-   🔹 돌아가기 버튼
-================================================== */
-function goBack() {
-  window.location.href = "../reviews/reviews.html";
-}
