@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { GoogleGenAI, Type } = require("@google/genai");
 const ai = new GoogleGenAI({});
 

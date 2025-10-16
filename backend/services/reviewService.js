@@ -41,12 +41,12 @@ const reviewService = {
   },
 
   // 특정 리뷰 상세 조회
-  getReviewById: async (id) => {
+  getReviewById: async (reviewId) => {
     try {
       const { data, error } = await supabase
         .from('review')
         .select('*')
-        .eq('id', id)
+        .eq('reviewId', reviewId)
         .single();
 
       if (error) {

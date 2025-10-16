@@ -159,8 +159,18 @@ document.addEventListener("DOMContentLoaded", () => {
     payload.append("rating", ratingInput.value);
     payload.append("planId", selectedPlanId);
     if (selectedFile) payload.append("image", selectedFile);
+    
+    const response = await fetch(
+        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/${payload.planId}/review`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    )
+    const data = await response.json()
 
-    alert("✅ 리뷰가 등록되었습니다! (서버 연동 시 실제 응답으로 변경)");
+    alert(`✅ 리뷰가 등록되었습니다! ${data.message}`);
     window.location.href = "../reviews/reviews.html";
   });
 });
