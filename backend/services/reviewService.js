@@ -1,12 +1,11 @@
 const { supabase } = require('../utils/supabase');
 
 const reviewService = {
-  // 모든 리뷰 조회 (페이지네이션)
+  // 모든 리뷰 조회
   getAllReviews: async (page, limit) => {
     try {
       const startIndex = (page - 1) * limit;
 
-      // 전체 개수 조회
       const { count, error: countError } = await supabase
         .from('review')
         .select('*', { count: 'exact', head: true });
@@ -16,12 +15,11 @@ const reviewService = {
         throw new Error(countError.message);
       }
 
-      // 페이지네이션된 리뷰 조회
       const { data, error } = await supabase
         .from('review')
-        .select('id, title, rate, content, img_path')
+        .select('reviewId, title, rate, content, img_path')
         .range(startIndex, startIndex + limit - 1)
-        .order('id', { ascending: false });
+        .order('reviewId', { ascending: false });
 
       if (error) {
         console.error('리뷰 조회 오류:', error);
@@ -63,7 +61,7 @@ const reviewService = {
     }
   },
 
-  // 리뷰 검색 (키워드만 지원)
+  // 리뷰 검색 (키워드만)
   searchReviews: async ({ keyword }) => {
     try {
       let query = supabase.from('review').select('*');
