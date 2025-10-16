@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const getReviewById = (reviewId) => {
+        return myReviewsData.find(item => item.review.reviewId === reviewId);
+    };
     // ----------------------------------------
     // #1. 전역 변수 및 DOM 요소 선택
     // ----------------------------------------
@@ -23,12 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeButtons = document.querySelectorAll('.close-button');
     const modalOverlays = document.querySelectorAll('.modal-overlay');
     
-    // API 기본 URL (실제 운영 서버 주소로 확인 필요)
+    // API 기본 URL
     const API_BASE_URL = 'https://aibe4-project1-team2-m9vr.onrender.com'; 
 
     // 전역 데이터 저장소
     let myReviewsData = [];
-    // 수정 시 최종 별점 값을 가져오기 위한 함수 스코프 변수
+    let currentUserKey = null; // [코드 개선] 사용자 고유번호를 저장할 변수 추가
     let getFinalRating = null;
 
     // ----------------------------------------
@@ -67,20 +70,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------------------------------------
     // #3. 내가 작성한 후기 조회 (Read Reviews)
+    // [코드 개선] 고유번호를 한 번만 묻도록 로직 수정
     // ----------------------------------------
     const fetchMyReviews = async () => {
-        // 실제 서버 API 호출 로직
-        const headers = {
-            'Content-Type': 'application/json',
-            // TODO: 실제 로그인 기능 구현 시, 토큰 추가 필요
-            // 'Authorization': 'Bearer ' + localStorage.getItem('accessToken')
-        };
+        // currentUserKey가 없으면 사용자에게 물어보고 저장
+        if (!currentUserKey) {
+            const userKey = prompt("리뷰를 조회할 고유번호를 입력해주세요.");
+            if (!userKey) {
+                reviewList.innerHTML = '<p class="no-reviews">고유번호가 입력되지 않아 리뷰를 조회할 수 없습니다.</p>';
+                return;
+            }
+            currentUserKey = userKey; // 입력받은 고유번호를 변수에 저장
+        }
 
         try {
-            // サーバーの `reviews/my-reviews` エンドポイントに POST リクエストを送信します。
             const response = await fetch(`${API_BASE_URL}/reviews/my-reviews`, {
-                method: 'POST', // API 명세에 따라 GET 또는 POST로 변경
-                headers: headers,
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userKey: currentUserKey }) // 저장된 고유번호 사용
             });
 
             if (!response.ok) {
@@ -90,15 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (result.success) {
-                myReviewsData = result.data; // 서버에서 받은 데이터 저장
+                myReviewsData = result.data;
                 renderReviews(myReviewsData);
             } else {
                 alert(result.message || '리뷰를 불러오는 데 실패했습니다.');
+                reviewList.innerHTML = '<p class="no-reviews">리뷰를 불러올 수 없습니다.</p>';
+                currentUserKey = null; // [코드 개선] 실패 시 고유번호 초기화하여 다시 입력받도록 함
             }
         } catch (error) {
             console.error('리뷰 조회 중 오류 발생:', error);
             alert('리뷰를 불러오는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
-            // 에러 발생 시 샘플 UI를 보여주지 않도록 목록을 비워줍니다.
             reviewList.innerHTML = '<p class="no-reviews">리뷰를 불러올 수 없습니다.</p>';
         }
     };
@@ -130,51 +138,63 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         
-        return () => newRating; // 현재 선택된 별점 값을 반환하는 함수를 리턴
+        return () => newRating;
     };
 
     // ----------------------------------------
     // #5. 내가 작성한 후기 수정 (Update Review)
     // ----------------------------------------
-    const handleModifySubmit = async (event) => {
-        event.preventDefault();
-        
-        const reviewId = modifyReviewId.value;
-        const finalRate = getFinalRating ? getFinalRating() : null; // 최종 별점 값 가져오기
+   const handleModifySubmit = async (event) => {
+    event.preventDefault();
+    
+    const reviewId = modifyReviewId.value;
+    const finalRate = getFinalRating ? getFinalRating() : null;
+    const userKeyForModification = currentUserKey; // 💡 1. 전역 변수에서 userKey 가져오기
 
-        if (finalRate === null) {
-            alert('별점을 선택해주세요.');
-            return;
-        }
+    if (finalRate === null) {
+        alert('별점을 선택해주세요.');
+        return;
+    }
 
-        const updatedData = new FormData();
-        updatedData.append('title', modifyTitle.value);
-        updatedData.append('content', modifyContent.value);
-        updatedData.append('rate', finalRate);
-        updatedData.append('password', modifyPassword.value);
-        // TODO: 이미지 파일이 있다면 추가 -> updatedData.append('image', fileInput.files[0]);
+    // 💡 2. 혹시 모를 예외 처리: 고유번호가 없는 경우
+    if (!userKeyForModification) {
+        alert("사용자 고유번호를 찾을 수 없습니다. 페이지를 새로고침 후 다시 시도해주세요.");
+        return;
+    }
 
-        try {
-            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
-                method: 'PUT', // 또는 'PATCH'
-                // FormData 사용 시 Content-Type은 브라우저가 자동으로 설정하므로 헤더에서 제외합니다.
-                body: updatedData,
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('리뷰가 성공적으로 수정되었습니다.');
-                closeModal(modifyModal);
-                fetchMyReviews(); // 목록 새로고침
-            } else {
-                alert(result.message || '리뷰 수정에 실패했습니다.');
-            }
-        } catch (error) {
-            console.error('리뷰 수정 중 오류 발생:', error);
-            alert('리뷰 수정 중 오류가 발생했습니다.');
-        }
+    // 💡 3. FormData 대신, 서버가 이해하기 쉬운 일반 JavaScript 객체(JSON)로 데이터를 만듭니다.
+    const updatedData = {
+        title: modifyTitle.value,
+        content: modifyContent.value,
+        rate: finalRate,
+        userKey: userKeyForModification // 'password' 대신 'userKey'를 사용 (백엔드와 확인 필요!)
     };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, { // 명세서 확인 필요!!
+            method: 'PATCH', 
+            // 💡 4. 우리가 보내는 데이터가 JSON 형식임을 서버에 알려줍니다.
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            // 💡 5. JavaScript 객체를 JSON 문자열로 변환하여 body에 담아 전송합니다.
+            body: JSON.stringify(updatedData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert('리뷰가 성공적으로 수정되었습니다.');
+            closeModal(modifyModal);
+            fetchMyReviews(); 
+        } else {
+            alert(result.message || '리뷰 수정에 실패했습니다.');
+        }
+    } catch (error) {
+        console.error('리뷰 수정 중 오류 발생:', error);
+        alert('리뷰 수정 중 오류가 발생했습니다.');
+    }
+};
     
     // ----------------------------------------
     // #6. 내가 작성한 후기 삭제 (Delete Review)
@@ -184,25 +204,31 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // TODO: 삭제 시에도 비밀번호를 입력받는 UI가 필요하다면 추가 구현
-        const password = prompt("리뷰 삭제를 위해 비밀번호를 입력하세요:");
-        if (!password) {
-            alert("삭제가 취소되었습니다.");
+        // 💡 1. prompt를 사용하지 않고, 전역 변수에 저장된 currentUserKey를 사용합니다.
+        const userKeyForDeletion = currentUserKey; 
+
+        // 혹시 모를 예외 처리: 고유번호가 없는 경우
+        if (!userKeyForDeletion) {
+            alert("사용자 고유번호를 찾을 수 없습니다. 페이지를 새로고침 후 다시 시도해주세요.");
             return;
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, {
+            // 💡 2. DELETE 대신 POST 메서드를 사용하고,
+            //         백엔드 API 주소도 삭제 처리를 위한 주소로 변경합니다. (백엔드와 협의 필요)
+            //         예: /reviews/{reviewId}/delete
+            const response = await fetch(`${API_BASE_URL}/my-review/${reviewId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password: password }),
+                // 💡 3. body에는 'password' 대신 백엔드가 요구하는 'userKey'를 담아 전송합니다.
+                body: JSON.stringify({ userKey: userKeyForDeletion }),
             });
 
             const result = await response.json();
 
             if (result.success) {
                 alert('리뷰가 삭제되었습니다.');
-                fetchMyReviews(); // 목록 새로고침
+                fetchMyReviews(); 
             } else {
                 alert(result.message || '리뷰 삭제에 실패했습니다.');
             }
@@ -211,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('리뷰 삭제 중 오류가 발생했습니다.');
         }
     };
-
     // ----------------------------------------
     // #7. 모달 관련 기능 (Modal Functions)
     // ----------------------------------------
@@ -225,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const populateReviewModal = (reviewId) => {
-        const reviewData = myReviewsData.find(item => item.review.reviewId === reviewId);
+        const reviewData = getReviewById(reviewId);
         if (!reviewData) return;
 
         const { review, departure, destinationName } = reviewData;
@@ -239,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const populateModifyModal = (reviewId) => {
-        const reviewData = myReviewsData.find(item => item.review.reviewId === reviewId);
+        const reviewData = getReviewById(reviewId);
         if (!reviewData) return;
 
         const { review } = reviewData;
@@ -247,8 +272,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modifyTitle.value = review.title;
         modifyContent.value = review.content;
         
-        // 수정 모달이 열릴 때마다 별점 생성 함수를 호출하고,
-        // 그 리턴값(최종 별점을 가져오는 함수)을 전역 변수에 할당
         getFinalRating = createStarRating(modifyRatingContainer, review.rate);
         
         openModal(modifyModal);
@@ -299,6 +322,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------------------------------------
     // #9. 초기 데이터 로드 (Initial Load)
+    // [코드 변경] 초기 로드 로직을 함수로 분리하고 수정
     // ----------------------------------------
-    fetchMyReviews();
+    const loadInitialReviews = () => {
+        const storedReviews = localStorage.getItem('myReviews');
+        if (storedReviews) {
+            // 로컬 스토리지에 데이터가 있으면 파싱해서 화면에 렌더링
+            const reviewsData = JSON.parse(storedReviews);
+            myReviewsData = reviewsData; // 전역 변수에도 할당
+            renderReviews(reviewsData);
+            // 한 번 사용한 데이터는 삭제하여 다음 접속 시 최신 데이터를 받도록 함
+            localStorage.removeItem('myReviews');
+        } else {
+            // 로컬 스토리지에 데이터가 없으면 서버에 요청
+            fetchMyReviews();
+        }
+    };
+
+    loadInitialReviews(); // 수정한 초기 로드 함수 호출
 });
