@@ -52,7 +52,7 @@ const myreviewController = {
         message: "일정에 대한 후기가 성공적으로 작성되었습니다.",
         data: {
           reviewId: result.reviewId,
-          scheduleId: planId,
+          planId: planId,
         },
       });
     } catch (error) {
