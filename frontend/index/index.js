@@ -17,11 +17,11 @@ async function goToReviews() {
     const { success, data, message } = await res.json();
     const reviews = data?.reviews ?? [];
 
-    if (!success || !Array.isArray(reviews) || reviews.length === 0) {
+    if (success === false || !Array.isArray(reviews) || reviews.length === 0) {
       return handleError(message || "유효한 리뷰 데이터가 없습니다.");
     }
 
-    localStorage.setItem("savedReviews", JSON.stringify(reviews));
+    localStorage.setItem("reviews", JSON.stringify(reviews));
     window.location.href = "./frontend/reviews/reviews.html";
   } catch (err) {
     handleError(

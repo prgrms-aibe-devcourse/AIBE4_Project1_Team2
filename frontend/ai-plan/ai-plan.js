@@ -1,3 +1,6 @@
+// =============================
+//  여행 스타일 / 입력 요소
+// =============================
 const styleContainer = document.getElementById("styleButtons");
 const customInputBtn = document.getElementById("customInputBtn");
 const customInput = document.getElementById("customStyleInput");
@@ -8,7 +11,7 @@ const budgetValue = document.getElementById("budgetValue");
 let selectedStyles = [];
 
 // =============================
-// 여행 스타일 선택
+//  여행 스타일 선택
 // =============================
 styleContainer.addEventListener("click", (e) => {
   const btn = e.target.closest(".style-btn");
@@ -30,7 +33,7 @@ customInputBtn.addEventListener("click", () => {
   if (customInput.classList.contains("show")) customInput.focus();
 });
 
-// 직접입력 → 엔터 입력 시 새 버튼 추가
+// 직접입력 → 엔터 시 새 버튼 추가
 customInput.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   e.preventDefault();
@@ -56,7 +59,7 @@ customInput.addEventListener("keydown", (e) => {
 });
 
 // =============================
-// 예산 슬라이더
+//  예산 슬라이더
 // =============================
 function updateBudgetSlider() {
   const value = parseInt(budgetSlider.value);
@@ -77,7 +80,7 @@ window.addEventListener("pageshow", updateBudgetSlider);
 updateBudgetSlider();
 
 // =============================
-// 필수 입력 필드 검증
+//  필수 입력 검증
 // =============================
 const requiredFields = {
   departure: "출발지를 입력해주세요!",
@@ -104,7 +107,7 @@ document.getElementById("departureDate").min = new Date()
   .split("T")[0];
 
 // =============================
-// 폼 제출 처리
+//  폼 제출 처리
 // =============================
 travelForm.addEventListener("submit", async (e) => {
   e.preventDefault();

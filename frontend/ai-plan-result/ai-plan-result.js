@@ -40,7 +40,7 @@ function renderSchedule(result) {
   // 제목
   const departure = result.departure || "출발지 미입력";
   const destination = result.recommendation?.destinationName || "미정";
-  document.getElementById("trip-title").innerHTML = `
+  document.getElementById("tripTitle").innerHTML = `
     <span class="title-black">${departure}</span>
     <span class="title-black"> → </span>
     <span class="highlight-destination">${destination}</span>
@@ -56,10 +56,10 @@ function renderSchedule(result) {
       ? `예산 약 ${Number(result.budget).toLocaleString()}원`
       : null,
   ].filter(Boolean);
-  document.getElementById("trip-info").textContent = infoParts.join(" | ");
+  document.getElementById("tripInfo").textContent = infoParts.join(" | ");
 
   // 여행지 설명
-  document.getElementById("destination-description").textContent =
+  document.getElementById("destinationDescription").textContent =
     result.recommendation?.destinationDescription || "설명이 없습니다.";
 
   // 일정 타임라인
@@ -88,7 +88,7 @@ function renderSchedule(result) {
   }
 
   // 여행 팁
-  const notesList = document.getElementById("notes-list");
+  const notesList = document.getElementById("notesList");
   notesList.innerHTML = "";
   if (Array.isArray(result.recommendation?.notes)) {
     result.recommendation.notes.forEach((note) => {
