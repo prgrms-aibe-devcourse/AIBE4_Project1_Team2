@@ -1,99 +1,6 @@
-:root {
-  --main-yellow: #f5c563;
-  --main-orange: #ff9b6b;
-  --main-yellow-light: #ffd93d;
-  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-  --transition: all 0.3s ease;
-}
-
-/* ============================= */
-/* 1. 기본 설정 */
-/* ============================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-  font-family: var(--font-primary);
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  overflow: hidden;
-  scroll-behavior: smooth;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ============================= */
-/* 2. 상단 바 */
-/* ============================= */
-.top-bar {
-  background: linear-gradient(135deg, var(--main-yellow) 0%, #f7d082 100%);
-  height: clamp(40px, 8vh, 70px);
-  flex-shrink: 0;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  padding: 0 30px;
-}
-
-/* 로고 */
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.logo-img {
-  width: clamp(120px, 20vw, 180px);
-  height: clamp(40px, 8vh, 60px);
-  object-fit: contain;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: clamp(6px, 1.5vh, 10px) clamp(10px, 2vw, 16px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.logo-link:hover .logo-img {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-}
-
-/* 후기 버튼 */
-.review-btn {
-  background-color: #fff;
-  color: var(--main-yellow);
-  font-weight: 700;
-  border: 2px solid var(--main-yellow);
-  border-radius: 30px;
-  padding: 10px 26px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-family: var(--font-primary);
-  transition: var(--transition);
-}
-
-.review-btn:hover {
-  color: #000;
-  transform: translateY(-4px);
-  box-shadow: 0 4px 10px rgba(245, 197, 99, 0.3);
-}
-
-/* ============================= */
-/* 3. 메인 콘텐츠 */
-/* ============================= */
+/* ====================================================== */
+/* 1. 페이지 전용 레이아웃 */
+/* ====================================================== */
 .main-content {
   flex: 1;
   display: flex;
@@ -101,10 +8,11 @@ body {
   align-items: flex-start;
   background: #fff;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 40px 20px;
+  box-sizing: border-box;
 }
 
-/* 결과 컨테이너 */
 .result-container {
   background: #fff;
   border-radius: 20px;
@@ -115,23 +23,22 @@ body {
   animation: fadeIn 0.8s ease-out;
 }
 
-/* ============================= */
-/* 4. 헤더 제목 영역 */
-/* ============================= */
+/* ====================================================== */
+/* 2. 헤더 제목 영역 */
+/* ====================================================== */
 .header {
   text-align: center;
-  margin-bottom: 40px;
+  background: #fff;
+  padding: 20px 0 15px;
+  margin-bottom: 30px;
   border-bottom: 2px solid #f5f5f5;
-  padding-bottom: 20px;
 }
 
 .main-title {
-  font-size: clamp(28px, 4vw, 38px);
-  font-weight: 800;
+  font-size: clamp(26px, 4vw, 36px);
   color: #333;
-  line-height: 1.5;
-  white-space: nowrap;
-  transition: var(--transition);
+  font-weight: 800;
+  margin-bottom: 8px;
 }
 
 .highlight-destination {
@@ -141,14 +48,12 @@ body {
 
 .subtitle {
   font-size: clamp(14px, 2vw, 17px);
-  color: #555;
-  margin-top: 8px;
-  line-height: 1.8;
+  color: #666;
 }
 
-/* ============================= */
-/* 5. 여행지 설명 */
-/* ============================= */
+/* ====================================================== */
+/* 3. 여행지 설명 */
+/* ====================================================== */
 .destination-description {
   font-size: 1rem;
   color: #333;
@@ -165,9 +70,9 @@ body {
   box-shadow: 0 4px 15px rgba(255, 215, 100, 0.2);
 }
 
-/* ============================= */
-/* 6. 일정 타임라인 */
-/* ============================= */
+/* ====================================================== */
+/* 4. 일정 타임라인 */
+/* ====================================================== */
 .timeline {
   position: relative;
   margin: 40px 0;
@@ -221,14 +126,13 @@ body {
 }
 
 .transport {
-  font-size: 0.9rem;
-  color: var(--main-yellow);
+  color: var(--main-orange);
   margin-top: 5px;
 }
 
-/* ============================= */
-/* 7. 여행 팁 */
-/* ============================= */
+/* ====================================================== */
+/* 5. 여행 팁 */
+/* ====================================================== */
 .notes-section {
   margin-top: 50px;
   padding: 25px;
@@ -247,13 +151,13 @@ body {
   gap: 6px;
 }
 
-#notes-list {
+#notesList {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-#notes-list li {
+#notesList li {
   position: relative;
   padding-left: 26px;
   margin-bottom: 14px;
@@ -261,7 +165,7 @@ body {
   line-height: 1.8;
 }
 
-#notes-list li::before {
+#notesList li::before {
   content: "💡";
   position: absolute;
   left: 0;
@@ -269,9 +173,9 @@ body {
   font-size: 1rem;
 }
 
-/* ============================= */
-/* 8. 하단 버튼 */
-/* ============================= */
+/* ====================================================== */
+/* 6. 하단 버튼 */
+/* ====================================================== */
 .bottom-btn {
   display: flex;
   justify-content: center;
@@ -279,33 +183,34 @@ body {
   margin-top: 60px;
 }
 
-button {
-  font-family: var(--font-primary);
+.btn-back {
+  background-color: #fff;
+  border: 2px solid #bbb;
+  color: #555;
+  font-weight: 700;
   font-size: 1rem;
   padding: 14px 32px;
   border-radius: 50px;
-  border: none;
   cursor: pointer;
   transition: var(--transition);
-  font-weight: 700;
-}
-
-.btn-back {
-  background-color: #fff;
-  border: 2px solid var(--main-yellow);
-  color: var(--main-yellow);
 }
 
 .btn-back:hover {
   color: #000;
   transform: translateY(-3px);
-  box-shadow: 0 4px 10px rgba(245, 197, 99, 0.3);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .btn-save {
   background: linear-gradient(135deg, var(--main-orange) 0%, #ff8556 100%);
   color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 14px 32px;
+  border-radius: 50px;
+  cursor: pointer;
   box-shadow: 0 4px 10px rgba(255, 155, 107, 0.3);
+  transition: var(--transition);
 }
 
 .btn-save:hover {
@@ -314,59 +219,29 @@ button {
   box-shadow: 0 8px 20px rgba(255, 155, 107, 0.5);
 }
 
-/* ============================= */
-/* 9. 푸터 */
-/* ============================= */
-.bottom-bar {
-  background: transparent;
-  height: clamp(20px, 4vh, 35px);
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer-text {
-  color: var(--main-yellow);
-  font-weight: 700;
-  font-size: clamp(12px, 1.3vw, 15px);
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-
-/* ============================= */
-/* 10. 반응형 */
-/* ============================= */
+/* ====================================================== */
+/* 7. 반응형 */
+/* ====================================================== */
 @media (max-width: 600px) {
   .result-container {
-    padding: 25px 20px;
-    max-width: 100%;
-  }
-
-  .main-title {
-    font-size: 1.5rem;
-    white-space: normal;
-    line-height: 1.4;
-  }
-
-  .details {
-    padding: 12px 15px;
-  }
-
-  button {
-    font-size: 0.9rem;
-    padding: 10px 18px;
+    padding: 20px;
   }
 
   .bottom-btn {
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
+  }
+
+  .btn-back,
+  .btn-save {
+    width: 100%;
+    padding: 14px 0;
   }
 }
 
-/* ============================= */
-/* 11. 애니메이션 */
-/* ============================= */
+/* ====================================================== */
+/* 8. 애니메이션 */
+/* ====================================================== */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -1,103 +1,6 @@
-:root {
-  --main-yellow: #f5c563;
-  --main-orange: #ff9b6b;
-  --main-yellow-light: #ffd93d;
-  --font-primary: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo",
-    sans-serif;
-  --transition: all 0.3s ease;
-}
-
-/* ============================= */
-/* 1. 기본 설정 */
-/* ============================= */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-  font-family: var(--font-primary);
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  overflow: hidden;
-  scroll-behavior: smooth;
-}
-
-/* ============================= */
-/* 2. 컨테이너 구조 */
-/* ============================= */
-.container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ============================= */
-/* 3. 상단 바 */
-/* ============================= */
-.top-bar {
-  background: linear-gradient(135deg, var(--main-yellow) 0%, #f7d082 100%);
-  height: clamp(40px, 8vh, 70px);
-  flex-shrink: 0;
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 100%;
-  padding: 0 30px;
-}
-
-/* 로고 */
-.logo-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-}
-
-.logo-img {
-  width: clamp(120px, 20vw, 180px);
-  height: clamp(40px, 8vh, 60px);
-  object-fit: contain;
-  background-color: #fff;
-  border-radius: 12px;
-  padding: clamp(6px, 1.5vh, 10px) clamp(10px, 2vw, 16px);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.logo-link:hover .logo-img {
-  transform: scale(1.05);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
-}
-
-/* 후기 버튼 */
-.review-btn {
-  background-color: #fff;
-  color: var(--main-yellow);
-  font-weight: 700;
-  border: 2px solid var(--main-yellow);
-  border-radius: 30px;
-  padding: 10px 26px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-family: var(--font-primary);
-  transition: var(--transition);
-}
-
-.review-btn:hover {
-  color: #000;
-  transform: translateY(-4px);
-  box-shadow: 0 4px 10px rgba(245, 197, 99, 0.3);
-}
-
-/* ============================= */
-/* 4. 메인 콘텐츠 */
-/* ============================= */
+/* ====================================================== */
+/* 1. 페이지 전용 레이아웃 */
+/* ====================================================== */
 .main-content {
   flex: 1;
   display: flex;
@@ -110,7 +13,6 @@ body {
   box-sizing: border-box;
 }
 
-/* 폼 컨테이너 */
 .form-container {
   background: #fff;
   border-radius: 20px;
@@ -122,9 +24,9 @@ body {
   animation: fadeIn 0.8s ease-out;
 }
 
-/* ============================= */
-/* 5. 폼 헤더 및 입력 영역 */
-/* ============================= */
+/* ====================================================== */
+/* 2. 헤더 섹션 */
+/* ====================================================== */
 .header {
   background: #fff;
   padding: 20px 0 15px;
@@ -144,6 +46,9 @@ body {
   color: #666;
 }
 
+/* ====================================================== */
+/* 3. 폼 구조 */
+/* ====================================================== */
 .travel-form {
   display: flex;
   flex-direction: column;
@@ -151,7 +56,6 @@ body {
   text-align: left;
 }
 
-/* 2열 구조 */
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -163,7 +67,6 @@ body {
   min-width: 250px;
 }
 
-/* 입력 그룹 */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -180,7 +83,9 @@ body {
   color: var(--main-orange);
 }
 
-/* 입력 필드 */
+/* ====================================================== */
+/* 4. 입력 필드 */
+/* ====================================================== */
 .form-control {
   width: 100%;
   padding: 14px 18px;
@@ -198,28 +103,9 @@ body {
   outline: none;
 }
 
-/*  필수 입력 오류 강조 */
-.error-border {
-  border-color: #ff6b6b !important;
-  box-shadow: 0 0 6px rgba(255, 107, 107, 0.5);
-  background-color: #fff5f5;
-  transition: all 0.3s ease;
-}
-
-/* 자동완성 배경 제거 */
-input:-webkit-autofill,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:hover,
-textarea:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #fff inset !important;
-  box-shadow: 0 0 0px 1000px #fff inset !important;
-  background-color: #fff !important;
-  -webkit-text-fill-color: #333 !important;
-}
-
-/* ============================= */
-/* 6. 여행 스타일 버튼 */
-/* ============================= */
+/* ====================================================== */
+/* 5. 여행 스타일 버튼 */
+/* ====================================================== */
 .style-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -239,6 +125,7 @@ textarea:-webkit-autofill {
 
 .style-btn:hover {
   background: var(--main-yellow);
+  color: #fff;
 }
 
 .style-btn.active {
@@ -247,57 +134,12 @@ textarea:-webkit-autofill {
   border-color: var(--main-yellow);
 }
 
-/* 직접입력 버튼 */
-.custom-style-btn {
-  border-style: dotted !important;
-  background: #fff;
-}
-
-.custom-style-btn:hover {
-  background: #fffbe6;
-  transform: scale(1.03);
-}
-
-/* 직접입력 입력창 */
-#customStyleInput {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  color: #333;
-  transition: all 0.4s ease;
-}
-
-#customStyleInput.show {
-  max-height: 60px;
-  opacity: 1;
-  margin-top: 10px;
-  padding: 14px 18px;
-  border: 2px solid #eee;
-  background-color: #fff;
-}
-
-/* textarea */
-textarea.form-control {
-  height: 75px;
-  resize: none;
-}
-
-/* ============================= */
-/* 7. 예산 & 버튼 */
-/* ============================= */
+/* ====================================================== */
+/* 6. 예산 슬라이더 */
+/* ====================================================== */
 .form-range {
   width: 100%;
   accent-color: var(--main-yellow);
-  background: linear-gradient(
-    to right,
-    var(--main-yellow-light) 0%,
-    var(--main-yellow-light) 100%
-  );
   height: 10px;
   border-radius: 5px;
   outline: none;
@@ -309,10 +151,13 @@ textarea.form-control {
   color: var(--main-yellow);
 }
 
+/* ====================================================== */
+/* 7. 제출 버튼 */
+/* ====================================================== */
 .btn-submit {
   align-self: center;
   padding: clamp(16px, 3vh, 22px) clamp(70px, 10vw, 140px);
-  background: linear-gradient(135deg, var(--main-orange) 0%, #ff8556 100%);
+  background: var(--main-orange);
   border: none;
   border-radius: 60px;
   color: #fff;
@@ -329,29 +174,9 @@ textarea.form-control {
   box-shadow: 0 8px 20px rgba(255, 155, 107, 0.5);
 }
 
-/* ============================= */
-/* 8. 하단 푸터 */
-/* ============================= */
-.bottom-bar {
-  background: transparent;
-  height: clamp(20px, 4vh, 35px);
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer-text {
-  color: var(--main-yellow);
-  font-weight: 500;
-  font-size: clamp(12px, 1.3vw, 15px);
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-
-/* ============================= */
-/* 9. 기타 (로딩, 반응형, 애니메이션) */
-/* ============================= */
+/* ====================================================== */
+/* 8. 로딩 오버레이 */
+/* ====================================================== */
 .loading-overlay {
   position: fixed;
   inset: 0;
@@ -378,7 +203,9 @@ textarea.form-control {
   color: #333;
 }
 
-/* 반응형 */
+/* ====================================================== */
+/* 9. 반응형 */
+/* ====================================================== */
 @media (max-width: 600px) {
   .form-container {
     padding: 0 20px 40px;
@@ -395,18 +222,9 @@ textarea.form-control {
   }
 }
 
-/* 애니메이션 */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* ====================================================== */
+/* 10. 애니메이션 */
+/* ====================================================== */
 @keyframes spin {
   to {
     transform: rotate(360deg);

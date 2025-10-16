@@ -64,13 +64,14 @@
 
     <!-- font / css -->
     <link rel="stylesheet" href="../public/font.css" />
+    <link rel="stylesheet" href="../public/css/common.css" />
     <link rel="stylesheet" href="./my-ai-plans.css" />
   </head>
 
   <body>
     <div class="container">
       <header class="top-bar">
-        <div class="header-inner">
+        <div class="nav-container">
           <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
             <img
               src="../public/logo/logo.png"
@@ -79,63 +80,77 @@
             />
           </a>
 
-          <button
-            class="plan-btn"
-            onclick="window.location.href='../ai-plan/ai-plan.html'"
-          >
-            일정 추천받기
+          <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
           </button>
+
+          <nav class="nav-menu" id="navMenu">
+            <button class="nav-btn my-ai-plans" id="btnMyAiPlans">
+              📅 내가 저장한 일정
+            </button>
+            <button class="nav-btn my-reviews" id="btnMyReviews">
+              📝 내가 작성한 후기
+            </button>
+            <button
+              class="nav-btn ai-plan"
+              onclick="window.location.href='../ai-plan/ai-plan.html'"
+            >
+              🧭 AI에게 일정 추천받기
+            </button>
+            <button class="nav-btn reviews" id="btnReviews">
+              💬 여행자들의 후기
+            </button>
+          </nav>
         </div>
       </header>
 
       <main class="main-content">
-        <div class="content-container">
-          <div class="header">
-            <h1 class="main-title">저장한 AI 추천 일정을 한눈에 확인하세요!</h1>
-            <p class="subtitle">일정 상세보기 및 후기 작성을 할 수 있습니다.</p>
-          </div>
-
-          <section id="plan-list" class="plan-list"></section>
+        <div class="header">
+          <h1 class="main-title">저장한 AI 추천 일정을 한눈에 확인하세요!</h1>
+          <p class="subtitle">일정 상세보기 및 후기 작성을 할 수 있습니다.</p>
         </div>
+
+        <section class="plan-list" id="planList"></section>
       </main>
 
       <footer class="bottom-bar">
-        <p class="footer-text">돔황챠(2조)</p>
+        <p class="footer-text">돔황챠 (2조)</p>
       </footer>
     </div>
 
-    <!-- 상세보기 모달 -->
     <div class="modal-overlay" id="planModal">
-      <div class="modal-content">
-        <button class="close-button">&times;</button>
+      <div class="modal-content plan-result-modal">
+        <button class="close-button" aria-label="닫기">&times;</button>
 
-        <div class="modal-body">
-          <div class="header">
-            <h1 class="main-title" id="modal-title"></h1>
-            <p class="subtitle" id="modal-info"></p>
-          </div>
+        <div class="plan-header">
+          <h1 class="destination-title" id="modalTitle"></h1>
+          <p class="destination-desc" id="modalInfo"></p>
+        </div>
 
-          <div class="destination-description" id="modal-description"></div>
+        <div id="modalDescription"></div>
 
-          <div class="timeline" id="modal-timeline"></div>
+        <section class="plan-itinerary-section">
+          <h2>🗺️ 상세 일정</h2>
+          <div class="plan-cards" id="modalTimeline"></div>
+        </section>
 
-          <div class="notes-section">
-            <h2>💡 여행 팁</h2>
-            <ul id="modal-notes"></ul>
-          </div>
+        <section class="plan-notes-section">
+          <h2>💡 여행 팁</h2>
+          <ul id="modalNotes" class="plan-notes"></ul>
+        </section>
 
-          <div class="bottom-btn">
-            <button class="btn-back" id="prevPlan">◀</button>
-            <button class="btn-review" id="modalReviewBtn">
-              ✏️ 후기 작성하기
-            </button>
-            <button class="btn-delete" id="modalDeleteBtn">🗑 삭제하기</button>
-            <button class="btn-back" id="nextPlan">▶</button>
-          </div>
+        <div class="bottom-btn">
+          <button class="btn-prev" id="prevBtn">◀</button>
+          <button class="btn-review" id="modalReviewBtn">✏️ 후기 작성</button>
+          <button class="btn-delete" id="modalDeleteBtn">🗑 삭제</button>
+          <button class="btn-next" id="nextBtn">▶</button>
         </div>
       </div>
     </div>
 
+    <script src="../public/js/common.js" defer></script>
     <script src="./my-ai-plans.js"></script>
   </body>
 </html>
