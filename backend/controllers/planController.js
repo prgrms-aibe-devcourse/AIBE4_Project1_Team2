@@ -47,6 +47,19 @@ const reviewController = {
       handleError(res, "내 일정 조회에 실패했습니다.", error);
     }
   },
+
+  // 내가 저장한 일정 삭제
+  deletePlan: async (req, res) => {
+    try {
+      const planId = parseInt(req.params.planId, 10);
+      await planService.deletePlan(planId);
+
+      handleSuccess(res, 200, "삭제되었습니다.");
+    } catch (error) {
+      console.error("일정 삭제 중 오류 발생:", error);
+      handleError(res, "일정 삭제에 실패했습니다.", error);
+    }
+  },
 };
 
 module.exports = reviewController;

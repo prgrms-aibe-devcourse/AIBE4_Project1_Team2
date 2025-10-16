@@ -115,6 +115,14 @@ const planService = {
 
     return data;
   },
+
+  deletePlan: async (planId) => {
+    const { error } = await supabase.from("ai").delete().eq("planId", planId);
+    if (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 };
 
 module.exports = planService;
