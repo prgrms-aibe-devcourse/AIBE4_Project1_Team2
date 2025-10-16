@@ -161,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectedFile) payload.append("image", selectedFile);
     
     const response = await fetch(
-        `https://aibe4-project1-team2-m9vr.onrender.com/mypage/${payload.planId}/review`,
+        `https://aibe4-project1-team2-m9vr.onrender.com/my-review/save/`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

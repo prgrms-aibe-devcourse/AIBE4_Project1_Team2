@@ -8,7 +8,12 @@ const reviewController = {
       const limit = parseInt(req.query.limit) || 10;
       const result = await reviewService.getAllReviews(page, limit);
 
-      handleSuccess(res, 200, "성공적으로 조회되었습니다.", result);
+      let { data, error } = await supabase.from('review').select('*')
+      if (error) {
+        handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
+      }
+
+      handleSuccess(res, 200, "성공적으로 조회되었습니다.", data);
     } catch (error) {
       handleError(res, "리뷰 목록 조회에 실패하였습니다.", error);
     }
