@@ -122,6 +122,26 @@ const planService = {
       console.error(error);
       throw error;
     }
+  },
+
+    // planId로 특정 일정 상세 조회
+  getPlanById: async (planId) => {
+    const { data, error } = await supabase
+      .from("ai")
+      .select(
+        "planId, departure, companions, companionsType, travelStyles, budget, recommendation, departureDate, budgetUnit"
+      )
+      .eq("planId", planId)
+      .single(); // planId는 고유하므로 single()을 사용합니다.
+
+    if (error) {
+      // 데이터가 없는 경우(null)도 Supabase는 에러로 처리할 수 있습니다.
+      console.error("getPlanById 서비스 오류:", error.message);
+      // 컨트롤러에서 404 처리를 할 수 있도록 null을 반환합니다.
+      return null;
+    }
+
+    return data;
   }
 };
 
