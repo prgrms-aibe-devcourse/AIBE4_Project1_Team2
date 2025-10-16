@@ -4,7 +4,7 @@ const mypageController = {
   // 저장된 일정 상세 조회
   getScheduleDetail: async (req, res) => {
     try {
-      const scheduleId = parseInt(req.params.scheduleId, 10);
+      const scheduleId = parseInt(req.params.planId, 10);
       const schedule = await mypageService.getScheduleDetail(scheduleId);
 
       if (!schedule) {
@@ -34,8 +34,9 @@ const mypageController = {
   // 일정에 후기 작성
   createReview: async (req, res) => {
     try {
-      const scheduleId = parseInt(req.params.scheduleId, 10);
+      // const scheduleId = parseInt(req.params.scheduleId, 10);
       const {
+        planId,
         userKey,
         rate,
         title,
@@ -56,7 +57,8 @@ const mypageController = {
         });
       }
 
-      const result = await mypageService.createReview(scheduleId, {
+      const result = await mypageService.createReview({
+        planId,
         userKey,
         rate,
         title,
@@ -98,7 +100,7 @@ const mypageController = {
   deleteReview: async (req, res) => {
     try {
       const reviewId = parseInt(req.params.reviewId, 10);
-      const { userKey } = req.body;
+      // const { userKey } = req.body;
 
       if (!userKey) {
         return res.status(400).json({
@@ -109,7 +111,7 @@ const mypageController = {
         });
       }
 
-      const result = await mypageService.deleteReview(reviewId, userKey);
+      const result = await mypageService.deleteReview(reviewId);
 
       if (!result.success) {
         if (result.statusCode === 404) {

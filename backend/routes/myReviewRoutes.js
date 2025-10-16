@@ -6,6 +6,6 @@ const mypageController = require("../controllers/mypageController");
 router.post("/save", mypageController.createReview);
 
 // 후기 삭제
-router.delete("/:reviewId", mypageController.deleteReview);
+router.delete("/:planId", mypageController.deleteReview);
 
 module.exports = router;
