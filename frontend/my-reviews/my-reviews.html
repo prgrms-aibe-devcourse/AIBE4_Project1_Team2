@@ -65,19 +65,43 @@
 <body>
 
     <div class="container">
-        <main>
-            <div class="page-title">
-                <h2>내 리뷰</h2>
-            </div>
-            <div class="content-area">
-                <section id="reviews" class="tab-content active">
-                    <div class="review-list"></div>
-                    <div class="pagination"></div>
-                </section>
+        <header class="top-bar">
+        <div class="header-inner">
+          <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
+            <img
+              src="../public/logo/logo.png"
+              alt="오늘 트립 로고"
+              class="logo-img"
+            />
+          </a>
+
+          <button
+            class="plan-btn"
+            onclick="window.location.href='../reviews/reviews.html'"
+          >
+            전체 후기 보기
+          </button>
+        </div>
+      </header>
+        <main class="main-content">
+            <div class="content-container">
+                <div class="page-title">
+                    <h1>내 리뷰</h1>
+                </div>
+                <div class="content-area">
+                    <section id="reviews" class="tab-content active">
+                        <div class="review-list"></div>
+                        <div class="pagination"></div>
+                    </section>
+                </div>
             </div>
         </main>
+        <footer class="bottom-bar">
+        <p class="footer-text">돔황챠(2조)</p>
+      </footer>
     </div>
 
+    <!-- 상세보기 모 -->
     <div id="reviewModal" class="modal-overlay">
         <div class="modal-content">
             <button class="close-button">&times;</button>
