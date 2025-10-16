@@ -60,25 +60,25 @@ const reviewService = {
   },
 
   // 특정 리뷰 상세 조회
-  getReviewById: async (reviewId) => {
-    try {
-      const { data, error } = await supabase
-        .from("review")
-        .select("*")
-        .eq("reviewId", reviewId)
-        .single();
+  //getReviewById: async (reviewId) => {
+  //  try {
+  //    const { data, error } = await supabase
+  //      .from("review")
+  //      .select("*")
+  //      .eq("reviewId", reviewId)
+  //      .single();
 
-      if (error) {
-        console.error("리뷰 상세 조회 오류:", error);
-        return null;
-      }
+  //    if (error) {
+  //      console.error("리뷰 상세 조회 오류:", error);
+  //      return null;
+  //    }
 
-      return data;
-    } catch (error) {
-      console.error("getReviewById 오류:", error);
-      return null;
-    }
-  },
+  //    return data;
+  //  } catch (error) {
+  //    console.error("getReviewById 오류:", error);
+  //    return null;
+  //  }
+  //},
 
   // 리뷰 검색 (키워드만)
   searchReviews: async ({ keyword }) => {
