@@ -1,4 +1,4 @@
-let planData = {}; // AI 일정 데이터 전역 저장 변수
+let planData = {};
 
 // =============================
 // 데이터 로드 및 초기화
@@ -100,7 +100,6 @@ function renderSchedule(result) {
     notesList.innerHTML = `<li>추가 여행 팁이 없습니다.</li>`;
   }
 
-  // 버튼 이벤트 등록
   document.getElementById("btnBack").addEventListener("click", goBack);
   document.getElementById("btnSave").addEventListener("click", savePlan);
 }

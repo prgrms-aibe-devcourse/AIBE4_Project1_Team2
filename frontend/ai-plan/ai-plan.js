@@ -1,6 +1,3 @@
-// =============================
-//  여행 스타일 / 입력 요소
-// =============================
 const styleContainer = document.getElementById("styleButtons");
 const customInputBtn = document.getElementById("customInputBtn");
 const customInput = document.getElementById("customStyleInput");
@@ -10,9 +7,6 @@ const budgetSlider = document.getElementById("budget");
 const budgetValue = document.getElementById("budgetValue");
 let selectedStyles = [];
 
-// =============================
-//  여행 스타일 선택
-// =============================
 styleContainer.addEventListener("click", (e) => {
   const btn = e.target.closest(".style-btn");
   if (!btn || btn.id === "customInputBtn") return;
