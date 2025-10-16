@@ -37,12 +37,7 @@ const reviewController = {
   // 리뷰 검색
   searchReviews: async (req, res) => {
     try {
-      const { departure, arrival, keyword } = req.query;
-      const reviews = await reviewService.searchReviews({
-        departure,
-        arrival,
-        keyword,
-      });
+      const reviews = await reviewService.searchReviews(req.query);
 
       handleSuccess(res, 200, "성공적으로 조회되었습니다.", reviews);
     } catch (error) {

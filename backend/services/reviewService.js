@@ -81,12 +81,44 @@ const reviewService = {
   //},
 
   // 리뷰 검색 (키워드만)
-  searchReviews: async ({ keyword }) => {
+  searchReviews: async (filters) => {
     try {
-      let query = supabase.from("review").select("*");
+      const { keyword, departure, travelStyles, minRate, companionsType } = filters;
 
+      // 기본 쿼리: review 테이블과 ai 테이블을 조인합니다.
+      let query = supabase.from("review").select(`
+        reviewId,
+        title,
+        rate,
+        content,
+        img_path,
+        ai!inner(*)
+      `);
+
+      // 1. 키워드 검색 (리뷰 제목 또는 내용)
       if (keyword) {
         query = query.or(`title.ilike.%${keyword}%,content.ilike.%${keyword}%`);
+      }
+
+      // 2. 출발지 검색 (ai 테이블)
+      if (departure) {
+        // foreign table 필터링은 'foreignTable.column' 형식을 사용합니다.
+        query = query.ilike("ai.departure", `%${departure}%`);
+      }
+
+      // 3. 동행자 유형 검색 (ai 테이블)
+      if (companionsType) {
+        query = query.ilike("ai.companionsType", `%${companionsType}%`);
+      }
+
+      // 4. 여행 스타일 검색 (ai 테이블, 배열 포함 여부)
+      if (travelStyles) {
+        query = query.contains("ai.travelStyles", [travelStyles]);
+      }
+
+      // 5. 최소 별점 검색 (review 테이블)
+      if (minRate) {
+        query = query.gte("rate", minRate);
       }
 
       const { data, error } = await query;
@@ -96,7 +128,19 @@ const reviewService = {
         throw new Error(error.message);
       }
 
-      return data || [];
+      // getAllReviews와 동일한 데이터 구조로 가공하여 반환
+      const processedData = data?.map(item => {
+        const { ai, ...reviewData } = item;
+        const { userKey, ...planData } = ai;
+
+        return {
+          ...reviewData,
+          planId: planData.planId,
+          plan: planData,
+        };
+      });
+
+      return processedData || [];
     } catch (error) {
       console.error("searchReviews 오류:", error);
       throw error;
