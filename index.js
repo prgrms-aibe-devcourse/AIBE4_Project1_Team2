@@ -9,6 +9,10 @@ app.use(cors());
 // JSON 파싱을 위한 미들웨어
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("돔황챠 프로젝트 실행중...");
+});
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
