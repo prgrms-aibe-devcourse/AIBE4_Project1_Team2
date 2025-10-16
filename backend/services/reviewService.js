@@ -16,18 +16,36 @@ const reviewService = {
       }
 
       const { data, error } = await supabase
-        .from("review")
-        .select("reviewId, title, rate, content, img_path")
-        .range(startIndex, startIndex + limit - 1)
-        .order("reviewId", { ascending: false });
+      .from('review')
+      .select(`
+        reviewId,
+        title,
+        rate,
+        content,
+        img_path,
+        ai!inner (
+          planId
+        )
+      `)
+      .range(startIndex, startIndex + limit - 1)
+      .order('reviewId', { ascending: false });
 
       if (error) {
         console.error("리뷰 조회 오류:", error);
         throw new Error(error.message);
       }
 
+      const flattenedData = data?.map(review => ({
+        reviewId: review.reviewId,
+        planId: review.ai.planId,
+        title: review.title,
+        rate: review.rate,
+        content: review.content,
+        img_path: review.img_path
+      }));
+
       return {
-        reviews: data || [],
+        reviews: flattenedData || [],
         pagination: {
           currentPage: page,
           totalPages: Math.ceil(count / limit),
