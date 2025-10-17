@@ -8,4 +8,7 @@ router.post("/save", myreviewController.saveReview);
 // DELETE /my-review/:reviewId
 router.delete("/:reviewId", myreviewController.deleteReview);
 
+// PATCH /my-review/:reviewId
+router.patch("/:reviewId", myreviewController.updateReview);
+
 module.exports = router;
