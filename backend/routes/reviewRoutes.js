@@ -12,4 +12,7 @@ router.get("/", reviewController.getAllReviews);
 // 내가 작성한 리뷰 조회
 router.post("/my-reviews", reviewController.getMyReviews);
 
+// 내가 작성한 리뷰 수정
+router.put("/:reviewId", reviewController.updateReview);
+
 module.exports = router;
