@@ -27,6 +27,7 @@ const planService = {
     - 추가 요청 사항: ${additionalInfo}
     - 예산: ${budget}원
 
+    여행 날짜에 해당하는 날씨도 함께 알려줘.
     응답은 반드시 한국어로 해야돼.   
   `;
 
