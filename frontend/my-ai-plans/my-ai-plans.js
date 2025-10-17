@@ -149,6 +149,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (e.target === DOM.modal) closeModal();
   });
 
+  DOM.reviewBtn.addEventListener("click", () => {
+    const plan = savedPlans[currentIndex];
+    if (!plan) return alert("선택된 일정이 없습니다.");
+    goToReview(plan.planId);
+  });
+
+  DOM.deleteBtn.addEventListener("click", () => {
+    const plan = savedPlans[currentIndex];
+    if (!plan) return alert("선택된 일정이 없습니다.");
+    deletePlan(plan.planId);
+  });
+
   // =============================
   // 이전 / 다음 일정
   // =============================
