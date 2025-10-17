@@ -204,24 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         
-        // 💡 1. prompt를 사용하지 않고, 전역 변수에 저장된 currentUserKey를 사용합니다.
-        const userKeyForDeletion = currentUserKey; 
-
-        // 혹시 모를 예외 처리: 고유번호가 없는 경우
-        if (!userKeyForDeletion) {
-            alert("사용자 고유번호를 찾을 수 없습니다. 페이지를 새로고침 후 다시 시도해주세요.");
-            return;
-        }
-
         try {
-            // 💡 2. DELETE 대신 POST 메서드를 사용하고,
-            //         백엔드 API 주소도 삭제 처리를 위한 주소로 변경합니다. (백엔드와 협의 필요)
-            //         예: /reviews/{reviewId}/delete
+            // DELETE 대신 POST 메서드를 사용하고,
             const response = await fetch(`${API_BASE_URL}/my-review/${reviewId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                // 💡 3. body에는 'password' 대신 백엔드가 요구하는 'userKey'를 담아 전송합니다.
-                body: JSON.stringify({ userKey: userKeyForDeletion }),
+                headers: { 'Content-Type': 'application/json' }
             });
 
             const result = await response.json();
