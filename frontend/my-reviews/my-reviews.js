@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
         const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, { // 명세서 확인 필요!!
-            method: 'PUT', 
+            method: 'PATCH', 
             // 💡 4. 우리가 보내는 데이터가 JSON 형식임을 서버에 알려줍니다.
             headers: {
                 'Content-Type': 'application/json',
