@@ -60,6 +60,24 @@ const reviewController = {
       handleError(res, "일정 삭제에 실패했습니다.", error);
     }
   },
+    // 저장한 일정 수정
+  updatePlanById: async (req, res) => {
+    try {
+      const planId = parseInt(req.params.planId, 10);
+      if (isNaN(planId)) {
+        return res.status(400).json({ success: false, message: "유효하지 않은 planId 입니다." });
+      }
+
+      const plan = await planService.updatePlanById(planId);
+      if (!plan) {
+        return res.status(404).json({ success: false, message: "해당 일정을 찾을 수 없습니다." });
+      }
+      handleSuccess(res, 200, "일정이 성공적으로 수정되었습니다.", plan);
+    } catch (error) {
+      handleError(res, "일정 수정에 실패했습니다.", error);
+    }
+  },
+  
     // 특정 일정 상세 조회
   getPlanById: async (req, res) => {
     try {

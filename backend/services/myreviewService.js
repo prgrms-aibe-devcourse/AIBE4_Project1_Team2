@@ -59,6 +59,64 @@ const myreviewService = {
     }
   },
 
+  updateReview: async (reviewData) => {
+    const { reviewId, planId, rate, title, content, img_path } = reviewData;
+
+    try {
+      // 1. 먼저 해당 planId가 존재하는지 확인
+      const { data: planExists, error: planError } = await supabase
+        .from("ai")
+        .select("planId")
+        .eq("planId", planId)
+        .single();
+
+      if (planError || !planExists) {
+        console.error("Plan 조회 오류:", planError);
+        return { error: "PLAN_NOT_FOUND" };
+      }
+
+      // 2. review 테이블에 리뷰 데이터 수정
+      const { data: newReview, error: reviewError } = await supabase
+        .from("review")
+        .update({
+          rate,
+          title,
+          content,
+          img_path: img_path || null,
+        })
+        .eq("reviewId", reviewId)
+        .single();
+
+      if (reviewError) {
+        console.error("Review 수정 오류:", reviewError);
+        throw reviewError;
+      }
+
+      // const newReviewId = newReview.reviewId;
+
+      // // 3. ai 테이블의 reviewId 업데이트 (plan과 review 연결)
+      // const { error: updateError } = await supabase
+      //   .from("ai")
+      //   .update({ reviewId: newReviewId })
+      //   .eq("planId", planId);
+
+      // if (updateError) {
+      //   console.error("AI 테이블 업데이트 오류:", updateError);
+      //   // 롤백을 위해 방금 생성한 리뷰 삭제
+      //   await supabase.from("review").delete().eq("reviewId", newReviewId);
+      //   throw updateError;
+      // }
+
+      // return {
+      //   reviewId: newReviewId,
+      //   planId: planId,
+      // };
+    } catch (error) {
+      console.error("myreviewService.updateReview 오류:", error);
+      throw error;
+    }
+  },
+
   deleteReview: async (reviewId) => {
     try {
       // 1. 리뷰가 존재하는지 확인
