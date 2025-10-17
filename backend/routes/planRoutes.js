@@ -14,9 +14,6 @@ router.post("/my-plans", planController.getMyPlans);
 // 저장한 일정 삭제
 router.delete("/my-plans/:planId", planController.deletePlan);
 
-// 저장한 일정 수정
-router.put("/plan/:planId", planController.updatePlanById);
-
 // 특정 planId의 상세 정보를 조회
 router.get("/plan/:planId", planController.getPlanById);
 
