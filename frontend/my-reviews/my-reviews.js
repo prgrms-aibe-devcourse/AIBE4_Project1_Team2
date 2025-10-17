@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const modifyTitle = document.getElementById('modifyTitle');
     const modifyRatingContainer = document.getElementById('modifyRating');
     const modifyContent = document.getElementById('modifyContent');
-    const modifyPassword = document.getElementById('modifyPassword');
     
     const closeButtons = document.querySelectorAll('.close-button');
     const modalOverlays = document.querySelectorAll('.modal-overlay');
@@ -31,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 전역 데이터 저장소
     let myReviewsData = [];
-    let currentUserKey = null; // [코드 개선] 사용자 고유번호를 저장할 변수 추가
+    // let currentUserKey = null; // [삭제] 고유키 저장을 위한 변수 삭제
     let getFinalRating = null;
 
     // ----------------------------------------
@@ -70,24 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ----------------------------------------
     // #3. 내가 작성한 후기 조회 (Read Reviews)
-    // [코드 개선] 고유번호를 한 번만 묻도록 로직 수정
+    // [수정] 고유키 입력 로직 전체 삭제 및 fetch 방식 변경
     // ----------------------------------------
     const fetchMyReviews = async () => {
-        // currentUserKey가 없으면 사용자에게 물어보고 저장
-        if (!currentUserKey) {
-            const userKey = prompt("리뷰를 조회할 고유번호를 입력해주세요.");
-            if (!userKey) {
-                reviewList.innerHTML = '<p class="no-reviews">고유번호가 입력되지 않아 리뷰를 조회할 수 없습니다.</p>';
-                return;
-            }
-            currentUserKey = userKey; // 입력받은 고유번호를 변수에 저장
-        }
-
         try {
+            // [수정] GET 방식으로 변경하고, body와 headers 일부를 제거
             const response = await fetch(`${API_BASE_URL}/reviews/my-reviews`, {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userKey: currentUserKey }) // 저장된 고유번호 사용
+                method: 'GET' // 'POST'에서 'GET'으로 변경
             });
 
             if (!response.ok) {
@@ -102,7 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 alert(result.message || '리뷰를 불러오는 데 실패했습니다.');
                 reviewList.innerHTML = '<p class="no-reviews">리뷰를 불러올 수 없습니다.</p>';
-                currentUserKey = null; // [코드 개선] 실패 시 고유번호 초기화하여 다시 입력받도록 함
             }
         } catch (error) {
             console.error('리뷰 조회 중 오류 발생:', error);
@@ -112,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // =======================================================
-    // #4. [수정] 수정 모달을 위한 별점 생성 및 이벤트 처리 함수
+    // #4. 수정 모달을 위한 별점 생성 및 이벤트 처리 함수
     // =======================================================
     const createStarRating = (container, currentRating) => {
         container.innerHTML = '';
@@ -149,35 +136,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const reviewId = modifyReviewId.value;
     const finalRate = getFinalRating ? getFinalRating() : null;
-    const userKeyForModification = currentUserKey; // 💡 1. 전역 변수에서 userKey 가져오기
 
     if (finalRate === null) {
         alert('별점을 선택해주세요.');
         return;
     }
 
-    // 💡 2. 혹시 모를 예외 처리: 고유번호가 없는 경우
-    if (!userKeyForModification) {
-        alert("사용자 고유번호를 찾을 수 없습니다. 페이지를 새로고침 후 다시 시도해주세요.");
-        return;
-    }
-
-    // 💡 3. FormData 대신, 서버가 이해하기 쉬운 일반 JavaScript 객체(JSON)로 데이터를 만듭니다.
+    // [수정] updatedData에서 userKey 속성 제거
     const updatedData = {
         title: modifyTitle.value,
         content: modifyContent.value,
-        rate: finalRate,
-        userKey: userKeyForModification // 'password' 대신 'userKey'를 사용 (백엔드와 확인 필요!)
+        rate: finalRate
+        // userKey: userKeyForModification // [삭제]
     };
 
     try {
-        const response = await fetch(`${API_BASE_URL}/reviews/${reviewId}`, { // 명세서 확인 필요!!
+        const response = await fetch(`${API_BASE_URL}/my-review/${reviewId}`, {
             method: 'PATCH', 
-            // 💡 4. 우리가 보내는 데이터가 JSON 형식임을 서버에 알려줍니다.
             headers: {
                 'Content-Type': 'application/json',
             },
-            // 💡 5. JavaScript 객체를 JSON 문자열로 변환하여 body에 담아 전송합니다.
             body: JSON.stringify(updatedData),
         });
 
@@ -186,7 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (result.success) {
             alert('리뷰가 성공적으로 수정되었습니다.');
             closeModal(modifyModal);
-            fetchMyReviews(); 
+            await refreshReviewCache(); 
+            
+            window.location.href = "../reviews/reviews.html";
         } else {
             alert(result.message || '리뷰 수정에 실패했습니다.');
         }
@@ -203,19 +183,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!confirm('정말로 이 리뷰를 삭제하시겠습니까?')) {
             return;
         }
-        
+
         try {
-            // DELETE 대신 POST 메서드를 사용하고,
             const response = await fetch(`${API_BASE_URL}/my-review/${reviewId}`, {
                 method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json' 
+                },
             });
 
             const result = await response.json();
 
             if (result.success) {
                 alert('리뷰가 삭제되었습니다.');
-                fetchMyReviews(); 
+                await refreshReviewCache(); 
+            
+                window.location.href = "../reviews/reviews.html";
             } else {
                 alert(result.message || '리뷰 삭제에 실패했습니다.');
             }
@@ -255,6 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!reviewData) return;
 
         const { review } = reviewData;
+        const currentPhotoPreview = document.getElementById('currentPhotoPreview');
+        currentPhotoPreview.src = review.img_path || 'default-image.jpg';
         modifyReviewId.value = review.reviewId;
         modifyTitle.value = review.title;
         modifyContent.value = review.content;
@@ -262,6 +247,99 @@ document.addEventListener('DOMContentLoaded', () => {
         getFinalRating = createStarRating(modifyRatingContainer, review.rate);
         
         openModal(modifyModal);
+    };
+
+    async function refreshReviewCache() {
+        const res = await fetch(`${API_BASE_URL}/reviews`);
+        if (!res.ok) throw new Error(`후기 목록 요청 실패: ${res.status}`);
+
+        const { success, data, message } = await res.json();
+        const reviews = data?.reviews ?? [];
+
+        if (!success || !Array.isArray(reviews)) {
+        throw new Error(message || "후기 데이터가 올바르지 않습니다.");
+        }
+
+        // reviews.html이 읽을 수 있도록 localStorage에 전체 리뷰 목록 저장
+        localStorage.setItem("reviews", JSON.stringify(reviews)); 
+    }
+
+    // =======================================================
+    // #7-1. [추가] 드래그 앤 드롭 및 이미지 미리보기 기능
+    // =======================================================
+    const setupImageUpload = (dropZoneId, inputId, previewId) => {
+        const dropZone = document.getElementById(dropZoneId);
+        const fileInput = document.getElementById(inputId);
+        const previewContainer = document.getElementById(previewId);
+        const promptElement = dropZone.querySelector('.drop-zone-prompt');
+
+        if (!dropZone || !fileInput || !previewContainer) {
+            console.warn('드래그 앤 드롭 요소를 찾을 수 없습니다.');
+            return;
+        }
+
+        // --- 이벤트 핸들러 함수들 ---
+        const handleFileSelect = (file) => {
+            if (!file || !file.type.startsWith('image/')) return;
+
+            promptElement.style.display = 'none';
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                previewContainer.innerHTML = `
+                    <img src="${e.target.result}" alt="미리보기 이미지" class="preview-image">
+                    <button type="button" class="remove-preview-btn">&times;</button>
+                `;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // --- 이벤트 리스너 연결 ---
+
+        // 1. Drop Zone 클릭 시 파일 선택창 열기
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // 2. 파일 입력(input) 변경 시 미리보기 표시
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                handleFileSelect(fileInput.files[0]);
+            }
+        });
+
+        // 3. 드래그 오버(dragover): 드롭을 허용하도록 기본 동작 방지
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        // 4. 드래그 이탈(dragleave): 하이라이트 효과 제거
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        // 5. 드롭(drop): 파일 처리
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files; // input에 파일 정보 할당
+                handleFileSelect(files[0]); // 미리보기 표시
+            }
+        });
+
+        // 6. 미리보기 이미지 삭제
+        previewContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-preview-btn')) {
+                fileInput.value = ''; // input의 파일 정보 초기화
+                previewContainer.innerHTML = ''; // 미리보기 삭제
+
+                promptElement.style.display = 'flex';
+            }
+        });
     };
 
     // ----------------------------------------
@@ -327,4 +405,5 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     loadInitialReviews(); // 수정한 초기 로드 함수 호출
+    setupImageUpload('modifyDropZone', 'modifyPhotoUpload', 'modifyImagePreview');
 });
