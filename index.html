@@ -59,11 +59,16 @@
     />
 
     <!-- font / css -->
-    <link rel="stylesheet" href="./frontend/public/font.css" />
+    <link rel="stylesheet" href="./frontend/public/css/common.css" />
     <link rel="stylesheet" href="./frontend/index/index.css" />
   </head>
 
   <body>
+    <div id="loadingSpinner" class="hidden">
+      <div class="spinner"></div>
+      <p>후기를 불러오는 중입니다...</p>
+    </div>
+
     <div class="container">
       <header class="top-bar"></header>
 
@@ -84,7 +89,7 @@
 
         <div class="button-container">
           <button class="btn-custom btn-ai" onclick="goToAIPlan()">
-            당일치기 일정 추천받기
+            AI에게 일정 추천받기
           </button>
           <button class="btn-custom btn-review" onclick="goToReviews()">
             여행자들의 후기
@@ -95,6 +100,7 @@
       <footer class="bottom-bar"></footer>
     </div>
 
+    <script src="./frontend/public/js/common.js" defer></script>
     <script src="./frontend/index/index.js" defer></script>
   </body>
 </html>

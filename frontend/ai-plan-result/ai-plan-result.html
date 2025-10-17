@@ -60,14 +60,14 @@
     <link rel="manifest" href="../public/favicon/site.webmanifest" />
 
     <!-- font / css -->
-    <link rel="stylesheet" href="../public/font.css" />
+    <link rel="stylesheet" href="../public/css/common.css" />
     <link rel="stylesheet" href="./ai-plan-result.css" />
   </head>
 
   <body>
     <div class="container">
       <header class="top-bar">
-        <div class="header-inner">
+        <div class="nav-container">
           <a href="/AIBE4_Project1_Team2/index.html" class="logo-link">
             <img
               src="../public/logo/logo.png"
@@ -76,31 +76,48 @@
             />
           </a>
 
-          <button
-            class="review-btn"
-            onclick="window.location.href='../reviews/reviews.html'"
-          >
-            여행자들의 후기
+          <button class="nav-toggle" id="navToggle" aria-label="메뉴 열기">
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
+            <span class="hamburger"></span>
           </button>
+
+          <nav class="nav-menu" id="navMenu">
+            <button class="nav-btn my-ai-plans" id="btnMyAiPlans">
+              📅 내가 저장한 일정
+            </button>
+            <button class="nav-btn my-reviews" id="btnMyReviews">
+              📝 내가 작성한 후기
+            </button>
+            <button
+              class="nav-btn ai-plan"
+              onclick="window.location.href='../ai-plan/ai-plan.html'"
+            >
+              🧭 AI에게 일정 추천받기
+            </button>
+            <button class="nav-btn reviews" id="btnReviews">
+              💬 여행자들의 후기
+            </button>
+          </nav>
         </div>
       </header>
 
       <main class="main-content">
         <section class="result-container">
           <div class="header">
-            <h1 class="main-title" id="trip-title"></h1>
-            <p class="subtitle" id="trip-info"></p>
+            <h1 class="main-title" id="tripTitle"></h1>
+            <p class="subtitle" id="tripInfo"></p>
           </div>
 
           <div
             class="destination-description"
-            id="destination-description"
+            id="destinationDescription"
           ></div>
           <div class="timeline" id="timeline"></div>
 
           <div class="notes-section">
             <h2>💡 여행 팁</h2>
-            <ul id="notes-list"></ul>
+            <ul id="notesList"></ul>
           </div>
 
           <div class="bottom-btn">
@@ -115,6 +132,7 @@
       </footer>
     </div>
 
+    <script src="../public/js/common.js" defer></script>
     <script src="./ai-plan-result.js" defer></script>
   </body>
 </html>

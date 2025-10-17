@@ -3,29 +3,50 @@ function goToAIPlan() {
 }
 
 async function goToReviews() {
-    try{
-        // 서버에 리뷰 데이터를 GET 방식으로 요청
-        const response = await fetch('https://aibe4-project1-team2-m9vr.onrender.com/reviews');
-        
-        // 서버 응답 성공 여부 확인
-        if(!response.ok){
-            throw new Error(`서버 응답 오류 : ${response.status}` );
-        }
+  const API_BASE_URL = "https://aibe4-project1-team2-m9vr.onrender.com";
 
-        // 응답 데이터를 JSON 형태로 파싱
-        const result = await response.json();
-        // API 응답 형식에 따라 성공 여부를 확인
-        if(result.success && result.data) {
-            localStorage.setItem('savedReviews', JSON.stringify(result.data));
-            // 모든 과정이 성공하면 reviews 페이지로 이동
-            window.location.href = "./frontend/reviews/reviews.html";
-        } else {
-            // 서버 응답은 성공, API가 실패 메시지 전송
-            alert(`리뷰를 가져오지 못했습니다 : ${result.message || '알 수 없는 오류'}`);
-        }
-    } catch (error) {
-        // fetch  요청 중 네트워크 오류나 기타 오류 발생
-        console.error("리뷰 데이터를 불러오는 중 에러 발생 : ", error);
-        alert("리뷰 데이터를 불러우는 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.")
+  const handleError = (message, error) => {
+    console.error("[후기 불러오기 실패]", error || message);
+    alert(message);
+  };
+
+  const loader = document.getElementById("loadingSpinner");
+  loader?.classList.remove("hidden");
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/reviews`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) throw new Error(`서버 응답 오류: ${res.status}`);
+
+    let json;
+    try {
+      json = await res.json();
+    } catch (parseError) {
+      throw new Error("서버 응답을 해석하는 중 오류가 발생했습니다.");
     }
+
+    const { success, data, message } = json;
+    const reviews = data?.reviews ?? [];
+
+    if (!success || !Array.isArray(reviews) || reviews.length === 0) {
+      throw new Error(message || "유효한 후기 데이터가 없습니다.");
+    }
+
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+    window.location.href = "./frontend/reviews/reviews.html";
+  } catch (err) {
+    if (err instanceof TypeError) {
+      handleError("네트워크 연결이 불안정합니다. 인터넷을 확인해주세요.", err);
+    } else {
+      handleError(
+        "서버 연결 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+        err
+      );
+    }
+  } finally {
+    loader?.classList.add("hidden");
+  }
 }

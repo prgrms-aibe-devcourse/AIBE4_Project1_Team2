@@ -1,293 +1,371 @@
-/* =================================
-   1. 전역 스타일 및 변수 정의 (Global & Variables)
-   ================================= */
-
-/* :root에서 변수를 선언하면 나중에 색상, 폰트 등을 한 번에 쉽게 바꿀 수 있습니다. */
-:root {
-  --primary-color: #333;
-  --secondary-color: #555;
-  --background-color: #f9fafc;
-  --white-color: #fff;
-  --accent-gradient: linear-gradient(90deg, #ff9b6b, #ffd93d);
-  --accent-color-start: #ff9b6b;
-  --font-family-main: "Noto Sans KR", sans-serif;
-  --border-radius-main: 16px;
-  --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.12);
+/* ============================= */
+/* 1. 메인 콘텐츠 */
+/* ============================= */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  overflow-y: auto;
+  padding: 60px 20px 80px;
+  min-height: calc(100vh - 120px);
+  animation: fadeIn 0.8s ease-out;
 }
 
-* {
-  box-sizing: border-box; /* 레이아웃 계산을 쉽게 만듭니다. */
-}
-
-html {
-  scroll-behavior: smooth; /* 부드러운 스크롤 효과 */
-}
-
-body {
-  font-family: var(--font-family-main);
-  background-color: var(--background-color);
-  color: var(--primary-color);
-  margin: 0;
-  -webkit-font-smoothing: antialiased; /* 폰트를 더 부드럽게 렌더링 */
-  text-rendering: optimizeLegibility;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-/* =================================
-   2. 헤더 (Header)
-   ================================= */
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 50px;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.title-wrap h1 {
-  font-size: 2.2rem;
-  margin: 0 0 8px;
-  color: var(--primary-color);
-}
-
-.subtitle {
-  color: #777;
-  font-size: 1rem;
-  margin: 0;
-}
-
-.btn-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-/* 버튼 스타일 */
-.btn-main {
-  background: var(--accent-gradient);
-  color: var(--white-color);
-  border: none;
-  border-radius: 10px;
-  padding: 12px 24px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-}
-
-.btn-main:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
-}
-
-/* 접근성을 위한 focus 상태 추가 */
-.btn-main:focus-visible {
-  outline: 3px solid var(--accent-color-start);
-  outline-offset: 2px;
-}
-
-/* =================================
-   3. 리뷰 카드 섹션 (Review Cards)
-   ================================= */
-.region-section {
+  text-align: center;
   margin-bottom: 60px;
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 25px;
+}
+.main-title {
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 800;
+  color: var(--text-strong);
+  line-height: 1.5;
+}
+.subtitle {
+  font-size: clamp(14px, 2vw, 17px);
+  color: var(--text-soft);
+  margin-top: 8px;
+  line-height: 1.8;
 }
 
-.region-section h2 {
-  font-size: 1.5rem;
-  color: var(--primary-color);
-  margin-bottom: 25px;
-  border-left: 5px solid var(--accent-color-start);
-  padding-left: 15px;
-}
-
-.review-grid {
+/* ============================= */
+/* 2. 리뷰 카드 리스트 */
+/* ============================= */
+.review-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 35px;
+  width: 100%;
+  max-width: 1200px;
+  padding: 10px 20px 50px;
+  justify-items: center;
 }
 
 .review-card {
-  background: var(--white-color);
-  border-radius: var(--border-radius-main);
-  overflow: hidden;
-  box-shadow: var(--shadow-light);
-  transition: all 0.25s ease;
-}
-
-.review-card.clickable {
+  width: 100%;
+  max-width: 340px;
+  min-height: 430px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: var(--card-shadow);
+  padding: 22px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
   cursor: pointer;
 }
 
-.review-card.clickable:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-medium);
+.review-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 25px rgba(255, 155, 107, 0.25);
 }
 
+.card-title {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--main-yellow);
+  margin-bottom: 18px;
+  line-height: 1.5;
+}
+
+.card-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 18px;
+  background: #f6f6f6;
+}
 .card-image img {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease; /* 이미지 확대 효과 */
 }
 
-.review-card:hover .card-image img {
-  transform: scale(1.05);
+.card-rate {
+  color: var(--main-yellow);
+  font-size: 1.5rem;
+  margin-bottom: 18px;
 }
 
-.card-content {
-  padding: 20px 25px;
+.card-snippet {
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 0.98rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  white-space: pre-line;
 }
 
-.card-content h3 {
-  margin: 0 0 10px;
-  font-size: 1.2rem;
-  color: var(--primary-color);
-}
-.card-content p {
-  font-size: 0.95rem;
-  color: var(--secondary-color);
-  line-height: 1.6;
-}
-
-/* =================================
-   4. 모달 (Modal)
-   ================================= */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex; /* none -> flex로 변경, 투명도로 제어 */
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden; /* display: none 대신 사용 */
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  z-index: 1000;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
+/* ============================= */
+/* 3. 후기 상세 모달 */
+/* ============================= */
 .modal-content {
-  background: var(--white-color);
-  border-radius: var(--border-radius-main);
-  padding: 30px 40px;
-  width: 90%;
-  max-width: 700px;
-  max-height: 90vh;
+  background: #fff;
+  border-radius: 22px;
+  width: min(95%, 900px);
+  height: 80vh;
   overflow-y: auto;
+  padding: 28px 28px 100px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
   position: relative;
-  transform: scale(0.95);
-  transition: transform 0.3s ease;
-}
-.modal-overlay.active .modal-content {
-  transform: scale(1);
 }
 
-.close-button {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 2rem;
-  border: none;
-  background: none;
-  color: #aaa;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-.close-button:hover {
-  color: var(--primary-color);
+.modal-title-text {
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--main-yellow);
+  margin-bottom: 18px;
 }
 
-.review-header h1 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-}
-
-.star-rating-display {
-  color: #ffd93d;
-  font-size: 1.3rem;
-  margin-bottom: 20px;
-}
-
-.review-body .review-photo {
+.modal-image {
+  display: block;
   width: 100%;
-  border-radius: 10px;
-  margin: 10px 0 20px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin: 0 auto 14px;
+  box-shadow: 0 8px 20px rgba(255, 197, 99, 0.25);
 }
 
-.review-body .review-text {
+.modal-rate {
+  color: var(--main-yellow);
+  text-align: center;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.modal-divider {
+  border: none;
+  border-top: 1.5px solid #eee;
+  margin: 20px 0;
+}
+
+.review-text {
+  color: var(--text);
   font-size: 1.05rem;
   line-height: 1.8;
-  color: var(--secondary-color);
+  text-align: center;
+  background: none;
+  border: none;
+  padding: 0 10px;
+  white-space: pre-wrap;
+  max-height: 40vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ccc transparent;
+}
+.review-text::-webkit-scrollbar {
+  width: 6px;
+}
+.review-text::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
 }
 
-body.modal-open {
-  overflow: hidden;
+/* ============================= */
+/* 4. 하단 고정 버튼 영역 */
+/* ============================= */
+.bottom-btn {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 18px 0;
+  background: rgba(255, 255, 255, 0.97);
+  border-top: 1px solid #eee;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.05);
+  border-bottom-left-radius: 22px;
+  border-bottom-right-radius: 22px;
+  z-index: 10;
 }
 
-/* =================================
-   5. 모바일 반응형 (Responsive)
-   ================================= */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 25px;
-  }
-
-  .title-wrap h1 {
-    font-size: 1.8rem;
-  }
-
-  .container {
-    margin: 30px auto;
-  }
-
-  .review-grid {
-    gap: 20px;
-  }
+.btn-prev,
+.btn-next {
+  background: #fff;
+  border: 2px solid #bbb;
+  color: #666;
+  padding: 10px 20px;
+  border-radius: 60px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: var(--transition);
 }
-.search-section {
-  background: var(--white-color);
-  padding: 25px 30px;
-  border-radius: var(--border-radius-main);
-  box-shadow: var(--shadow-light);
-  margin-bottom: 40px;
+.btn-prev:hover,
+.btn-next:hover {
+  transform: translateY(-1px);
+  border-color: #999;
+  color: #333;
 }
 
-.search-section h2 {
-  margin: 0 0 15px;
-  font-size: 1.3rem;
-  color: var(--primary-color);
+.btn-plan {
+  background: var(--main-yellow-light);
+  color: #333;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 26px;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: var(--transition);
+}
+.btn-plan:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 217, 61, 0.4);
+  color: #fff;
+  background: #ffe066;
+}
+.btn-plan[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.search-form {
+/* ============================= */
+/* 5. 일정 상세 모달 */
+/* ============================= */
+.plan-result-modal {
+  background: #fff;
+  border-radius: 22px;
+  width: min(95%, 1100px);
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 36px 48px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  position: relative;
+  margin: auto;
+}
+
+.plan-header {
+  text-align: center;
+  margin-bottom: 26px;
+}
+.destination-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-strong);
+  margin-bottom: 8px;
+}
+.destination-desc {
+  color: var(--text-soft);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.plan-summary {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  justify-content: center;
+  gap: 10px 18px;
+  background: #fffef6;
+  border-radius: 12px;
+  padding: 12px 16px;
+  border: 1.5px solid #ffe6b0;
+  box-shadow: 0 4px 10px rgba(255, 215, 120, 0.1);
 }
 
-.search-form input {
-  flex: 1;
-  min-width: 160px;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 1rem;
+.plan-itinerary-section {
+  margin-top: 28px;
+}
+.plan-itinerary-section h2,
+.plan-notes-section h2 {
+  font-size: 1.15rem;
+  color: var(--text-strong);
+  margin-bottom: 10px;
+}
+.plan-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.plan-card {
+  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid #ffdfa7;
+  padding: 16px;
+  box-shadow: 0 5px 12px rgba(255, 197, 99, 0.15);
+  transition: transform 0.25s ease;
+}
+.plan-card:hover {
+  transform: translateY(-3px);
+}
+.plan-card h3 {
+  font-size: 1.02rem;
+  color: var(--main-orange);
+  margin-bottom: 6px;
 }
 
-.search-form button {
-  flex-shrink: 0;
+.plan-notes-section {
+  margin-top: 26px;
+  background: #fffef6;
+  border-left: 4px solid var(--main-yellow);
+  padding: 16px 18px;
+  border-radius: 10px;
+}
+.plan-notes {
+  list-style: none;
+  padding-left: 0;
+}
+.plan-notes li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 8px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.plan-notes li::before {
+  content: "⭐";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 1.05rem;
+}
+
+/* ============================= */
+/* 6. 반응형 */
+/* ============================= */
+@media (max-width: 1100px) {
+  .review-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .plan-cards {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 750px) {
+  .review-list {
+    grid-template-columns: 1fr;
+  }
+  .review-card {
+    max-width: 90%;
+  }
+  .modal-content {
+    width: min(95%, 640px);
+  }
+}
+
+/* ============================= */
+/* 7. 애니메이션 */
+/* ============================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

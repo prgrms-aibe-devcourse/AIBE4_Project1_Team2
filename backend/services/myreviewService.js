@@ -59,6 +59,47 @@ const myreviewService = {
     }
   },
 
+  updateReview: async (reviewId, updateData) => {
+    try {
+      // 1. 리뷰가 존재하는지 확인
+      const { data: reviewExists, error: reviewCheckError } = await supabase
+        .from("review")
+        .select("reviewId")
+        .eq("reviewId", reviewId)
+        .single();
+
+      if (reviewCheckError || !reviewExists) {
+        console.error("Review 조회 오류:", reviewCheckError);
+        return { error: "REVIEW_NOT_FOUND" };
+      }
+
+      // 2. 수정할 데이터만 필터링 (undefined 제거)
+      const filteredData = {};
+      if (updateData.rate !== undefined) filteredData.rate = updateData.rate;
+      if (updateData.title !== undefined) filteredData.title = updateData.title;
+      if (updateData.content !== undefined)
+        filteredData.content = updateData.content;
+      if (updateData.img_path !== undefined)
+        filteredData.img_path = updateData.img_path;
+
+      // 3. review 테이블 업데이트
+      const { error: updateError } = await supabase
+        .from("review")
+        .update(filteredData)
+        .eq("reviewId", reviewId);
+
+      if (updateError) {
+        console.error("Review 업데이트 오류:", updateError);
+        throw updateError;
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error("myreviewService.updateReview 오류:", error);
+      throw error;
+    }
+  },
+
   deleteReview: async (reviewId) => {
     try {
       // 1. 리뷰가 존재하는지 확인
